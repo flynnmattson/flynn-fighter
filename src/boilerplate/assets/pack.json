@@ -19,8 +19,8 @@
       },
       {
         "type": "image",
-        "key": "player",
-        "url": "src/boilerplate/assets/sprites/player.png"
+        "key": "enemy",
+        "url": "src/boilerplate/assets/sprites/player3.png"
       },
       {
         "type": "spritesheet",
@@ -30,6 +30,20 @@
           "frameWidth": 20,
           "frameHeight": 20
         }
+      },
+      {
+        "type": "spritesheet",
+        "key": "adventurer",
+        "url": "src/boilerplate/assets/sprites/adventurer-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
+        "type": "json",
+        "key": "animationJSON",
+        "url": "src/boilerplate/assets/animations/animations.json"
       }
     ]
   }

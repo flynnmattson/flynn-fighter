@@ -6,8 +6,9 @@
  */
 
 export class Player extends Phaser.GameObjects.Sprite {
-  private anim: Phaser.Tweens.Tween[];
   private isDead: boolean = false;
+  private isJumping: boolean = false;
+  private isRunning: boolean = false;
 
   public getDead(): boolean {
     return this.isDead;
@@ -26,51 +27,53 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     // physics
     params.scene.physics.world.enable(this);
-    this.body.setGravityY(-300);
-    this.body.setSize(17, 12);
-
-    // animations & tweens
-    this.anim = [];
-    this.anim.push(
-      params.scene.tweens.add({
-        targets: this,
-        duration: 100,
-        angle: -20
-      })
-    );
+    this.body.allowGravity = true;
+    this.body.setSize(50, 37);
 
     params.scene.add.existing(this);
   }
 
   update(): void {
-    this.handleAngleChange();
+    if (!this.isJumping && !this.isRunning) this.anims.play("adventurerIdle", true);
     this.handleGravity();
     this.isOffTheScreen();
   }
 
   private handleGravity(): void {
-    if (this.body.y >= this.scene.sys.canvas.height - 150) {
-      this.body.setGravityY(-300);
+    if (this.body.y >= this.scene.sys.canvas.height - 215) {
+      this.body.allowGravity = false;
       if (this.body.velocity.y > 0) {
+        this.isJumping = false;
         this.body.setVelocityY(0);
       }
     } else {
-      this.body.setGravityY(300);
+      this.body.allowGravity = true;
     }
   }
 
-  private handleAngleChange(): void {
-    if (this.angle < 20) {
-      this.angle += 1;
-    }
-  }
-
-  public flap(): void {
-    if (this.body.y >= this.scene.sys.canvas.height - 150 &&
+  public jump(): void {
+    if (this.body.y >= this.scene.sys.canvas.height - 215 &&
         this.body.velocity.y === 0) {
       this.body.setVelocityY(-350);
-      this.anim[0].restart();
+      this.isJumping = true;
+      this.anims.play("adventurerJump", true);
     }
+  }
+ 
+  public runLeft(): void {
+    this.isRunning = true;
+    this.flipX = true;
+    if (!this.isJumping) this.anims.play("adventurerRun", true);
+  }
+
+  public runRight(): void {
+    this.isRunning = true;
+    this.flipX = false;
+    if (!this.isJumping) this.anims.play("adventurerRun", true);
+  }
+
+  public stopRun(): void {
+    this.isRunning = false;
   }
 
   private isOffTheScreen(): void {

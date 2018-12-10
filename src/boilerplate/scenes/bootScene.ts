@@ -4,7 +4,10 @@
  * @license      Digitsensitive
  */
 
+import { AnimationHelper } from "../helpers/animationHelper";
+
 export class BootScene extends Phaser.Scene {
+  private animationHelperInstance: AnimationHelper;
   private loadingBar: Phaser.GameObjects.Graphics;
   private progressBar: Phaser.GameObjects.Graphics;
 
@@ -32,7 +35,12 @@ export class BootScene extends Phaser.Scene {
     // delete bar graphics, when loading complete
     this.load.on(
       "complete",
-      function() {
+      function () {
+        this.animationHelperInstance = new AnimationHelper(
+          this,
+          this.cache.json.get("animationJSON")
+        );
+
         this.progressBar.destroy();
         this.loadingBar.destroy();
       },

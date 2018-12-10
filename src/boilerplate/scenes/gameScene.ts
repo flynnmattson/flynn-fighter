@@ -6,12 +6,12 @@
  */
 
 import { Player } from "../objects/player";
-import { Pipe } from "../objects/pipe";
+import { Enemy } from "../objects/enemy";
 
 export class GameScene extends Phaser.Scene {
   // objects
   private player: Player;
-  private pipes: Phaser.GameObjects.Group;
+  private enemies: Phaser.GameObjects.Group;
   private bg: Phaser.GameObjects.TileSprite;
   private fg: Phaser.GameObjects.TileSprite;
 
@@ -32,13 +32,16 @@ export class GameScene extends Phaser.Scene {
   init(): void {
     // objects
     this.player = null;
-    this.pipes = this.add.group({ classType: Pipe });
+    this.enemies = this.add.group({
+      classType: Enemy,
+      runChildUpdate: true
+    });
     this.bg = null;
     this.fg = null;
 
     // variables
     this.timer = undefined;
-    this.score = -1;
+    this.score = 0;
     this.scoreText = [];
 
     // input
@@ -53,7 +56,6 @@ export class GameScene extends Phaser.Scene {
 
     this.fg = this.add.tileSprite(0, this.sys.canvas.height, this.sys.canvas.width, 110, "foreground");
     this.fg.setScale(2);
-    // this.physics.world.enable(this.fg);
 
     this.scoreText.push(
       this.add.text(this.sys.canvas.width / 2 - 14, 30, "0", {
@@ -70,18 +72,18 @@ export class GameScene extends Phaser.Scene {
       })
     );
 
-    // this.addRowOfPipes();
+    this.spawnEnemy();
 
     this.player = new Player({
       scene: this,
-      x: this.sys.canvas.width / 2 - 14,
-      y: this.sys.canvas.height - 150,
-      key: "player"
+      x: this.sys.canvas.width / 2 - 75,
+      y: this.sys.canvas.height - 220,
+      key: "adventurer"
     });
 
     // this.timer = this.time.addEvent({
-    //   delay: 1500,
-    //   callback: this.addRowOfPipes,
+    //   delay: 5000,
+    //   callback: this.spawnEnemy,
     //   callbackScope: this,
     //   loop: true
     // });
@@ -91,16 +93,7 @@ export class GameScene extends Phaser.Scene {
     this.handleInput();
     if (!this.player.getDead()) {
       this.player.update();
-      this.physics.overlap(this.player, this.pipes, this.hitPipe, null, this);
     } else {
-      Phaser.Actions.Call(
-        this.pipes.getChildren(),
-        function(pipe) {
-          pipe.body.setVelocityX(0);
-        },
-        this
-      );
-
       if (this.player.y > this.sys.canvas.height) {
         this.restartGame();
       }
@@ -109,54 +102,61 @@ export class GameScene extends Phaser.Scene {
 
   private handleInput(): void {
     if (this.jumpKey.isDown) {
-      this.player.flap();
+      this.player.jump();
     }
     if (this.leftKey.isDown) {
-      this.player.flipX = true;
-      this.bg.tilePositionX -= 0.1;
-      this.fg.tilePositionX -= 1;
+      this.player.runLeft();
+      this.enemies.getChildren().forEach((enemy: Enemy) => {
+        enemy.moveRight();
+      });
+      this.bg.tilePositionX -= 0.05;
+      this.fg.tilePositionX -= 2;
     } else if (this.rightKey.isDown) {
-      this.player.flipX = false;
-      this.bg.tilePositionX += 0.1;
-      this.fg.tilePositionX += 1;
+      this.player.runRight();
+      this.enemies.getChildren().forEach((enemy: Enemy) => {
+        enemy.moveLeft();
+      });
+      this.bg.tilePositionX += 0.05;
+      this.fg.tilePositionX += 2;
+    } else {
+      this.player.stopRun();
     }
   }
 
-  private addOnePipe(x, y, frame, hole): void {
-    // create a pipe at the position x and y
-    let pipe = new Pipe({
+  private addOneEnemy(x): void {
+    let enemy = new Enemy({
       scene: this,
       x: x,
-      y: y,
-      frame: frame,
-      key: "pipe"
+      y: this.sys.canvas.height - 205,
+      key: "enemy"
     });
 
-    // add pipe to group
-    this.pipes.add(pipe);
+    this.enemies.add(enemy);
   }
 
-  private addRowOfPipes(): void {
+  private spawnEnemy(): void {
     // update the score
     this.score += 1;
     this.scoreText[0].setText("" + this.score);
     this.scoreText[1].setText("" + this.score);
 
     // randomly pick a number between 1 and 5
-    let hole = Math.floor(Math.random() * 5) + 1;
+    // let x = Math.floor(Math.random() * 10) + 5;
 
-    // add 6 pipes with one big hole at position hole and hole + 1
-    for (let i = 0; i < 10; i++) {
-      if (i != hole && i != hole + 1 && i != hole + 2) {
-        if (i == hole - 1) {
-          this.addOnePipe(800, i * 60, 0, hole);
-        } else if (i == hole + 3) {
-          this.addOnePipe(800, i * 60, 1, hole);
-        } else {
-          this.addOnePipe(800, i * 60, 2, hole);
-        }
-      }
-    }
+    this.addOneEnemy(this.sys.canvas.width);
+
+    // // add 6 pipes with one big hole at position hole and hole + 1
+    // for (let i = 0; i < 10; i++) {
+    //   if (i != hole && i != hole + 1 && i != hole + 2) {
+    //     if (i == hole - 1) {
+    //       this.addOnePipe(800, i * 60, 0, hole);
+    //     } else if (i == hole + 3) {
+    //       this.addOnePipe(800, i * 60, 1, hole);
+    //     } else {
+    //       this.addOnePipe(800, i * 60, 2, hole);
+    //     }
+    //   }
+    // }
   }
 
   private hitPipe() {
