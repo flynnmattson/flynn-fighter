@@ -87,6 +87,14 @@ export class GameScene extends Phaser.Scene {
     //   callbackScope: this,
     //   loop: true
     // });
+
+    this.input.on(
+      "pointerdown",
+      function() {
+        this.player.attack();
+      },
+      this
+    );
   }
 
   update(): void {

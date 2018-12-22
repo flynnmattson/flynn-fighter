@@ -5,8 +5,8 @@
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
         "key": "adventurer",
-        "start": 0,
-        "end": 3
+        "start": 38,
+        "end": 41
       },
       "repeat": -1,
       "frameRate": 6
@@ -31,7 +31,40 @@
         "end": 23
       },
       "repeat": 0,
-      "frameRate": 8
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 42,
+        "end": 47
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 48,
+        "end": 52
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAttack3",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 53,
+        "end": 58
+      },
+      "repeat": 0,
+      "frameRate": 10
     }
   ]
 }
