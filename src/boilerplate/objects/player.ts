@@ -76,7 +76,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public attack(): void {
-    if (!this.isRunning && this.currentScene.time.now > this.lastAttack) {
+    if (this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = true;
       this.anims.play("adventurerAttack" + this.attackCombo, false);
       this.lastAttack = this.currentScene.time.now + this.attackCooldown;
