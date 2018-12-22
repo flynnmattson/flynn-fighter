@@ -9,6 +9,11 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isDead: boolean = false;
   private isJumping: boolean = false;
   private isRunning: boolean = false;
+  private isAttacking: boolean = false;
+  private currentScene: Phaser.Scene;
+  private attackCooldown: number = 500;
+  private lastAttack: number;
+  private attackCombo: number = 1;
 
   public getDead(): boolean {
     return this.isDead;
@@ -20,6 +25,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
+    this.currentScene = params.scene;
 
     // image
     this.setScale(3);
@@ -30,11 +36,20 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.body.allowGravity = true;
     this.body.setSize(50, 37);
 
+    this.lastAttack = 0;
+
     params.scene.add.existing(this);
   }
 
   update(): void {
-    if (!this.isJumping && !this.isRunning) this.anims.play("adventurerIdle", true);
+    if (this.isAttacking && this.currentScene.time.now > this.lastAttack) {
+      this.isAttacking = false;
+    }
+
+    if (!this.isJumping && !this.isRunning && !this.isAttacking) {
+      this.anims.play("adventurerIdle", true);
+    }
+
     this.handleGravity();
     this.isOffTheScreen();
   }
@@ -59,17 +74,30 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.anims.play("adventurerJump", true);
     }
   }
+
+  public attack(): void {
+    if (this.currentScene.time.now > this.lastAttack) {
+      this.isAttacking = true;
+      this.anims.play("adventurerAttack" + this.attackCombo, false);
+      this.lastAttack = this.currentScene.time.now + this.attackCooldown;
+      this.attackCombo = this.attackCombo === 3 ? 0 : this.attackCombo + 1;
+    }
+  }
  
   public runLeft(): void {
     this.isRunning = true;
     this.flipX = true;
-    if (!this.isJumping) this.anims.play("adventurerRun", true);
+    if (!this.isJumping && !this.isAttacking) {
+      this.anims.play("adventurerRun", true);
+    }
   }
 
   public runRight(): void {
     this.isRunning = true;
     this.flipX = false;
-    if (!this.isJumping) this.anims.play("adventurerRun", true);
+    if (!this.isJumping && !this.isAttacking) {
+      this.anims.play("adventurerRun", true);
+    }
   }
 
   public stopRun(): void {
