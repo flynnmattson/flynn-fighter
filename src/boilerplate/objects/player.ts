@@ -12,7 +12,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isAttacking: boolean = false;
   private currentScene: Phaser.Scene;
   private attackCooldown: number = 400;
-  private lastAttack: number;
+  private lastAttack: number = 0;
   private attackCombo: number = 1;
 
   public getDead(): boolean {
@@ -36,12 +36,14 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.body.allowGravity = true;
     this.body.setSize(50, 37);
 
-    this.lastAttack = 0;
-
     params.scene.add.existing(this);
   }
 
   update(): void {
+    if (this.body.velocity.y === 0) {
+      this.isJumping = false;
+    }
+
     if (this.isAttacking && this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = false;
     }
@@ -50,25 +52,23 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.anims.play("adventurerIdle", true);
     }
 
-    this.handleGravity();
     this.isOffTheScreen();
   }
 
-  private handleGravity(): void {
-    if (this.body.y >= this.scene.sys.canvas.height - 215) {
-      this.body.allowGravity = false;
-      if (this.body.velocity.y > 0) {
-        this.isJumping = false;
-        this.body.setVelocityY(0);
-      }
-    } else {
-      this.body.allowGravity = true;
-    }
-  }
+  // private handleGravity(): void {
+  //   if (this.body.y >= this.scene.sys.canvas.height - 215) {
+  //     this.body.allowGravity = false;
+  //     if (this.body.velocity.y > 0) {
+  //       this.isJumping = false;
+  //       this.body.setVelocityY(0);
+  //     }
+  //   } else {
+  //     this.body.allowGravity = true;
+  //   }
+  // }
 
   public jump(): void {
-    if (this.body.y >= this.scene.sys.canvas.height - 215 &&
-        this.body.velocity.y === 0) {
+    if (!this.isJumping) {
       this.body.setVelocityY(-350);
       this.isJumping = true;
       this.anims.play("adventurerJump", true);
@@ -76,7 +76,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public attack(): void {
-    if (this.currentScene.time.now > this.lastAttack) {
+    if (!this.isRunning && this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = true;
       this.anims.play("adventurerAttack" + this.attackCombo, false);
       this.lastAttack = this.currentScene.time.now + this.attackCooldown;
@@ -87,6 +87,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public runLeft(): void {
     this.isRunning = true;
     this.flipX = true;
+    this.body.setVelocityX(-200);
     if (!this.isJumping && !this.isAttacking) {
       this.anims.play("adventurerRun", true);
     }
@@ -95,12 +96,14 @@ export class Player extends Phaser.GameObjects.Sprite {
   public runRight(): void {
     this.isRunning = true;
     this.flipX = false;
+    this.body.setVelocityX(200);
     if (!this.isJumping && !this.isAttacking) {
       this.anims.play("adventurerRun", true);
     }
   }
 
   public stopRun(): void {
+    this.body.setVelocityX(0);
     this.isRunning = false;
   }
 

@@ -13,7 +13,6 @@ export class GameScene extends Phaser.Scene {
   private player: Player;
   private enemies: Phaser.GameObjects.Group;
   private bg: Phaser.GameObjects.TileSprite;
-  private fg: Phaser.GameObjects.TileSprite;
 
   // variables
   private timer: Phaser.Time.TimerEvent;
@@ -22,6 +21,11 @@ export class GameScene extends Phaser.Scene {
   private jumpKey: Phaser.Input.Keyboard.Key;
   private leftKey: Phaser.Input.Keyboard.Key;
   private rightKey: Phaser.Input.Keyboard.Key;
+
+  // tilemap
+  private map: Phaser.Tilemaps.Tilemap;
+  private tileset: Phaser.Tilemaps.Tileset;
+  private groundLayer: Phaser.Tilemaps.StaticTilemapLayer;
 
   constructor() {
     super({
@@ -37,7 +41,6 @@ export class GameScene extends Phaser.Scene {
       runChildUpdate: true
     });
     this.bg = null;
-    this.fg = null;
 
     // variables
     this.timer = undefined;
@@ -51,11 +54,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.bg = this.add.tileSprite(0, 0, 300, 200, "background");
+    this.bg = this.add.tileSprite(0, 100, this.sys.canvas.width * 3, 200, "background");
     this.bg.setScale(6);
 
-    this.fg = this.add.tileSprite(0, this.sys.canvas.height, this.sys.canvas.width, 110, "foreground");
-    this.fg.setScale(2);
+    this.map = this.make.tilemap({ key: "map" });
+    this.tileset = this.map.addTilesetImage("jungle tileset", "tiles");
+    this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
+    this.groundLayer.setScale(3);
+    this.groundLayer.setCollisionByProperty({collides: true});
 
     this.scoreText.push(
       this.add.text(this.sys.canvas.width / 2 - 14, 30, "0", {
@@ -72,7 +78,7 @@ export class GameScene extends Phaser.Scene {
       })
     );
 
-    this.spawnEnemy();
+    // this.spawnEnemy();
 
     this.player = new Player({
       scene: this,
@@ -80,6 +86,18 @@ export class GameScene extends Phaser.Scene {
       y: this.sys.canvas.height - 220,
       key: "adventurer"
     });
+
+    this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
+    this.cameras.main.startFollow(this.player);
+
+    this.physics.add.collider(this.player, this.groundLayer);
+
+    // const debugGraphics = this.add.graphics().setAlpha(0.75);
+    // this.groundLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    // });
 
     // this.timer = this.time.addEvent({
     //   delay: 5000,
@@ -114,18 +132,10 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.leftKey.isDown) {
       this.player.runLeft();
-      this.enemies.getChildren().forEach((enemy: Enemy) => {
-        enemy.moveRight();
-      });
       this.bg.tilePositionX -= 0.05;
-      this.fg.tilePositionX -= 2;
     } else if (this.rightKey.isDown) {
       this.player.runRight();
-      this.enemies.getChildren().forEach((enemy: Enemy) => {
-        enemy.moveLeft();
-      });
       this.bg.tilePositionX += 0.05;
-      this.fg.tilePositionX += 2;
     } else {
       this.player.stopRun();
     }

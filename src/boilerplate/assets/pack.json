@@ -23,6 +23,16 @@
         "url": "src/boilerplate/assets/sprites/player3.png"
       },
       {
+        "type": "image",
+        "key": "tiles",
+        "url": "src/boilerplate/assets/other/jungle_tileset.png"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "map",
+        "url": "src/boilerplate/assets/other/test2.json"
+      },
+      {
         "type": "spritesheet",
         "key": "pipe",
         "url": "src/games/flappy-bird/assets/sprites/pipe.png",
