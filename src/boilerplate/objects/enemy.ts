@@ -1,3 +1,5 @@
+import { Player } from "./player";
+
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2018 Digitsensitive
@@ -6,130 +8,117 @@
  */
 
 export class Enemy extends Phaser.GameObjects.Sprite {
-    private anim: Phaser.Tweens.Tween[];
-    private isDead: boolean = false;
-    private isJumping: boolean = false;
+  private isDead: boolean = false;
+  private isHurting: boolean = false;
+  private isAttacking: boolean = false;
+  private currentScene: Phaser.Scene;
+  private player: Player;
+  private attackCooldown: number = 1500;
+  private attackSpeed: number = 600;
+  private nextAttack: number = 0;
+  private attackFinished: number = 0;
 
-    public getDead(): boolean {
-        return this.isDead;
+  constructor(params) {
+    super(params.scene, params.x, params.y, params.key, params.frame);
+    this.currentScene = params.scene;
+    this.player = params.scene.getPlayer();
+
+    // image
+    this.setScale(3);
+    this.setOrigin(0, 0);
+
+    // physics
+    params.scene.physics.world.enable(this);
+    this.body.allowGravity = true;
+    this.body.setSize(32, 25);
+
+    params.scene.add.existing(this);
+  }
+
+  update(): void {
+    this.move();
+  }
+
+  public getDead(): boolean {
+    return this.isDead;
+  }
+
+  public setDead(dead): void {
+    this.isDead = dead;
+  }
+
+
+  public damage(info): void {
+    if (this.overlap(info)) {
+      this.isAttacking = false;
+      this.isHurting = true;
+      this.anims.play("slimeHurt", true);
+      this.body.setVelocityX(info.faceLeft ? -100 : 100);
+      this.body.setVelocityY(-75);
+      setTimeout(() => {
+        this.isHurting = false;
+      }, 600);
     }
+  }
 
-    public setDead(dead): void {
-        this.isDead = dead;
-    }
+  private overlap(other): boolean {
+    let position = {
+        rangeLeft: this.body.x,
+        rangeRight: this.body.x + 96
+      },
+      first = other.rangeLeft <= position.rangeLeft ? other : position,
+      second = other.rangeLeft <= position.rangeLeft ? position : other;
 
-    constructor(params) {
-        super(params.scene, params.x, params.y, params.key, params.frame);
+    return first.rangeRight >= second.rangeLeft;
+  }
 
-        // image
-        this.setScale(3);
-        this.setOrigin(0, 0);
-
-        // physics
-        params.scene.physics.world.enable(this);
-        this.body.allowGravity = true;
-        this.body.setSize(17, 12);
-
-        // animations & tweens
-        this.anim = [];
-        this.anim.push(
-            params.scene.tweens.add({
-                targets: this,
-                duration: 300,
-                angle: 8,
-                repeat: -1,
-                yoyo: true,
-                paused: true
-            }),
-            params.scene.tweens.add({
-                targets: this,
-                duration: 300,
-                angle: -5,
-                repeat: -1,
-                yoyo: true,
-                paused: true
-            })
-        );
-
-        params.scene.add.existing(this);
-    }
-
-    update(): void {
-        this.handleAngleChange();
-        this.handleGravity();
+  private move(): void {
+    if (!this.isHurting && !this.isAttacking && this.player.body.x - 50 < this.x && this.x > this.player.body.x + 100) {
+      this.runLeft();
+    } else if (!this.isHurting && !this.isAttacking && this.player.body.x + 100 > this.x && this.x < this.player.body.x - 50) {
+      this.runRight();
+    } else {
+      if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
+        // this.player.damage();
+        this.isAttacking = false;
+      } else if (!this.isHurting) {
         this.attack();
+      }
+      this.stopRun();
     }
+  }
 
-    private handleGravity(): void {
-        if (this.body.y >= this.scene.sys.canvas.height - 115) {
-            this.isJumping = false;
-            this.body.allowGravity = false;
-            if (this.body.velocity.y > 0) {
-                this.body.setVelocityY(0);
-            }
-        } else {
-            this.stopRun();
-            this.body.allowGravity = true;
-        }
+  private attack(): void {
+    if (this.currentScene.time.now >= this.nextAttack) {
+      this.isAttacking = true;
+      this.anims.play("slimeAttack", false);
+      // if (this.flipX) this.body.setVelocityX(100);
+      // else this.body.setVelocityX(-100);
+      this.nextAttack = this.currentScene.time.now + this.attackCooldown;
+      this.attackFinished = this.currentScene.time.now + this.attackSpeed;
     }
+  }
 
-    private handleAngleChange(): void {
-        if (this.angle > 0) {
-            this.angle -= 1;
-        } else if (this.angle < -1) {
-            this.angle += 1;
-        }
-    }
+  private runLeft(): void {
+    this.flipX = false;
+    this.body.setVelocityX(-150);
+    this.anims.play("slimeRun", true);
+  }
 
-    private attack(): void {
-        if (this.x < this.scene.sys.canvas.width / 2 - 65) {
-            this.runRight();
-            this.x += 1;
-        } else if (this.x > this.scene.sys.canvas.width / 2 + 20) {
-            this.runLeft();
-            this.x -= 1;
-        } else {
-            this.stopRun();
-            // TODO: ATTACK HEREa
-        }
-    }
+  private runRight(): void {
+    this.flipX = true;
+    this.body.setVelocity(150);
+    this.anims.play("slimeRun", true);
+  }
 
-    public jump(): void {
-        if (this.body.y >= this.scene.sys.canvas.height - 150 &&
-            this.body.velocity.y === 0) {
-            this.body.setVelocityY(-350);
-            this.isJumping = true;
-        }
+  private stopRun(): void {
+    if (!this.isHurting) {
+      if (this.body.velocity.x > 0) {
+        this.body.setVelocityX(this.body.velocity.x - 50);
+      } else if (this.body.velocity.x < 0) {
+        this.body.setVelocityX(this.body.velocity.x + 50);
+      }
+      if (!this.isAttacking) this.anims.play("slimeIdle", true);
     }
-
-    public runLeft(): void {
-        this.flipX = true;
-        if (!this.anim[1].isPlaying() && !this.isJumping) {
-            this.anim[0].stop();
-            this.anim[1].restart();
-        }
-    }
-
-    public runRight(): void {
-        this.flipX = false;
-        if (!this.anim[0].isPlaying() && !this.isJumping) {
-            this.anim[1].stop();
-            this.anim[0].restart();
-        }
-    }
-
-    public moveLeft(): void {
-        this.x -= 2;
-    }
-
-    public moveRight(): void {
-        this.x += 2;
-    }
-
-    public stopRun(): void {
-        if (this.anim[0].isPlaying())
-            this.anim[0].stop();
-        if (this.anim[1].isPlaying())
-            this.anim[1].stop();
-    }
+  }
 }

@@ -7,12 +7,13 @@
 
 import { Player } from "../objects/player";
 import { Enemy } from "../objects/enemy";
+import { Background } from "../objects/background";
 
 export class GameScene extends Phaser.Scene {
   // objects
   private player: Player;
   private enemies: Phaser.GameObjects.Group;
-  private bg: Phaser.GameObjects.TileSprite;
+  private parallaxBg: Background;
 
   // variables
   private timer: Phaser.Time.TimerEvent;
@@ -36,11 +37,11 @@ export class GameScene extends Phaser.Scene {
   init(): void {
     // objects
     this.player = null;
+    this.parallaxBg = null;
     this.enemies = this.add.group({
       classType: Enemy,
       runChildUpdate: true
     });
-    this.bg = null;
 
     // variables
     this.timer = undefined;
@@ -54,9 +55,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.bg = this.add.tileSprite(0, 100, this.sys.canvas.width * 3, 200, "background");
-    this.bg.setScale(6);
-
+    this.parallaxBg = new Background({
+      scene: this
+    });
     this.map = this.make.tilemap({ key: "map" });
     this.tileset = this.map.addTilesetImage("jungle tileset", "tiles");
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
@@ -78,8 +79,10 @@ export class GameScene extends Phaser.Scene {
       })
     );
 
-    // this.spawnEnemy();
+    this.scoreText[0].setScrollFactor(0);
+    this.scoreText[1].setScrollFactor(0);
 
+    
     this.player = new Player({
       scene: this,
       x: this.sys.canvas.width / 2 - 75,
@@ -87,10 +90,13 @@ export class GameScene extends Phaser.Scene {
       key: "adventurer"
     });
 
+    this.spawnEnemy();
+
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
     this.cameras.main.startFollow(this.player);
 
     this.physics.add.collider(this.player, this.groundLayer);
+    this.physics.add.collider(this.enemies, this.groundLayer);
 
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
     // this.groundLayer.renderDebug(debugGraphics, {
@@ -108,8 +114,14 @@ export class GameScene extends Phaser.Scene {
 
     this.input.on(
       "pointerdown",
-      function() {
-        this.player.attack();
+      () => {
+        let attackInfo; 
+        if (attackInfo = this.player.attack()) {
+          // damage nearby enemies
+          this.enemies.children.each((enemy) => {
+            enemy.damage(attackInfo);
+          }, this);
+        }
       },
       this
     );
@@ -117,6 +129,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.handleInput();
+    this.parallaxBg.shift(this.player.getVelocityX());
     if (!this.player.getDead()) {
       this.player.update();
     } else {
@@ -126,16 +139,18 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  public getPlayer(): Player {
+    return this.player;
+  }
+
   private handleInput(): void {
     if (this.jumpKey.isDown) {
       this.player.jump();
     }
     if (this.leftKey.isDown) {
       this.player.runLeft();
-      this.bg.tilePositionX -= 0.05;
     } else if (this.rightKey.isDown) {
       this.player.runRight();
-      this.bg.tilePositionX += 0.05;
     } else {
       this.player.stopRun();
     }
@@ -146,7 +161,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: x,
       y: this.sys.canvas.height - 205,
-      key: "enemy"
+      key: "slime"
     });
 
     this.enemies.add(enemy);
@@ -162,23 +177,6 @@ export class GameScene extends Phaser.Scene {
     // let x = Math.floor(Math.random() * 10) + 5;
 
     this.addOneEnemy(this.sys.canvas.width);
-
-    // // add 6 pipes with one big hole at position hole and hole + 1
-    // for (let i = 0; i < 10; i++) {
-    //   if (i != hole && i != hole + 1 && i != hole + 2) {
-    //     if (i == hole - 1) {
-    //       this.addOnePipe(800, i * 60, 0, hole);
-    //     } else if (i == hole + 3) {
-    //       this.addOnePipe(800, i * 60, 1, hole);
-    //     } else {
-    //       this.addOnePipe(800, i * 60, 2, hole);
-    //     }
-    //   }
-    // }
-  }
-
-  private hitPipe() {
-    this.player.setDead(true);
   }
 
   private restartGame(): void {

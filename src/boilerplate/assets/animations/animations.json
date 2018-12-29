@@ -65,6 +65,50 @@
       },
       "repeat": 0,
       "frameRate": 10
+    },
+    {
+      "key": "slimeIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slime",
+        "start": 0,
+        "end": 3
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "slimeRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slime",
+        "start": 4,
+        "end": 7
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slimeAttack",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slime",
+        "start": 8,
+        "end": 11
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slimeHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slime",
+        "start": 12,
+        "end": 15
+      },
+      "repeat": 0,
+      "frameRate": 6
     }
   ]
 }

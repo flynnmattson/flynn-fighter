@@ -14,9 +14,14 @@ export class Player extends Phaser.GameObjects.Sprite {
   private attackCooldown: number = 400;
   private lastAttack: number = 0;
   private attackCombo: number = 1;
+  private weaponRange: number = 75
 
   public getDead(): boolean {
     return this.isDead;
+  }
+
+  public getVelocityX(): number {
+    return this.body.velocity.x;
   }
 
   public setDead(dead): void {
@@ -55,18 +60,6 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.isOffTheScreen();
   }
 
-  // private handleGravity(): void {
-  //   if (this.body.y >= this.scene.sys.canvas.height - 215) {
-  //     this.body.allowGravity = false;
-  //     if (this.body.velocity.y > 0) {
-  //       this.isJumping = false;
-  //       this.body.setVelocityY(0);
-  //     }
-  //   } else {
-  //     this.body.allowGravity = true;
-  //   }
-  // }
-
   public jump(): void {
     if (!this.isJumping) {
       this.body.setVelocityY(-350);
@@ -75,19 +68,28 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public attack(): void {
+  public attack(): object {
     if (!this.isRunning && this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = true;
       this.anims.play("adventurerAttack" + this.attackCombo, false);
+      if (this.flipX) this.body.setVelocityX(-300);
+      else this.body.setVelocityX(300);
       this.lastAttack = this.currentScene.time.now + this.attackCooldown;
       this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
+      return {
+        faceLeft: this.flipX,
+        rangeLeft: this.flipX ? this.body.x - this.weaponRange : this.body.x,
+        rangeRight: this.flipX ? this.body.x + 50 : this.body.x + 50 + this.weaponRange
+      };
+    } else {
+      return null;
     }
   }
  
   public runLeft(): void {
     this.isRunning = true;
     this.flipX = true;
-    this.body.setVelocityX(-200);
+    this.body.setVelocityX(-300);
     if (!this.isJumping && !this.isAttacking) {
       this.anims.play("adventurerRun", true);
     }
@@ -96,14 +98,18 @@ export class Player extends Phaser.GameObjects.Sprite {
   public runRight(): void {
     this.isRunning = true;
     this.flipX = false;
-    this.body.setVelocityX(200);
+    this.body.setVelocityX(300);
     if (!this.isJumping && !this.isAttacking) {
       this.anims.play("adventurerRun", true);
     }
   }
 
   public stopRun(): void {
-    this.body.setVelocityX(0);
+    if (this.body.velocity.x > 0) {
+      this.body.setVelocityX(this.body.velocity.x - 50);
+    } else if (this.body.velocity.x < 0) {
+      this.body.setVelocityX(this.body.velocity.x + 50);
+    }
     this.isRunning = false;
   }
 

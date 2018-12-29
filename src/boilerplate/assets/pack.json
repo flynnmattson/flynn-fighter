@@ -9,18 +9,28 @@
       },
       {
         "type": "image",
-        "key": "background",
-        "url": "src/boilerplate/assets/other/bg.png"
+        "key": "background1",
+        "url": "src/boilerplate/assets/other/plx-1.png"
       },
       {
         "type": "image",
-        "key": "foreground",
-        "url": "src/boilerplate/assets/other/fg.png"
+        "key": "background2",
+        "url": "src/boilerplate/assets/other/plx-2.png"
       },
       {
         "type": "image",
-        "key": "enemy",
-        "url": "src/boilerplate/assets/sprites/player3.png"
+        "key": "background3",
+        "url": "src/boilerplate/assets/other/plx-3.png"
+      },
+      {
+        "type": "image",
+        "key": "background4",
+        "url": "src/boilerplate/assets/other/plx-4.png"
+      },
+      {
+        "type": "image",
+        "key": "background5",
+        "url": "src/boilerplate/assets/other/plx-5.png"
       },
       {
         "type": "image",
@@ -34,20 +44,20 @@
       },
       {
         "type": "spritesheet",
-        "key": "pipe",
-        "url": "src/games/flappy-bird/assets/sprites/pipe.png",
-        "frameConfig": {
-          "frameWidth": 20,
-          "frameHeight": 20
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "adventurer",
         "url": "src/boilerplate/assets/sprites/adventurer-Sheet.png",
         "frameConfig": {
           "frameWidth": 50,
           "frameHeight": 37
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "slime",
+        "url": "src/boilerplate/assets/sprites/slime-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 25
         }
       },
       {
