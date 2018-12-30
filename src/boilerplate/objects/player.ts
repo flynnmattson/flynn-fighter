@@ -14,7 +14,6 @@ export class Player extends Phaser.GameObjects.Sprite {
   private attackCooldown: number = 400;
   private lastAttack: number = 0;
   private attackCombo: number = 1;
-  private weaponRange: number = 75
 
   public getDead(): boolean {
     return this.isDead;
@@ -22,6 +21,10 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   public getVelocityX(): number {
     return this.body.velocity.x;
+  }
+
+  public getPositionX(): number {
+    return this.body.x;
   }
 
   public setDead(dead): void {
@@ -77,9 +80,10 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.lastAttack = this.currentScene.time.now + this.attackCooldown;
       this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
       return {
+        triggerDamage: this.attackCooldown / 2,
         faceLeft: this.flipX,
-        rangeLeft: this.flipX ? this.body.x - this.weaponRange : this.body.x,
-        rangeRight: this.flipX ? this.body.x + 50 : this.body.x + 50 + this.weaponRange
+        rangeLeft: this.flipX ? this.body.x : this.body.x / 2,
+        rangeRight: this.flipX ? (this.body.x + this.width * 3) / 2 : this.body.x + this.width * 3
       };
     } else {
       return null;

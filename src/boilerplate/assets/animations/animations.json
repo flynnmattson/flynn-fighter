@@ -109,6 +109,17 @@
       },
       "repeat": 0,
       "frameRate": 6
+    },
+    {
+      "key": "slimeDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slime",
+        "start": 16,
+        "end": 20
+      },
+      "repeat": 0,
+      "frameRate": 6
     }
   ]
 }

@@ -17,6 +17,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private attackSpeed: number = 600;
   private nextAttack: number = 0;
   private attackFinished: number = 0;
+  private health: number = 3;
+  private dyingTime: number = 400;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
@@ -36,7 +38,18 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    this.move();
+    if (!this.isDead) {
+      this.move();
+    } else {
+      this.anims.play("slimeDead", true);
+      this.body.setVelocityX(0);
+
+      if (this.dyingTime > 0) {
+        this.dyingTime -= 10;
+      } else {
+        this.destroy();
+      }
+    }
   }
 
   public getDead(): boolean {
@@ -47,17 +60,25 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.isDead = dead;
   }
 
-
   public damage(info): void {
-    if (this.overlap(info)) {
+    if (!this.isDead && this.overlap(info)) {
       this.isAttacking = false;
       this.isHurting = true;
-      this.anims.play("slimeHurt", true);
-      this.body.setVelocityX(info.faceLeft ? -100 : 100);
-      this.body.setVelocityY(-75);
-      setTimeout(() => {
-        this.isHurting = false;
-      }, 600);
+      this.health--;
+      if (this.health > 0) {
+        this.anims.play("slimeHurt", true);
+        this.body.setVelocityX(info.faceLeft ? -100 : 100);
+        this.body.setVelocityY(-75);
+        setTimeout(() => {
+          this.isHurting = false;
+          this.clearTint();
+          this.setAlpha(1);
+        }, 600);
+      } else {
+        this.isDead = true;
+      }
+      this.setTint(0xfc8a75);
+      this.setAlpha(0.9);
     }
   }
 
@@ -92,8 +113,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     if (this.currentScene.time.now >= this.nextAttack) {
       this.isAttacking = true;
       this.anims.play("slimeAttack", false);
-      // if (this.flipX) this.body.setVelocityX(100);
-      // else this.body.setVelocityX(-100);
+      if (this.flipX) this.body.setVelocityX(50);
+      else this.body.setVelocityX(-50);
       this.nextAttack = this.currentScene.time.now + this.attackCooldown;
       this.attackFinished = this.currentScene.time.now + this.attackSpeed;
     }

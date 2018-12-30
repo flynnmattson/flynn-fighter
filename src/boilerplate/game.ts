@@ -10,6 +10,7 @@ import "phaser";
 import { BootScene } from "./scenes/bootScene";
 import { MainMenuScene } from "./scenes/mainMenuScene";
 import { GameScene } from "./scenes/gameScene";
+import { HUDScene } from "./scenes/hudScene";
 
 // main game configuration
 const config: GameConfig = {
@@ -19,7 +20,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: "game",
-  scene: [BootScene, MainMenuScene, GameScene],
+  scene: [BootScene, MainMenuScene, GameScene, HUDScene],
   input: {
     keyboard: true,
     mouse: true,

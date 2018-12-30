@@ -20,6 +20,7 @@ export class MainMenuScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.S
     );
     this.startKey.isDown = false;
+    this.initRegistry();
   }
 
   create(): void {
@@ -46,7 +47,19 @@ export class MainMenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey.isDown) {
+      this.scene.start("HUDScene");
       this.scene.start("GameScene");
+      this.scene.bringToTop("HUDScene");
     }
+  }
+
+  /**
+   * Build-in global game data manager to exchange data between scenes.
+   * Here we initialize our variables with a key.
+   */
+  private initRegistry(): void {
+    this.registry.set("points", 0);
+    this.registry.set("lives", 3);
+    this.registry.set("level", 1);
   }
 }
