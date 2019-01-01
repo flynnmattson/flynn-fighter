@@ -50,7 +50,7 @@ export class HUDScene extends Phaser.Scene {
     // create events
     const level = this.scene.get("GameScene");
     level.events.on("pointsChanged", this.updatePoints, this);
-    level.events.on("livesChanged", this.updateLives, this);
+    level.events.on("healthChanged", this.updateHealth, this);
   }
 
   private updatePoints() {
@@ -58,7 +58,7 @@ export class HUDScene extends Phaser.Scene {
     this.scoreText[1].setText(`Kills: ${this.registry.get("points")}`);
   }
 
-  private updateLives() {
+  private updateHealth() {
     // this.bitmapTexts[0].setText(`Lives: ${this.registry.get("lives")}`);
   }
 }

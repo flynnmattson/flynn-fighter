@@ -10,10 +10,12 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isJumping: boolean = false;
   private isRunning: boolean = false;
   private isAttacking: boolean = false;
+  private isHurting: boolean = false;
   private currentScene: Phaser.Scene;
   private attackCooldown: number = 400;
   private lastAttack: number = 0;
   private attackCombo: number = 1;
+  private health: number;
 
   public getDead(): boolean {
     return this.isDead;
@@ -27,13 +29,18 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.body.x;
   }
 
-  public setDead(dead): void {
-    this.isDead = dead;
+  public getRightSide(): number {
+    return this.body.x + this.body.width - 7;
+  }
+
+  public getLeftSide(): number {
+    return this.body.x - this.body.width - 13;
   }
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
     this.currentScene = params.scene;
+    this.health = params.scene.registry.get("health");
 
     // image
     this.setScale(3);
@@ -42,7 +49,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    this.body.setSize(50, 37);
+    this.body.setOffset(12, 7);
+    this.body.setSize(24, 25, false);
 
     params.scene.add.existing(this);
   }
@@ -54,10 +62,6 @@ export class Player extends Phaser.GameObjects.Sprite {
 
     if (this.isAttacking && this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = false;
-    }
-
-    if (!this.isJumping && !this.isRunning && !this.isAttacking) {
-      this.anims.play("adventurerIdle", true);
     }
 
     this.isOffTheScreen();
@@ -75,8 +79,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     if (!this.isRunning && this.currentScene.time.now > this.lastAttack) {
       this.isAttacking = true;
       this.anims.play("adventurerAttack" + this.attackCombo, false);
-      if (this.flipX) this.body.setVelocityX(-300);
-      else this.body.setVelocityX(300);
+      this.body.setVelocityX(this.flipX ? -300 : 300);
       this.lastAttack = this.currentScene.time.now + this.attackCooldown;
       this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
       return {
@@ -109,12 +112,38 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public stopRun(): void {
+    this.isRunning = false;
     if (this.body.velocity.x > 0) {
       this.body.setVelocityX(this.body.velocity.x - 50);
     } else if (this.body.velocity.x < 0) {
       this.body.setVelocityX(this.body.velocity.x + 50);
     }
-    this.isRunning = false;
+    if (!this.isHurting && !this.isJumping && !this.isAttacking) {
+      this.anims.play("adventurerIdle", true);
+    }
+  }
+
+  public damage(fromLeft: boolean): void {
+    if (!this.isDead) {
+      this.isAttacking = false;
+      this.isHurting = true;
+      this.health--;
+      this.currentScene.registry.set("health", this.health);
+      this.currentScene.events.emit("healthChanged");
+      if (this.health > 0) {
+        this.anims.play("adventurerHurt", true);
+        // this.body.setVelocity(fromLeft ? 75 : -75, -75);
+        setTimeout(() => {
+          this.isHurting = false;
+          this.clearTint();
+          this.setAlpha(1);
+        }, 400);
+      } else {
+        this.isDead = true;
+      }
+      this.setTint(0xfc8a75);
+      this.setAlpha(0.9);
+    }
   }
 
   private isOffTheScreen(): void {

@@ -67,6 +67,17 @@
       "frameRate": 10
     },
     {
+      "key": "adventurerHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 59,
+        "end": 63
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
       "key": "slimeIdle",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",

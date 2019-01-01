@@ -69,8 +69,6 @@ export class GameScene extends Phaser.Scene {
       key: "adventurer"
     });
 
-    this.spawnEnemy();
-
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
     this.cameras.main.startFollow(this.player);
 
@@ -84,6 +82,8 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
+    this.spawnEnemy();
+
     this.timer = this.time.addEvent({
       delay: 5000,
       callback: this.spawnEnemy,
@@ -96,12 +96,18 @@ export class GameScene extends Phaser.Scene {
       () => {
         let attackInfo; 
         if (attackInfo = this.player.attack()) {
-          // damage nearby enemies
-          this.enemies.children.each((enemy) => {
-            setTimeout(() => {
-              enemy.damage(attackInfo);
-            }, attackInfo.triggerDamage);
-          }, this);
+          // damage overlapping enemies
+          setTimeout(() => {
+            this.physics.overlap(
+              this.enemies,
+              this.player,
+              (enemy: Enemy, player: Player) => {
+                enemy.damage(attackInfo);
+              },
+              null,
+              this
+            );
+          }, attackInfo.triggerDamage);
         }
       },
       this

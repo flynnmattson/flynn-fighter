@@ -32,7 +32,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    this.body.setSize(32, 25);
+    this.body.setOffset(2, 5);
+    // this.body.setSize(20, 25, false);
+    this.body.setSize(26, 15, false);
 
     params.scene.add.existing(this);
   }
@@ -47,6 +49,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       if (this.dyingTime > 0) {
         this.dyingTime -= 10;
       } else {
+        this.currentScene.registry.set("points", this.currentScene.registry.get("points") + 1);
+        this.currentScene.events.emit("pointsChanged");
         this.destroy();
       }
     }
@@ -56,19 +60,14 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     return this.isDead;
   }
 
-  public setDead(dead): void {
-    this.isDead = dead;
-  }
-
   public damage(info): void {
-    if (!this.isDead && this.overlap(info)) {
+    if (!this.isDead) {
       this.isAttacking = false;
       this.isHurting = true;
       this.health--;
       if (this.health > 0) {
         this.anims.play("slimeHurt", true);
-        this.body.setVelocityX(info.faceLeft ? -100 : 100);
-        this.body.setVelocityY(-75);
+        this.body.setVelocity(info.faceLeft ? -100 : 100, 75);
         setTimeout(() => {
           this.isHurting = false;
           this.clearTint();
@@ -82,35 +81,33 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     }
   }
 
-  private overlap(other): boolean {
-    let position = {
-        rangeLeft: this.body.x,
-        rangeRight: this.body.x + 96
-      },
-      first = other.rangeLeft <= position.rangeLeft ? other : position,
-      second = other.rangeLeft <= position.rangeLeft ? position : other;
-
-    return first.rangeRight >= second.rangeLeft;
-  }
-
   private move(): void {
-    if (!this.isHurting && !this.isAttacking && this.player.body.x - 50 < this.x && this.x > this.player.body.x + 100) {
+    this.currentScene.physics.overlap(
+      this,
+      this.player,
+      (enemy: Enemy, player: Player) => {
+        this.attack();
+      },
+      null,
+      this
+    );
+    if (!this.isHurting && !this.isAttacking && this.x > this.player.getRightSide()) {
       this.runLeft();
-    } else if (!this.isHurting && !this.isAttacking && this.player.body.x + 100 > this.x && this.x < this.player.body.x - 50) {
+    } else if (!this.isHurting && !this.isAttacking && this.player.getLeftSide() > this.x) {
       this.runRight();
     } else {
       if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
-        // this.player.damage();
         this.isAttacking = false;
-      } else if (!this.isHurting) {
-        this.attack();
       }
       this.stopRun();
     }
   }
 
   private attack(): void {
-    if (this.currentScene.time.now >= this.nextAttack) {
+    if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
+      this.player.damage(this.flipX);
+      this.isAttacking = false;
+    } else if (!this.isHurting && this.currentScene.time.now >= this.nextAttack) {
       this.isAttacking = true;
       this.anims.play("slimeAttack", false);
       if (this.flipX) this.body.setVelocityX(50);
