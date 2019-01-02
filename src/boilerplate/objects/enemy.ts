@@ -67,7 +67,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.health--;
       if (this.health > 0) {
         this.anims.play("slimeHurt", true);
-        this.body.setVelocity(info.faceLeft ? -100 : 100, 75);
+        this.body.setVelocity(info.faceLeft ? -75 : 75, 75);
         setTimeout(() => {
           this.isHurting = false;
           this.clearTint();

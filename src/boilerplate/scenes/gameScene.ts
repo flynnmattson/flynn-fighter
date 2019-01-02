@@ -70,7 +70,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
-    this.cameras.main.startFollow(this.player);
+    this.cameras.main.startFollow(this.player, false, 1, 1, -50, 0);
 
     this.physics.add.collider(this.player, this.groundLayer);
     this.physics.add.collider(this.enemies, this.groundLayer);
@@ -82,14 +82,14 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
-    // this.spawnEnemy();
+    this.spawnEnemy();
 
-    // this.timer = this.time.addEvent({
-    //   delay: 5000,
-    //   callback: this.spawnEnemy,
-    //   callbackScope: this,
-    //   loop: true
-    // });
+    this.timer = this.time.addEvent({
+      delay: 5000,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+      loop: true
+    });
 
     this.input.on(
       "pointerdown",

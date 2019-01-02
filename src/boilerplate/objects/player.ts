@@ -96,7 +96,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public slide(): void {
     if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.isJumping) {
       this.isSliding = true;
-      this.body.setVelocityX(this.flipX ? -1000 : 1000);
+      this.body.setVelocityX(this.flipX ? this.isRunning ? -550 : -1000 : this.isRunning ? 550 : 1000);
       this.anims.play("adventurerSlide", true);
       this.nextSlide = this.currentScene.time.now + this.attackCooldown * 2;
     }
@@ -153,7 +153,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public damage(fromLeft: boolean): void {
-    if (!this.isDead) {
+    if (!this.isDead && !this.isSliding) {
       this.isAttacking = false;
       this.isHurting = true;
       this.health--;
