@@ -53,6 +53,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "adventurerRun",
+        "url": "src/boilerplate/assets/sprites/adventurer-run-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "slime",
         "url": "src/boilerplate/assets/sprites/slime-Sheet.png",
         "frameConfig": {

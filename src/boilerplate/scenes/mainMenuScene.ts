@@ -24,6 +24,13 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    if (this.scene.isActive("HUDScene")) {
+      this.scene.stop("HUDScene");
+    }
+    if (this.scene.isActive("GameScene")) {
+      this.scene.stop("GameScene");
+    }
+
     this.bitmapTexts.push(
       this.add.bitmapText(
         this.sys.canvas.width / 2 - 135,

@@ -11,10 +11,13 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isRunning: boolean = false;
   private isAttacking: boolean = false;
   private isHurting: boolean = false;
+  private isSliding: boolean = false;
   private currentScene: Phaser.Scene;
   private attackCooldown: number = 400;
-  private lastAttack: number = 0;
+  private nextAttack: number = 0;
+  private nextSlide: number = 0;
   private attackCombo: number = 1;
+  private dyingTime: number = 400;
   private health: number;
 
   public getDead(): boolean {
@@ -60,33 +63,55 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.isJumping = false;
     }
 
-    if (this.isAttacking && this.currentScene.time.now > this.lastAttack) {
+    if (this.isAttacking && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = false;
+    }
+
+    if (this.isSliding && this.currentScene.time.now > this.nextSlide - this.attackCooldown) {
+      this.isSliding = false;
+    }
+
+    if (this.isDead) {
+      this.anims.play("adventurerDie", true);
+      this.body.setVelocityX(0);
+
+      if (this.dyingTime > 0) {
+        this.dyingTime -= 10;
+      } else {
+        this.currentScene.scene.start("MainMenuScene");
+      }
     }
 
     this.isOffTheScreen();
   }
 
   public jump(): void {
-    if (!this.isJumping) {
+    if (!this.isJumping && !this.isAttacking) {
       this.body.setVelocityY(-350);
       this.isJumping = true;
       this.anims.play("adventurerJump", true);
     }
   }
 
+  public slide(): void {
+    if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.isJumping) {
+      this.isSliding = true;
+      this.body.setVelocityX(this.flipX ? -1000 : 1000);
+      this.anims.play("adventurerSlide", true);
+      this.nextSlide = this.currentScene.time.now + this.attackCooldown * 2;
+    }
+  }
+
   public attack(): object {
-    if (!this.isRunning && this.currentScene.time.now > this.lastAttack) {
+    if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
       this.anims.play("adventurerAttack" + this.attackCombo, false);
       this.body.setVelocityX(this.flipX ? -300 : 300);
-      this.lastAttack = this.currentScene.time.now + this.attackCooldown;
+      this.nextAttack = this.currentScene.time.now + this.attackCooldown;
       this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
       return {
         triggerDamage: this.attackCooldown / 2,
-        faceLeft: this.flipX,
-        rangeLeft: this.flipX ? this.body.x : this.body.x / 2,
-        rangeRight: this.flipX ? (this.body.x + this.width * 3) / 2 : this.body.x + this.width * 3
+        faceLeft: this.flipX
       };
     } else {
       return null;
@@ -94,20 +119,24 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
  
   public runLeft(): void {
-    this.isRunning = true;
-    this.flipX = true;
-    this.body.setVelocityX(-300);
-    if (!this.isJumping && !this.isAttacking) {
-      this.anims.play("adventurerRun", true);
+    if (!this.isSliding) {
+      this.isRunning = true;
+      this.flipX = true;
+      this.body.setVelocityX(-300);
+      if (!this.isJumping && !this.isAttacking) {
+        this.anims.play("adventurerRun", true);
+      }
     }
   }
 
   public runRight(): void {
-    this.isRunning = true;
-    this.flipX = false;
-    this.body.setVelocityX(300);
-    if (!this.isJumping && !this.isAttacking) {
-      this.anims.play("adventurerRun", true);
+    if (!this.isSliding) {
+      this.isRunning = true;
+      this.flipX = false;
+      this.body.setVelocityX(300);
+      if (!this.isJumping && !this.isAttacking) {
+        this.anims.play("adventurerRun", true);
+      }
     }
   }
 
@@ -118,7 +147,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     } else if (this.body.velocity.x < 0) {
       this.body.setVelocityX(this.body.velocity.x + 50);
     }
-    if (!this.isHurting && !this.isJumping && !this.isAttacking) {
+    if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
       this.anims.play("adventurerIdle", true);
     }
   }

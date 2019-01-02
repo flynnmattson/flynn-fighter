@@ -17,10 +17,10 @@ export class GameScene extends Phaser.Scene {
 
   // variables
   private timer: Phaser.Time.TimerEvent;
-  private score: number;
   private jumpKey: Phaser.Input.Keyboard.Key;
   private leftKey: Phaser.Input.Keyboard.Key;
   private rightKey: Phaser.Input.Keyboard.Key;
+  private downKey: Phaser.Input.Keyboard.Key;
 
   // tilemap
   private map: Phaser.Tilemaps.Tilemap;
@@ -44,12 +44,12 @@ export class GameScene extends Phaser.Scene {
 
     // variables
     this.timer = undefined;
-    this.score = 0;
 
     // input
     this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
   }
 
   create(): void {
@@ -65,7 +65,7 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player({
       scene: this,
       x: this.sys.canvas.width / 2 - 75,
-      y: this.sys.canvas.height - 220,
+      y: this.sys.canvas.height - 170,
       key: "adventurer"
     });
 
@@ -82,14 +82,14 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
-    this.spawnEnemy();
+    // this.spawnEnemy();
 
-    this.timer = this.time.addEvent({
-      delay: 5000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
+    // this.timer = this.time.addEvent({
+    //   delay: 5000,
+    //   callback: this.spawnEnemy,
+    //   callbackScope: this,
+    //   loop: true
+    // });
 
     this.input.on(
       "pointerdown",
@@ -117,13 +117,7 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     this.handleInput();
     this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
-    if (!this.player.getDead()) {
-      this.player.update();
-    } else {
-      if (this.player.y > this.sys.canvas.height) {
-        this.restartGame();
-      }
-    }
+    this.player.update();
   }
 
   public getPlayer(): Player {
@@ -132,7 +126,11 @@ export class GameScene extends Phaser.Scene {
 
   private handleInput(): void {
     if (this.jumpKey.isDown) {
-      this.player.jump();
+      if (this.downKey.isDown) {
+        this.player.slide();
+      } else {
+        this.player.jump();
+      }
     }
     if (this.leftKey.isDown) {
       this.player.runLeft();
@@ -155,16 +153,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spawnEnemy(): void {
-    // update the score
-    this.score += 1;
-
-    // randomly pick a number between 1 and 5
-    // let x = Math.floor(Math.random() * 10) + 5;
-
     this.addOneEnemy(this.sys.canvas.width);
-  }
-
-  private restartGame(): void {
-    this.scene.start("MainMenuScene");
   }
 }
