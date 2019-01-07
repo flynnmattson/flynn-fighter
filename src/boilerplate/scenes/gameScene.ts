@@ -22,7 +22,7 @@ export class GameScene extends Phaser.Scene {
   private rightKey: Phaser.Input.Keyboard.Key;
   private downKey: Phaser.Input.Keyboard.Key;
   private escapeKey: Phaser.Input.Keyboard.Key;
-  private keyWait: number = 0;
+  private keyWait: number;
 
   // tilemap
   private map: Phaser.Tilemaps.Tilemap;
@@ -56,6 +56,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this
     });
@@ -132,6 +133,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.escapeKey.isDown && !this.keyWait) {
       this.keyWait = 200;
+      this.escapeKey.isDown = false; // NOTE: have to do this due to a bug I think??
       this.scene.launch("PauseScene");
       this.scene.pause(this.scene.key);
     }

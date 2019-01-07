@@ -6,7 +6,7 @@
  */
 
 export class HUDScene extends Phaser.Scene {
-  private scoreText: Phaser.GameObjects.Text[];
+  private scoreText: Phaser.GameObjects.BitmapText;
   private healthBarBg: Phaser.GameObjects.Graphics;
   private healthBar: Phaser.GameObjects.Graphics;
 
@@ -17,7 +17,7 @@ export class HUDScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.scoreText = [];
+
   }
 
   create(): void {
@@ -38,43 +38,24 @@ export class HUDScene extends Phaser.Scene {
       16
     );
 
-    this.scoreText.push(
-      this.add.text(
-        30,
-        55,
-        `Kills: ${this.registry.get("points")}`,
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#000"
-        }
-      )
-    );
-    this.scoreText.push(
-      this.add.text(
-        32,
-        55, 
-        `Kills: ${this.registry.get("points")}`, 
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#fff"
-        }
-      )
+    this.scoreText = this.add.bitmapText(
+      30,
+      55,
+      "pixelFont",
+      `SCORE: ${this.registry.get("points")}`,
+      25
     );
 
-    this.scoreText[0].setScrollFactor(0);
-    this.scoreText[1].setScrollFactor(0);
+    this.scoreText.setScrollFactor(0);
 
     // create events
-    const level = this.scene.get("GameScene");
-    level.events.on("pointsChanged", this.updatePoints, this);
-    level.events.on("healthChanged", this.updateHealth, this);
+    const gameScene = this.scene.get("GameScene");
+    gameScene.events.on("pointsChanged", this.updatePoints, this);
+    gameScene.events.on("healthChanged", this.updateHealth, this);
   }
 
   private updatePoints() {
-    this.scoreText[0].setText(`Kills: ${this.registry.get("points")}`);
-    this.scoreText[1].setText(`Kills: ${this.registry.get("points")}`);
+    this.scoreText.text = `SCORE: ${this.registry.get("points")}`;
   }
 
   private updateHealth() {

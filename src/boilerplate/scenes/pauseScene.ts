@@ -5,9 +5,10 @@
  */
 
 export class PauseScene extends Phaser.Scene {
-  private titleText: Phaser.GameObjects.Text[];
+  private bitmapTexts: Phaser.GameObjects.BitmapText[];
   private pauseBg: Phaser.GameObjects.Graphics;
   private escapeKey: Phaser.Input.Keyboard.Key;
+  private quitKey: Phaser.Input.Keyboard.Key;
   private keyWait: number;
 
   constructor() {
@@ -17,12 +18,14 @@ export class PauseScene extends Phaser.Scene {
   }
 
   init(): void {
-    this.titleText = [];
+    this.bitmapTexts = [];
     this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
-    this.keyWait = 200;
+    this.quitKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
   }
 
   create(): void {
+    this.keyWait = 200;
+
     this.pauseBg = this.add.graphics();
     this.pauseBg.fillStyle(0xa84647, 1);
     this.pauseBg.fillRect(
@@ -33,28 +36,31 @@ export class PauseScene extends Phaser.Scene {
     );
 
 
-    this.titleText.push(
-      this.add.text(
-        this.cameras.main.width / 2 - 90,
+    this.bitmapTexts.push(
+      this.add.bitmapText(
+        this.cameras.main.width / 2 - 100,
         this.cameras.main.height / 4 + 20,
-        'Game Paused',
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#000"
-        }
+        "pixelFont",
+        "GAME PAUSED",
+        30
       )
     );
-    this.titleText.push(
-      this.add.text(
-        this.cameras.main.width / 2 - 88,
-        this.cameras.main.height / 4 + 20,
-        'Game Paused',
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#fff"
-        }
+    this.bitmapTexts.push(
+      this.add.bitmapText(
+        this.cameras.main.width / 2 - 60,
+        this.cameras.main.height / 2 - 30,
+        "pixelFont",
+        "Q: QUIT",
+        30
+      )
+    );
+    this.bitmapTexts.push(
+      this.add.bitmapText(
+        this.cameras.main.width / 2 - 96,
+        this.cameras.main.height / 2,
+        "pixelFont",
+        "ESC: RESUME",
+        30
       )
     );
   }
@@ -64,6 +70,11 @@ export class PauseScene extends Phaser.Scene {
 
     if (this.escapeKey.isDown && !this.keyWait) {
       this.scene.resume("GameScene");
+      this.scene.stop("PauseScene");
+    } else if (this.quitKey.isDown && !this.keyWait) {
+      this.quitKey.isDown = false; // NOTE: have to do this due to a bug I think??
+      this.scene.resume("GameScene");
+      this.scene.start("MainMenuScene");
       this.scene.stop("PauseScene");
     }
   }

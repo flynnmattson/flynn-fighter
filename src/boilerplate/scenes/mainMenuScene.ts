@@ -24,13 +24,13 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    if (this.scene.isActive("HUDScene")) {
+    if (this.scene.isVisible("HUDScene")) {
       this.scene.stop("HUDScene");
     }
-    if (this.scene.isActive("GameScene")) {
+    if (this.scene.isVisible("GameScene")) {
       this.scene.stop("GameScene");
     }
-    if (this.scene.isActive("PauseScene")) {
+    if (this.scene.isVisible("PauseScene")) {
       this.scene.stop("PauseScene");
     }
 
@@ -39,7 +39,7 @@ export class MainMenuScene extends Phaser.Scene {
         this.sys.canvas.width / 2 - 135,
         this.sys.canvas.height / 2 - 80,
         "pixelFont",
-        "FRYNN FIGHTER",
+        "FLYNN FIGHTER",
         40
       )
     );
