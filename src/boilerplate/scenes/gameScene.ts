@@ -21,6 +21,8 @@ export class GameScene extends Phaser.Scene {
   private leftKey: Phaser.Input.Keyboard.Key;
   private rightKey: Phaser.Input.Keyboard.Key;
   private downKey: Phaser.Input.Keyboard.Key;
+  private escapeKey: Phaser.Input.Keyboard.Key;
+  private keyWait: number = 0;
 
   // tilemap
   private map: Phaser.Tilemaps.Tilemap;
@@ -50,6 +52,7 @@ export class GameScene extends Phaser.Scene {
     this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
   create(): void {
@@ -125,6 +128,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleInput(): void {
+    if (this.keyWait > 0) this.keyWait -= 10;
+
+    if (this.escapeKey.isDown && !this.keyWait) {
+      this.keyWait = 200;
+      this.scene.launch("PauseScene");
+      this.scene.pause(this.scene.key);
+    }
+
     if (this.jumpKey.isDown) {
       if (this.downKey.isDown) {
         this.player.slide();
@@ -132,6 +143,7 @@ export class GameScene extends Phaser.Scene {
         this.player.jump();
       }
     }
+
     if (this.leftKey.isDown) {
       this.player.runLeft();
     } else if (this.rightKey.isDown) {

@@ -30,6 +30,9 @@ export class MainMenuScene extends Phaser.Scene {
     if (this.scene.isActive("GameScene")) {
       this.scene.stop("GameScene");
     }
+    if (this.scene.isActive("PauseScene")) {
+      this.scene.stop("PauseScene");
+    }
 
     this.bitmapTexts.push(
       this.add.bitmapText(

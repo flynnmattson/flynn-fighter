@@ -11,6 +11,7 @@ import { BootScene } from "./scenes/bootScene";
 import { MainMenuScene } from "./scenes/mainMenuScene";
 import { GameScene } from "./scenes/gameScene";
 import { HUDScene } from "./scenes/hudScene";
+import { PauseScene } from "./scenes/pauseScene";
 
 // main game configuration
 const config: GameConfig = {
@@ -20,7 +21,7 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: "game",
-  scene: [BootScene, MainMenuScene, GameScene, HUDScene],
+  scene: [BootScene, MainMenuScene, GameScene, HUDScene, PauseScene],
   input: {
     keyboard: true,
     mouse: true,
@@ -34,7 +35,7 @@ const config: GameConfig = {
       debug: false
     }
   },
-  backgroundColor: "#98d687",
+  backgroundColor: "#a84647",
   pixelArt: true,
   antialias: false
 };

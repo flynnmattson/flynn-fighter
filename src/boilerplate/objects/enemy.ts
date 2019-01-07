@@ -93,7 +93,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     );
     if (!this.isHurting && !this.isAttacking && this.x > this.player.getRightSide()) {
       this.runLeft();
-    } else if (!this.isHurting && !this.isAttacking && this.player.getLeftSide() > this.x) {
+    } else if (!this.isHurting && !this.isAttacking && this.x < this.player.getLeftSide()) {
       this.runRight();
     } else {
       if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {

@@ -7,7 +7,8 @@
 
 export class HUDScene extends Phaser.Scene {
   private scoreText: Phaser.GameObjects.Text[];
-  private healthText: Phaser.GameObjects.Text[];
+  private healthBarBg: Phaser.GameObjects.Graphics;
+  private healthBar: Phaser.GameObjects.Graphics;
 
   constructor() {
     super({
@@ -17,33 +18,24 @@ export class HUDScene extends Phaser.Scene {
 
   init(): void {
     this.scoreText = [];
-    this.healthText = [];
   }
 
   create(): void {
-    this.healthText.push(
-      this.add.text(
-        30,
-        30,
-        `Health: ${this.registry.get("health")}`,
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#000"
-        }
-      )
+    this.healthBarBg = this.add.graphics();
+    this.healthBarBg.fillStyle(0xfff6d3, 1);
+    this.healthBarBg.fillRect(
+      30,
+      28,
+      this.cameras.main.width / 4 + 4,
+      20
     );
-    this.healthText.push(
-      this.add.text(
-        32,
-        30,
-        `Health: ${this.registry.get("health")}`,
-        {
-          fontFamily: "Connection",
-          fontSize: "25px",
-          fill: "#fff"
-        }
-      )
+    this.healthBar = this.add.graphics();
+    this.healthBar.fillStyle(0x5dae47, 1);
+    this.healthBar.fillRect(
+      32,
+      30,
+      (this.cameras.main.width / 4) * this.registry.get("health") / 10,
+      16
     );
 
     this.scoreText.push(
@@ -73,8 +65,6 @@ export class HUDScene extends Phaser.Scene {
 
     this.scoreText[0].setScrollFactor(0);
     this.scoreText[1].setScrollFactor(0);
-    this.healthText[0].setScrollFactor(0);
-    this.healthText[1].setScrollFactor(0);
 
     // create events
     const level = this.scene.get("GameScene");
@@ -88,7 +78,13 @@ export class HUDScene extends Phaser.Scene {
   }
 
   private updateHealth() {
-    this.healthText[0].setText(`Health: ${this.registry.get("health")}`);
-    this.healthText[1].setText(`Health: ${this.registry.get("health")}`);
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x5dae47, 1);
+    this.healthBar.fillRect(
+      32,
+      30,
+      (this.cameras.main.width / 4) * this.registry.get("health") / 10,
+      16
+    );
   }
 }
