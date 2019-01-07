@@ -1,0 +1,79 @@
+{
+  "preload": {
+    "files": [
+      {
+        "type": "bitmapFont",
+        "key": "pixelFont",
+        "textureURL": "src/assets/font/font.png",
+        "fontDataURL": "src/assets/font/font.fnt"
+      },
+      {
+        "type": "image",
+        "key": "background1",
+        "url": "src/assets/other/plx-1.png"
+      },
+      {
+        "type": "image",
+        "key": "background2",
+        "url": "src/assets/other/plx-2.png"
+      },
+      {
+        "type": "image",
+        "key": "background3",
+        "url": "src/assets/other/plx-3.png"
+      },
+      {
+        "type": "image",
+        "key": "background4",
+        "url": "src/assets/other/plx-4.png"
+      },
+      {
+        "type": "image",
+        "key": "background5",
+        "url": "src/assets/other/plx-5.png"
+      },
+      {
+        "type": "image",
+        "key": "tiles",
+        "url": "src/assets/other/jungle_tileset.png"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "map",
+        "url": "src/assets/other/test2.json"
+      },
+      {
+        "type": "spritesheet",
+        "key": "adventurer",
+        "url": "src/assets/sprites/adventurer-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "adventurerRun",
+        "url": "src/assets/sprites/adventurer-run-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "slime",
+        "url": "src/assets/sprites/slime-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 25
+        }
+      },
+      {
+        "type": "json",
+        "key": "animationJSON",
+        "url": "src/assets/animations/animations.json"
+      }
+    ]
+  }
+}
