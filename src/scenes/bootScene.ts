@@ -19,7 +19,7 @@ export class BootScene extends Phaser.Scene {
     // pass value to change the loading bar fill
     this.load.on(
       "progress",
-      function(value) {
+      function (value) {
         this.progressBar.clear();
         this.progressBar.fillStyle(0xfff6d3, 1);
         this.progressBar.fillRect(
@@ -50,7 +50,7 @@ export class BootScene extends Phaser.Scene {
     // load out package
     this.load.pack(
       "preload",
-      "./src/boilerplate/assets/pack.json",
+      "./src/assets/pack.json",
       "preload"
     );
   }

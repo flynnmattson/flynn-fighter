@@ -4,48 +4,48 @@
       {
         "type": "bitmapFont",
         "key": "pixelFont",
-        "textureURL": "src/boilerplate/assets/font/font.png",
-        "fontDataURL": "src/boilerplate/assets/font/font.fnt"
+        "textureURL": "src/assets/font/font.png",
+        "fontDataURL": "src/assets/font/font.fnt"
       },
       {
         "type": "image",
         "key": "background1",
-        "url": "src/boilerplate/assets/other/plx-1.png"
+        "url": "src/assets/other/plx-1.png"
       },
       {
         "type": "image",
         "key": "background2",
-        "url": "src/boilerplate/assets/other/plx-2.png"
+        "url": "src/assets/other/plx-2.png"
       },
       {
         "type": "image",
         "key": "background3",
-        "url": "src/boilerplate/assets/other/plx-3.png"
+        "url": "src/assets/other/plx-3.png"
       },
       {
         "type": "image",
         "key": "background4",
-        "url": "src/boilerplate/assets/other/plx-4.png"
+        "url": "src/assets/other/plx-4.png"
       },
       {
         "type": "image",
         "key": "background5",
-        "url": "src/boilerplate/assets/other/plx-5.png"
+        "url": "src/assets/other/plx-5.png"
       },
       {
         "type": "image",
         "key": "tiles",
-        "url": "src/boilerplate/assets/other/jungle_tileset.png"
+        "url": "src/assets/other/jungle_tileset.png"
       },
       {
         "type": "tilemapTiledJSON",
         "key": "map",
-        "url": "src/boilerplate/assets/other/test2.json"
+        "url": "src/assets/other/test2.json"
       },
       {
         "type": "spritesheet",
         "key": "adventurer",
-        "url": "src/boilerplate/assets/sprites/adventurer-Sheet.png",
+        "url": "src/assets/sprites/adventurer-Sheet.png",
         "frameConfig": {
           "frameWidth": 50,
           "frameHeight": 37
@@ -54,7 +54,7 @@
       {
         "type": "spritesheet",
         "key": "adventurerRun",
-        "url": "src/boilerplate/assets/sprites/adventurer-run-Sheet.png",
+        "url": "src/assets/sprites/adventurer-run-Sheet.png",
         "frameConfig": {
           "frameWidth": 50,
           "frameHeight": 37
@@ -63,7 +63,7 @@
       {
         "type": "spritesheet",
         "key": "slime",
-        "url": "src/boilerplate/assets/sprites/slime-Sheet.png",
+        "url": "src/assets/sprites/slime-Sheet.png",
         "frameConfig": {
           "frameWidth": 32,
           "frameHeight": 25
@@ -72,7 +72,7 @@
       {
         "type": "json",
         "key": "animationJSON",
-        "url": "src/boilerplate/assets/animations/animations.json"
+        "url": "src/assets/animations/animations.json"
       }
     ]
   }

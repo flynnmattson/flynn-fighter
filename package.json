@@ -1,15 +1,15 @@
 {
-  "name": "phaser3-typescript",
-  "version": "1.2.1",
-  "description": "Boilerplate, Tutorials, Cheat Sheets and more for Phaser 3 in Typescript",
+  "name": "flynn-fighter",
+  "version": "1.0.0",
+  "description": "Phaser 3 Roguelike Platformer written in TypeScript.",
   "keywords": [
     "Phaser",
     "Phaser 3",
     "Phaser3",
     "TypeScript",
-    "Webpack",
-    "Tutorials",
-    "Game Examples"
+    "Roguelike",
+    "Platformer",
+    "PixelArt"
   ],
   "devDependencies": {
     "expose-loader": "0.7.5",
@@ -28,15 +28,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/digitsensitive/phaser3-typescript.git"
+    "url": "git+https://github.com/flynnmattson/flynn-fighter.git"
   },
   "author": {
-    "name": "digitsensitive",
-    "email": "digit.sensitivee@gmail.com"
+    "name": "Flynn Mattson",
+    "email": "flynnmattson@msn.com"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/digitsensitive/phaser3-typescript/issues"
+    "url": "https://github.com/flynnmattson/flynn-fighter/issues"
   },
-  "homepage": "https://github.com/digitsensitive/phaser3-typescript#readme"
+  "homepage": ""
 }

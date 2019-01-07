@@ -4,7 +4,7 @@
  * @license      Digitsensitive
  */
 
-/// <reference path="../phaser.d.ts"/>
+/// <reference path="./phaser.d.ts"/>
 
 import "phaser";
 import { BootScene } from "./scenes/bootScene";
