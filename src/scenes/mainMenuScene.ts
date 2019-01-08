@@ -33,6 +33,9 @@ export class MainMenuScene extends Phaser.Scene {
     if (this.scene.isVisible("PauseScene")) {
       this.scene.stop("PauseScene");
     }
+    if (this.scene.isVisible("TownScene")) {
+      this.scene.stop("TownScene");
+    }
 
     this.bitmapTexts.push(
       this.add.bitmapText(
@@ -58,7 +61,8 @@ export class MainMenuScene extends Phaser.Scene {
   update(): void {
     if (this.startKey.isDown) {
       this.scene.start("HUDScene");
-      this.scene.start("GameScene");
+      // this.scene.start("GameScene");
+      this.scene.start("TownScene");
       this.scene.bringToTop("HUDScene");
     }
   }

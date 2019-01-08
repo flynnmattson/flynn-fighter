@@ -9,38 +9,58 @@
       },
       {
         "type": "image",
-        "key": "background1",
+        "key": "jungle_background1",
         "url": "src/assets/other/plx-1.png"
       },
       {
         "type": "image",
-        "key": "background2",
+        "key": "jungle_background2",
         "url": "src/assets/other/plx-2.png"
       },
       {
         "type": "image",
-        "key": "background3",
+        "key": "jungle_background3",
         "url": "src/assets/other/plx-3.png"
       },
       {
         "type": "image",
-        "key": "background4",
+        "key": "jungle_background4",
         "url": "src/assets/other/plx-4.png"
       },
       {
         "type": "image",
-        "key": "background5",
+        "key": "jungle_background5",
         "url": "src/assets/other/plx-5.png"
       },
       {
         "type": "image",
-        "key": "tiles",
+        "key": "town_background1",
+        "url": "src/assets/other/town-background.png"
+      },
+      {
+        "type": "image",
+        "key": "town_background2",
+        "url": "src/assets/other/town-middleground.png"
+      },
+      {
+        "type": "image",
+        "key": "jungleTiles",
         "url": "src/assets/other/jungle_tileset.png"
       },
       {
+        "type": "image",
+        "key": "townTiles",
+        "url": "src/assets/other/town_tileset.png"
+      },
+      {
         "type": "tilemapTiledJSON",
-        "key": "map",
+        "key": "jungleMap",
         "url": "src/assets/other/test2.json"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "townMap",
+        "url": "src/assets/other/town_map.json"
       },
       {
         "type": "spritesheet",

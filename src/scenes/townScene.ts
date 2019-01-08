@@ -1,22 +1,18 @@
 /**
  * @author       Flynn Mattson
  * @copyright    2019 Flynn Mattson
- * @description  Game Scene
+ * @description  Town Scene
  */
 
-
 import { Player } from "../objects/player";
-import { Enemy } from "../objects/enemy";
 import { Background } from "../objects/background";
 
-export class GameScene extends Phaser.Scene {
+export class TownScene extends Phaser.Scene {
   // objects
   private player: Player;
-  private enemies: Phaser.GameObjects.Group;
   private parallaxBg: Background;
 
   // variables
-  private timer: Phaser.Time.TimerEvent;
   private jumpKey: Phaser.Input.Keyboard.Key;
   private leftKey: Phaser.Input.Keyboard.Key;
   private rightKey: Phaser.Input.Keyboard.Key;
@@ -31,7 +27,7 @@ export class GameScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "GameScene"
+      key: "TownScene"
     });
   }
 
@@ -39,13 +35,6 @@ export class GameScene extends Phaser.Scene {
     // objects
     this.player = null;
     this.parallaxBg = null;
-    this.enemies = this.add.group({
-      classType: Enemy,
-      runChildUpdate: true
-    });
-
-    // variables
-    this.timer = undefined;
 
     // input
     this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -59,13 +48,13 @@ export class GameScene extends Phaser.Scene {
     this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
-      area: "jungle"
+      area: "town"
     });
-    this.map = this.make.tilemap({ key: "jungleMap" });
-    this.tileset = this.map.addTilesetImage("jungle tileset", "jungleTileset");
+    this.map = this.make.tilemap({ key: "townMap" });
+    this.tileset = this.map.addTilesetImage("town tileset", "townTiles");
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
     this.groundLayer.setScale(3);
-    this.groundLayer.setCollisionByProperty({collides: true});
+    this.groundLayer.setCollisionByProperty({ collides: true });
 
     this.player = new Player({
       scene: this,
@@ -74,10 +63,9 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
-    this.cameras.main.startFollow(this.player, false, 1, 1, -50, 0);
+    this.cameras.main.startFollow(this.player, false, 1, 1, -65, 0);
 
     this.physics.add.collider(this.player, this.groundLayer);
-    this.physics.add.collider(this.enemies, this.groundLayer);
 
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
     // this.groundLayer.renderDebug(debugGraphics, {
@@ -85,37 +73,6 @@ export class GameScene extends Phaser.Scene {
     //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
-
-    this.spawnEnemy();
-
-    this.timer = this.time.addEvent({
-      delay: 5000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
-
-    this.input.on(
-      "pointerdown",
-      () => {
-        let attackInfo; 
-        if (attackInfo = this.player.attack()) {
-          // damage overlapping enemies
-          setTimeout(() => {
-            this.physics.overlap(
-              this.enemies,
-              this.player,
-              (enemy: Enemy, player: Player) => {
-                enemy.damage(attackInfo);
-              },
-              null,
-              this
-            );
-          }, attackInfo.triggerDamage);
-        }
-      },
-      this
-    );
   }
 
   update(): void {
@@ -153,20 +110,5 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.player.stopRun();
     }
-  }
-
-  private addOneEnemy(x): void {
-    let enemy = new Enemy({
-      scene: this,
-      x: x,
-      y: this.sys.canvas.height - 205,
-      key: "slime"
-    });
-
-    this.enemies.add(enemy);
-  }
-
-  private spawnEnemy(): void {
-    this.addOneEnemy(this.sys.canvas.width);
   }
 }

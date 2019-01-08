@@ -7,6 +7,7 @@
 
 export class Player extends Phaser.GameObjects.Sprite {
   private isDead: boolean = false;
+  private inTown: boolean = false;
   private isJumping: boolean = false;
   private isRunning: boolean = false;
   private isAttacking: boolean = false;
@@ -43,6 +44,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
     this.currentScene = params.scene;
+    this.inTown = params.scene.scene.key === "TownScene";
     this.health = params.scene.registry.get("health");
 
     // image
@@ -124,7 +126,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.flipX = true;
       this.body.setVelocityX(-300);
       if (!this.isJumping && !this.isAttacking) {
-        this.anims.play("adventurerRun", true);
+        this.anims.play(`adventurerRun${!this.inTown ? "Sword" : ""}`, true);
       }
     }
   }
@@ -135,7 +137,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.flipX = false;
       this.body.setVelocityX(300);
       if (!this.isJumping && !this.isAttacking) {
-        this.anims.play("adventurerRun", true);
+        this.anims.play(`adventurerRun${!this.inTown ? "Sword" : ""}`, true);
       }
     }
   }
@@ -148,7 +150,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.body.setVelocityX(this.body.velocity.x + 50);
     }
     if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
-      this.anims.play("adventurerIdle", true);
+      this.anims.play(`adventurerIdle${!this.inTown ? "Sword" : ""}`, true);
     }
   }
 
