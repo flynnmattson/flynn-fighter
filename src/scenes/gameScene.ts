@@ -74,7 +74,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
-    this.cameras.main.startFollow(this.player, false, 1, 1, -50, 0);
+    this.cameras.main.startFollow(this.player, true, 1, 1, -50, 0);
 
     this.physics.add.collider(this.player, this.groundLayer);
     this.physics.add.collider(this.enemies, this.groundLayer);

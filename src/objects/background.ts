@@ -19,8 +19,8 @@ export class Background {
         break;
       case "town":
         this.backgrounds = [
-          params.scene.add.tileSprite(params.scene.sys.canvas.width / 2, params.scene.sys.canvas.height / 2, 384 * 2, 216, "town_background1"),
-          params.scene.add.tileSprite(params.scene.sys.canvas.width / 2, params.scene.sys.canvas.height / 2, 384 * 2, 216, "town_background2"),
+          params.scene.add.tileSprite(params.scene.sys.canvas.width / 2, params.scene.sys.canvas.height / 2, 384 * 3, 216, "town_background1"),
+          params.scene.add.tileSprite(params.scene.sys.canvas.width / 2, params.scene.sys.canvas.height / 2, 384 * 3, 216, "town_background2"),
         ];
         break;
       default:

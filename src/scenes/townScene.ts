@@ -11,6 +11,7 @@ export class TownScene extends Phaser.Scene {
   // objects
   private player: Player;
   private parallaxBg: Background;
+  private bitmapText: Phaser.GameObjects.BitmapText;
 
   // variables
   private jumpKey: Phaser.Input.Keyboard.Key;
@@ -20,10 +21,11 @@ export class TownScene extends Phaser.Scene {
   private escapeKey: Phaser.Input.Keyboard.Key;
   private keyWait: number;
 
-  // tilemap
+  // environment
   private map: Phaser.Tilemaps.Tilemap;
   private tileset: Phaser.Tilemaps.Tileset;
   private groundLayer: Phaser.Tilemaps.StaticTilemapLayer;
+  private townObjects: Phaser.GameObjects.Image[];
 
   constructor() {
     super({
@@ -35,6 +37,8 @@ export class TownScene extends Phaser.Scene {
     // objects
     this.player = null;
     this.parallaxBg = null;
+    this.bitmapText;
+    this.townObjects = [];
 
     // input
     this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -55,15 +59,44 @@ export class TownScene extends Phaser.Scene {
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
     this.groundLayer.setScale(3);
     this.groundLayer.setCollisionByProperty({ collides: true });
+    this.townObjects.push(this.add.image(this.sys.canvas.width * 1.5 + this.sys.canvas.width / 4, this.sys.canvas.height / 2 + 30, "townHouse3"));
+    this.townObjects.push(this.add.image(this.sys.canvas.width * 1.5 - this.sys.canvas.width / 3, this.sys.canvas.height / 2 - 30, "townHouse2"));
+    this.townObjects.push(this.add.image(this.sys.canvas.width - this.sys.canvas.width / 3.5, this.sys.canvas.height / 2 + 30, "townHouse3"));
+    this.townObjects.push(this.add.image(this.sys.canvas.width / 5, this.sys.canvas.height / 2 + 30, "townHouse1"));
+    this.townObjects.push(this.add.image(350, this.sys.canvas.height - 195, "townLamp"));
+    this.townObjects.push(this.add.image(this.sys.canvas.width + 380, this.sys.canvas.height - 195, "townLamp"));
+    this.townObjects.push(this.add.image(this.sys.canvas.width * 2.3, this.sys.canvas.height - 150, "townWagon"));
+    this.physics.world.enable(this.townObjects[this.townObjects.length - 1]);
+    this.townObjects[this.townObjects.length - 1].body.allowGravity = false;
+    this.townObjects[this.townObjects.length - 1].body.setSize(93, 75);
+    this.townObjects.forEach((obj) => {
+      obj.setScale(2);
+    });
+
+    this.bitmapText = this.add.bitmapText(
+      this.townObjects[this.townObjects.length - 1].x - 120,
+      this.townObjects[this.townObjects.length - 1].y - 170,
+      "pixelFont",
+      "E: ENTER JUNGLE",
+      30
+    );
+    this.tweens.add({
+      targets: this.bitmapText,
+      y: this.bitmapText.y + 25,
+      duration: 500,
+      repeat: -1,
+      yoyo: true
+    });
+    this.bitmapText.setVisible(false);
 
     this.player = new Player({
       scene: this,
       x: this.sys.canvas.width / 2 - 75,
-      y: this.sys.canvas.height - 170
+      y: this.sys.canvas.height - 200
     });
 
-    this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
-    this.cameras.main.startFollow(this.player, false, 1, 1, -65, 0);
+    this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
+    this.cameras.main.startFollow(this.player, true, 1, 1, -65, 0);
 
     this.physics.add.collider(this.player, this.groundLayer);
 
@@ -79,6 +112,16 @@ export class TownScene extends Phaser.Scene {
     this.handleInput();
     this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
     this.player.update();
+
+    this.physics.overlap(
+      this.player,
+      this.townObjects[this.townObjects.length - 1],
+      (player: Player, wagon: Phaser.GameObjects.Image) => {
+        this.bitmapText.setVisible(true);
+      },
+      null,
+      this
+    );
   }
 
   public getPlayer(): Player {

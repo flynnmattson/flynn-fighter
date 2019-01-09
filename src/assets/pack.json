@@ -35,12 +35,37 @@
       {
         "type": "image",
         "key": "town_background1",
-        "url": "src/assets/other/town-background.png"
+        "url": "src/assets/other/town/town-background.png"
       },
       {
         "type": "image",
         "key": "town_background2",
-        "url": "src/assets/other/town-middleground.png"
+        "url": "src/assets/other/town/town-middleground.png"
+      },
+      {
+        "type": "image",
+        "key": "townHouse1",
+        "url": "src/assets/other/town/house-a.png"
+      },
+      {
+        "type": "image",
+        "key": "townHouse2",
+        "url": "src/assets/other/town/house-b.png"
+      },
+      {
+        "type": "image",
+        "key": "townHouse3",
+        "url": "src/assets/other/town/house-c.png"
+      },
+      {
+        "type": "image",
+        "key": "townWagon",
+        "url": "src/assets/other/town/wagon.png"
+      },
+      {
+        "type": "image",
+        "key": "townLamp",
+        "url": "src/assets/other/town/street-lamp.png"
       },
       {
         "type": "image",
@@ -50,7 +75,7 @@
       {
         "type": "image",
         "key": "townTiles",
-        "url": "src/assets/other/town_tileset.png"
+        "url": "src/assets/other/town/town_tileset.png"
       },
       {
         "type": "tilemapTiledJSON",
@@ -60,7 +85,7 @@
       {
         "type": "tilemapTiledJSON",
         "key": "townMap",
-        "url": "src/assets/other/town_map.json"
+        "url": "src/assets/other/town/town_map.json"
       },
       {
         "type": "spritesheet",

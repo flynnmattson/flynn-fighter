@@ -54,7 +54,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    this.body.setOffset(12, 7);
+    // this.body.setOffset(12, 7);
+    this.body.setOffset(12, 15);
     this.body.setSize(24, 25, false);
 
     params.scene.add.existing(this);

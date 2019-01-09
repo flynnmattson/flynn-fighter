@@ -60,6 +60,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey.isDown) {
+      this.registry.set("currentScene", "TownScene");
       this.scene.start("HUDScene");
       // this.scene.start("GameScene");
       this.scene.start("TownScene");
@@ -74,6 +75,6 @@ export class MainMenuScene extends Phaser.Scene {
   private initRegistry(): void {
     this.registry.set("points", 0);
     this.registry.set("health", 10);
-    this.registry.set("level", 1);
+    this.registry.set("currentScene", "MainMenuScene");
   }
 }
