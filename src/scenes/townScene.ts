@@ -6,12 +6,13 @@
 
 import { Player } from "../objects/player";
 import { Background } from "../objects/background";
+import { ActionText } from "../objects/actionText";
 
 export class TownScene extends Phaser.Scene {
   // objects
   private player: Player;
   private parallaxBg: Background;
-  private bitmapText: Phaser.GameObjects.BitmapText;
+  private actionText: ActionText;
 
   // variables
   private jumpKey: Phaser.Input.Keyboard.Key;
@@ -19,6 +20,7 @@ export class TownScene extends Phaser.Scene {
   private rightKey: Phaser.Input.Keyboard.Key;
   private downKey: Phaser.Input.Keyboard.Key;
   private escapeKey: Phaser.Input.Keyboard.Key;
+  private goKey: Phaser.Input.Keyboard.Key;
   private keyWait: number;
 
   // environment
@@ -37,7 +39,7 @@ export class TownScene extends Phaser.Scene {
     // objects
     this.player = null;
     this.parallaxBg = null;
-    this.bitmapText;
+    this.actionText = null;
     this.townObjects = [];
 
     // input
@@ -46,9 +48,11 @@ export class TownScene extends Phaser.Scene {
     this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.goKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
   }
 
   create(): void {
+    this.registry.set("currentScene", "TownScene");
     this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
@@ -73,25 +77,19 @@ export class TownScene extends Phaser.Scene {
       obj.setScale(2);
     });
 
-    this.bitmapText = this.add.bitmapText(
-      this.townObjects[this.townObjects.length - 1].x - 120,
-      this.townObjects[this.townObjects.length - 1].y - 170,
-      "pixelFont",
-      "E: ENTER JUNGLE",
-      30
-    );
-    this.tweens.add({
-      targets: this.bitmapText,
-      y: this.bitmapText.y + 25,
-      duration: 500,
-      repeat: -1,
-      yoyo: true
+    this.actionText = new ActionText({
+      scene: this,
+      x: this.townObjects[this.townObjects.length - 1].x - 180,
+      y: this.townObjects[this.townObjects.length - 1].y - 150,
+      type: "pixelFont",
+      text: "E: TRAVEL TO FOREST",
+      size: 30
     });
-    this.bitmapText.setVisible(false);
 
     this.player = new Player({
       scene: this,
-      x: this.sys.canvas.width / 2 - 75,
+      x: this.sys.canvas.width / 5,
+      // x: this.sys.canvas.width * 2,
       y: this.sys.canvas.height - 200
     });
 
@@ -112,12 +110,18 @@ export class TownScene extends Phaser.Scene {
     this.handleInput();
     this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
     this.player.update();
+    this.actionText.update();
 
     this.physics.overlap(
       this.player,
       this.townObjects[this.townObjects.length - 1],
       (player: Player, wagon: Phaser.GameObjects.Image) => {
-        this.bitmapText.setVisible(true);
+        this.actionText.showText(100);
+        // Listen for Action to go to Jungle here
+        if (this.goKey.isDown) {
+          this.goKey.isDown = false;
+          this.scene.start("GameScene");
+        }
       },
       null,
       this

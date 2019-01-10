@@ -56,13 +56,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.registry.set("currentScene", "GameScene");
     this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
       area: "jungle"
     });
     this.map = this.make.tilemap({ key: "jungleMap" });
-    this.tileset = this.map.addTilesetImage("jungle tileset", "jungleTileset");
+    this.tileset = this.map.addTilesetImage("jungle tileset", "jungleTiles");
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
     this.groundLayer.setScale(3);
     this.groundLayer.setCollisionByProperty({collides: true});

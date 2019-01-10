@@ -1,8 +1,7 @@
 /**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @description  Flappy Bird: Bird
- * @license      Digitsensitive
+ * @author       Flynn Mattson
+ * @copyright    2019 Flynn Mattson
+ * @description  Player Object
  */
 
 export class Player extends Phaser.GameObjects.Sprite {
@@ -54,8 +53,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    // this.body.setOffset(12, 7);
-    this.body.setOffset(12, 15);
+    this.body.setOffset(12, this.inTown ? 15 : 7);
     this.body.setSize(24, 25, false);
 
     params.scene.add.existing(this);
@@ -89,7 +87,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public jump(): void {
-    if (!this.isJumping && !this.isAttacking) {
+    if (!this.isSliding && !this.isJumping && !this.isAttacking) {
       this.body.setVelocityY(-350);
       this.isJumping = true;
       this.anims.play("adventurerJump", true);
