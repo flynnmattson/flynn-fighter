@@ -56,14 +56,19 @@ export class MainMenuScene extends Phaser.Scene {
         30
       )
     );
+
+    this.cameras.main.fadeIn();
   }
 
   update(): void {
     if (this.startKey.isDown) {
-      this.scene.start("HUDScene");
-      // this.scene.start("GameScene");
-      this.scene.start("TownScene");
-      this.scene.bringToTop("HUDScene");
+      this.cameras.main.fadeOut(500);
+      setTimeout(() => {
+        this.scene.start("HUDScene");
+        // this.scene.start("GameScene");
+        this.scene.start("TownScene");
+        this.scene.bringToTop("HUDScene");
+      }, 500);
     }
   }
 

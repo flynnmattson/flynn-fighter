@@ -122,6 +122,28 @@
       "frameRate": 6
     },
     {
+      "key": "adventurerWield",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 69,
+        "end": 72
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "adventurerUnwield",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 73,
+        "end": 76
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
       "key": "slimeIdle",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",

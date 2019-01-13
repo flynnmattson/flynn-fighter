@@ -6,12 +6,12 @@
 
 export class Player extends Phaser.GameObjects.Sprite {
   private isDead: boolean = false;
-  private inTown: boolean = false;
   private isJumping: boolean = false;
   private isRunning: boolean = false;
   private isAttacking: boolean = false;
   private isHurting: boolean = false;
   private isSliding: boolean = false;
+  private isWielding: boolean = false;
   private currentScene: Phaser.Scene;
   private attackCooldown: number = 400;
   private nextAttack: number = 0;
@@ -40,10 +40,20 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.body.x - this.body.width - 13;
   }
 
+  public setWield(wield: boolean): void {
+    if (wield && !this.isWielding) {
+      this.anims.play("adventurerWield", false);
+      this.isWielding = true;
+    } else if (!wield && this.isWielding) {
+      this.anims.play("adventurerUnwield", false);
+      this.isWielding = false;
+    }
+  }
+
   constructor(params) {
     super(params.scene, params.x, params.y, params.key, params.frame);
     this.currentScene = params.scene;
-    this.inTown = params.scene.scene.key === "TownScene";
+    this.isWielding = params.wield || false;
     this.health = params.scene.registry.get("health");
 
     // image
@@ -53,7 +63,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    this.body.setOffset(12, this.inTown ? 15 : 7);
+    this.body.setOffset(12, params.scene.scene.key === "TownScene" ? 15 : 7);
     this.body.setSize(24, 25, false);
 
     params.scene.add.existing(this);
@@ -125,7 +135,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.flipX = true;
       this.body.setVelocityX(-300);
       if (!this.isJumping && !this.isAttacking) {
-        this.anims.play(`adventurerRun${!this.inTown ? "Sword" : ""}`, true);
+        this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
     }
   }
@@ -136,7 +146,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.flipX = false;
       this.body.setVelocityX(300);
       if (!this.isJumping && !this.isAttacking) {
-        this.anims.play(`adventurerRun${!this.inTown ? "Sword" : ""}`, true);
+        this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
     }
   }
@@ -148,8 +158,9 @@ export class Player extends Phaser.GameObjects.Sprite {
     } else if (this.body.velocity.x < 0) {
       this.body.setVelocityX(this.body.velocity.x + 50);
     }
-    if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
-      this.anims.play(`adventurerIdle${!this.inTown ? "Sword" : ""}`, true);
+    // if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
+    if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.isJumping) {
+      this.anims.play(`adventurerIdle${this.isWielding ? "Sword" : ""}`, true);
     }
   }
 

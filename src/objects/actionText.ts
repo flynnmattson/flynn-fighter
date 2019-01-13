@@ -5,24 +5,23 @@
  */
 
 export class ActionText extends Phaser.GameObjects.BitmapText {
-  private currentScene: Phaser.Scene;
-  private bounceTween: Phaser.Tweens.Tween;
   private fadeInTween: Phaser.Tweens.Tween;
   private fadeOutTween: Phaser.Tweens.Tween;
-  private fadeReset: number;
+  private fadeReset: number = 0;
   private showingText: boolean;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.type, params.text, params.size);
-    this.currentScene = params.scene;
 
-    this.bounceTween = params.scene.tweens.add({
-      targets: this,
-      y: this.y + 25,
-      duration: 500,
-      repeat: -1,
-      yoyo: true
-    });
+    if (params.bounce) {
+      params.scene.tweens.add({
+        targets: this,
+        y: this.y + 25,
+        duration: 500,
+        repeat: -1,
+        yoyo: true
+      });
+    }
     this.fadeInTween = params.scene.tweens.add({
       targets: this,
       duration: 500,
@@ -62,6 +61,10 @@ export class ActionText extends Phaser.GameObjects.BitmapText {
     } else if (this.alpha === 1) {
       this.fadeOutTween.restart();
     }
+  }
+
+  public isShowingText(): boolean {
+    return this.showingText;
   }
 
   public showText(fadeReset): void {

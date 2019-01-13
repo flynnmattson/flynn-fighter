@@ -83,18 +83,21 @@ export class TownScene extends Phaser.Scene {
       y: this.townObjects[this.townObjects.length - 1].y - 150,
       type: "pixelFont",
       text: "E: TRAVEL TO FOREST",
-      size: 30
+      size: 30,
+      bounce: true
     });
 
     this.player = new Player({
       scene: this,
       x: this.sys.canvas.width / 5,
       // x: this.sys.canvas.width * 2,
-      y: this.sys.canvas.height - 200
+      y: this.sys.canvas.height - 200,
+      wield: false
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
     this.cameras.main.startFollow(this.player, true, 1, 1, -65, 0);
+    this.cameras.main.fadeIn();
 
     this.physics.add.collider(this.player, this.groundLayer);
 
@@ -119,8 +122,11 @@ export class TownScene extends Phaser.Scene {
         this.actionText.showText(100);
         // Listen for Action to go to Jungle here
         if (this.goKey.isDown) {
+          this.cameras.main.fadeOut(500);
           this.goKey.isDown = false;
-          this.scene.start("GameScene");
+          setTimeout(() => {
+            this.scene.start("GameScene");
+          }, 500);
         }
       },
       null,
