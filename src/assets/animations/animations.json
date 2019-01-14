@@ -31,7 +31,7 @@
         "end": 13
       },
       "repeat": 0,
-      "frameRate": 6
+      "frameRate": 8
     },
     {
       "key": "adventurerRunSword",
@@ -42,7 +42,7 @@
         "end": 5
       },
       "repeat": 0,
-      "frameRate": 6
+      "frameRate": 8
     },
     {
       "key": "adventurerJump",
@@ -50,6 +50,17 @@
         "typeOfGeneration": "generateFrameNumbers",
         "key": "adventurer",
         "start": 14,
+        "end": 23
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerFall",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 22,
         "end": 23
       },
       "repeat": 0,
@@ -142,6 +153,39 @@
       },
       "repeat": 0,
       "frameRate": 6
+    },
+    {
+      "key": "adventurerAirAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 96,
+        "end": 99
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAirAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 100,
+        "end": 102
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAirAttack3",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 103,
+        "end": 108
+      },
+      "repeat": 0,
+      "frameRate": 10
     },
     {
       "key": "slimeIdle",

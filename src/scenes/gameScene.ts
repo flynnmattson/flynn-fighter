@@ -46,6 +46,7 @@ export class GameScene extends Phaser.Scene {
       classType: Enemy,
       runChildUpdate: true
     });
+    this.cutscene = null;
 
     // variables
     this.timer = undefined;
@@ -85,18 +86,11 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.groundLayer);
     this.physics.add.collider(this.enemies, this.groundLayer);
 
-    // const debugGraphics = this.add.graphics().setAlpha(0.75);
-    // this.groundLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    // });
-
     this.cutscene = {
       countdown: 1400,
       wield: 1400,
       run: 1100,
-      jump: 50
+      jump: 0
     };
     this.countdownText = new ActionText({
       scene: this,
@@ -107,6 +101,8 @@ export class GameScene extends Phaser.Scene {
       size: 50,
       bounce: false
     });
+
+    // this.debug();
   }
 
   update(): void {
@@ -124,6 +120,19 @@ export class GameScene extends Phaser.Scene {
 
   public getPlayer(): Player {
     return this.player;
+  }
+
+  private debug(): void {
+    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    this.groundLayer.renderDebug(debugGraphics, {
+      tileColor: null, // Color of non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
+
+    this.player.setPosition(250, 0);
+    this.player.setWield(true);
+    this.cutsceneOver();
   }
 
   private handleCutscene(): void {
@@ -148,7 +157,6 @@ export class GameScene extends Phaser.Scene {
       this.countdownText.setText("HERE THEY COME!");
       this.countdownText.setPosition(this.sys.canvas.width / 3 + 50, this.sys.canvas.height / 2 - 50);
       this.countdownText.showText(500);
-      this.cutscene = null;
       this.cutsceneOver();
     }
 
@@ -158,14 +166,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private cutsceneOver(): void {
-    this.spawnEnemy();
-
-    this.timer = this.time.addEvent({
-      delay: 5000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
+    this.cutscene = null;
 
     this.input.on(
       "pointerdown",
@@ -188,6 +189,8 @@ export class GameScene extends Phaser.Scene {
       },
       this
     );
+
+    this.startSpawner();
   }
 
   private handleInput(): void {
@@ -215,6 +218,17 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.player.stopRun();
     }
+  }
+
+  private startSpawner(): void {
+    this.spawnEnemy();
+
+    this.timer = this.time.addEvent({
+      delay: 5000,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+      loop: true
+    });
   }
 
   private addOneEnemy(x: number): void {

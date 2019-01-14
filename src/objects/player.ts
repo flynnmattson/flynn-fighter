@@ -6,17 +6,18 @@
 
 export class Player extends Phaser.GameObjects.Sprite {
   private isDead: boolean = false;
-  private isJumping: boolean = false;
+  private inAir: boolean = false;
   private isRunning: boolean = false;
   private isAttacking: boolean = false;
   private isHurting: boolean = false;
   private isSliding: boolean = false;
   private isWielding: boolean = false;
   private currentScene: Phaser.Scene;
-  private attackCooldown: number = 400;
+  private attackCooldown: number = 375;
   private nextAttack: number = 0;
   private nextSlide: number = 0;
   private attackCombo: number = 1;
+  private airAttackCombo: number = 1;
   private dyingTime: number = 400;
   private health: number;
 
@@ -70,8 +71,15 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    if (this.body.velocity.y === 0) {
-      this.isJumping = false;
+    if (this.body.velocity.y === 0 && this.inAir) {
+      this.inAir = false;
+      this.airAttackCombo = 1;
+    } else if (this.body.velocity.y != 0) {
+      if (!this.anims.isPlaying) {
+        this.anims.play("adventurerFall", true);
+      }
+      this.inAir = true;
+      this.isRunning = false;
     }
 
     if (this.isAttacking && this.currentScene.time.now > this.nextAttack) {
@@ -97,15 +105,15 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public jump(): void {
-    if (!this.isSliding && !this.isJumping && !this.isAttacking) {
+    if (!this.isSliding && !this.inAir && !this.isAttacking) {
+      this.inAir = true;
       this.body.setVelocityY(-350);
-      this.isJumping = true;
-      this.anims.play("adventurerJump", true);
+      this.anims.play("adventurerJump", false);
     }
   }
 
   public slide(): void {
-    if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.isJumping) {
+    if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.inAir) {
       this.isSliding = true;
       this.body.setVelocityX(this.flipX ? this.isRunning ? -550 : -1000 : this.isRunning ? 550 : 1000);
       this.anims.play("adventurerSlide", true);
@@ -116,12 +124,20 @@ export class Player extends Phaser.GameObjects.Sprite {
   public attack(): object {
     if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
-      this.anims.play("adventurerAttack" + this.attackCombo, false);
-      this.body.setVelocityX(this.flipX ? -300 : 300);
+      if (this.inAir) {
+        this.body.setVelocityX(0);
+        this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
+        this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
+        this.airAttackCombo = this.airAttackCombo === 3 ? 1 : this.airAttackCombo + 1;
+      } else {
+        this.anims.play("adventurerAttack" + this.attackCombo, false);
+        this.body.setVelocityX(this.flipX ? this.attackCombo === 3 ? -600 : -300 : this.attackCombo === 3 ? 600 : 300);
+        this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
+      }
+
       this.nextAttack = this.currentScene.time.now + this.attackCooldown;
-      this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
       return {
-        triggerDamage: this.attackCooldown / 2,
+        triggerDamage: this.inAir ? this.attackCooldown - this.attackCooldown / 4 : this.attackCooldown / 2,
         faceLeft: this.flipX
       };
     } else {
@@ -130,22 +146,22 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
  
   public runLeft(): void {
-    if (!this.isSliding) {
-      this.isRunning = true;
+    if (!this.isAttacking && !this.isSliding) {
       this.flipX = true;
       this.body.setVelocityX(-300);
-      if (!this.isJumping && !this.isAttacking) {
+      if (!this.inAir) {
+        this.isRunning = true;
         this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
     }
   }
 
   public runRight(): void {
-    if (!this.isSliding) {
-      this.isRunning = true;
+    if (!this.isAttacking && !this.isSliding) {
       this.flipX = false;
       this.body.setVelocityX(300);
-      if (!this.isJumping && !this.isAttacking) {
+      if (!this.inAir) {
+        this.isRunning = true;
         this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
     }
@@ -159,7 +175,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.body.setVelocityX(this.body.velocity.x + 50);
     }
     // if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
-    if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.isJumping) {
+    if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.inAir) {
       this.anims.play(`adventurerIdle${this.isWielding ? "Sword" : ""}`, true);
     }
   }

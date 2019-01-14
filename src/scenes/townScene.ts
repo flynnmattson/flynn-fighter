@@ -90,7 +90,6 @@ export class TownScene extends Phaser.Scene {
     this.player = new Player({
       scene: this,
       x: this.sys.canvas.width / 5,
-      // x: this.sys.canvas.width * 2,
       y: this.sys.canvas.height - 200,
       wield: false
     });
@@ -101,12 +100,7 @@ export class TownScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.groundLayer);
 
-    // const debugGraphics = this.add.graphics().setAlpha(0.75);
-    // this.groundLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    // });
+    // this.debug();
   }
 
   update(): void {
@@ -136,6 +130,17 @@ export class TownScene extends Phaser.Scene {
 
   public getPlayer(): Player {
     return this.player;
+  }
+
+  private debug(): void {
+    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    this.groundLayer.renderDebug(debugGraphics, {
+      tileColor: null, // Color of non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
+
+    this.player.setPosition(this.sys.canvas.width * 2, this.sys.canvas.height - 200);
   }
 
   private handleInput(): void {
