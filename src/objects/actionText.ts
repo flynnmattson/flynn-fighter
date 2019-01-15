@@ -12,7 +12,9 @@ export class ActionText extends Phaser.GameObjects.BitmapText {
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.type, params.text, params.size);
-
+    if (params.follow) {
+      this.setScrollFactor(0);
+    }
     if (params.bounce) {
       params.scene.tweens.add({
         targets: this,

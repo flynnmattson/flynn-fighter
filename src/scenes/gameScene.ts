@@ -94,12 +94,13 @@ export class GameScene extends Phaser.Scene {
     };
     this.countdownText = new ActionText({
       scene: this,
-      x: this.sys.canvas.width / 2 + 100,
+      x: this.sys.canvas.width / 2,
       y: this.sys.canvas.height / 2 - 50,
       type: "pixelFont",
       text: "3...",
       size: 50,
-      bounce: false
+      bounce: false,
+      follow: true
     });
 
     // this.debug();
@@ -155,7 +156,7 @@ export class GameScene extends Phaser.Scene {
       this.countdownText.showText(500);
     } else if (this.cutscene.countdown === -3000) {
       this.countdownText.setText("HERE THEY COME!");
-      this.countdownText.setPosition(this.sys.canvas.width / 3 + 50, this.sys.canvas.height / 2 - 50);
+      this.countdownText.setPosition(this.sys.canvas.width / 3 - 50, this.sys.canvas.height / 2 - 50);
       this.countdownText.showText(500);
       this.cutsceneOver();
     }
@@ -223,12 +224,12 @@ export class GameScene extends Phaser.Scene {
   private startSpawner(): void {
     this.spawnEnemy();
 
-    this.timer = this.time.addEvent({
-      delay: 5000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
+    // this.timer = this.time.addEvent({
+    //   delay: 5000,
+    //   callback: this.spawnEnemy,
+    //   callbackScope: this,
+    //   loop: true
+    // });
   }
 
   private addOneEnemy(x: number): void {
@@ -236,7 +237,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: x,
       y: this.sys.canvas.height - 205,
-      key: "slime"
+      key: "slug"
     });
 
     this.enemies.add(enemy);

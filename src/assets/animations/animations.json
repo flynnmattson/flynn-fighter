@@ -210,7 +210,7 @@
       "frameRate": 6
     },
     {
-      "key": "slimeAttack",
+      "key": "slimeAttack1",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
         "key": "slime",
@@ -238,6 +238,72 @@
         "key": "slime",
         "start": 16,
         "end": 20
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 0,
+        "end": 4
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "slugRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 5,
+        "end": 9
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 10,
+        "end": 14
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 15,
+        "end": 29
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 30,
+        "end": 34
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 35,
+        "end": 38
       },
       "repeat": 0,
       "frameRate": 6

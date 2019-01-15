@@ -108,10 +108,118 @@
       {
         "type": "spritesheet",
         "key": "slime",
-        "url": "src/assets/sprites/slime-Sheet.png",
+        "url": "src/assets/sprites/enemies/slime-Sheet.png",
         "frameConfig": {
           "frameWidth": 32,
           "frameHeight": 25
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "executioner",
+        "url": "src/assets/sprites/enemies/executioner-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 87,
+          "frameHeight": 59
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "fireGolem",
+        "url": "src/assets/sprites/enemies/fire-golem-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 57
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "ghoul",
+        "url": "src/assets/sprites/enemies/ghoul-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 51,
+          "frameHeight": 20
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "iceGolem",
+        "url": "src/assets/sprites/enemies/ice-golem-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 57
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "imp",
+        "url": "src/assets/sprites/enemies/imp-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 50
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "impProjectile",
+        "url": "src/assets/sprites/enemies/imp-projectile-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 34,
+          "frameHeight": 9
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "necromancer",
+        "url": "src/assets/sprites/enemies/necromancer-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 60,
+          "frameHeight": 61
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "necromancerProjectile",
+        "url": "src/assets/sprites/enemies/necromancer-projectile-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 102,
+          "frameHeight": 9
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "phantomKnight",
+        "url": "src/assets/sprites/enemies/phantom-knight-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 57,
+          "frameHeight": 51
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "reaper",
+        "url": "src/assets/sprites/enemies/reaper-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 46
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "slug",
+        "url": "src/assets/sprites/enemies/slug-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 77,
+          "frameHeight": 39
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "undeadWarrior",
+        "url": "src/assets/sprites/enemies/undead-warrior-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 36
         }
       },
       {
