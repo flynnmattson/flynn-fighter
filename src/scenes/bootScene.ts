@@ -56,8 +56,8 @@ export class BootScene extends Phaser.Scene {
 
     // load out json
     this.load.json(
-      "enemyAttributes",
-      "./src/helpers/enemyAttributes.json"
+      "attributes",
+      "./src/helpers/attributes.json"
     );
   }
 

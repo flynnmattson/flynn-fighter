@@ -1,0 +1,68 @@
+{
+  "player": {
+    "depth": 1,
+    "body": {
+      "size": {
+        "x": 24,
+        "y": 25
+      },
+      "offset": {
+        "x": 12,
+        "y": 7
+      }
+    }
+  },
+  "slime": {
+    "depth": 2,
+    "body": {
+      "size": {
+        "x": 26,
+        "y": 15
+      },
+      "offset": {
+        "flipX": 3,
+        "x": 2,
+        "y": 5
+      }
+    },
+    "attack": [
+      {
+        "damage": 5,
+        "speed": 600,
+        "cooldown": 1500,
+        "velocity": 50
+      }
+    ],
+    "health": 3,
+    "speed": 150
+  },
+  "slug": {
+    "depth": 0,
+    "body": {
+      "size": {
+        "x": 55,
+        "y": 25
+      },
+      "offset": {
+        "flipX": -2,
+        "x": 23,
+        "y": 10
+      }
+    },
+    "attack": [
+      {
+        "damage": 8,
+        "speed": 600,
+        "cooldown": 1500,
+        "velocity": 50
+      }, {
+        "damage": 20,
+        "speed": 600,
+        "cooldown": 1500,
+        "velocity": 50
+      }
+    ],
+    "health": 5,
+    "speed": 100
+  }
+}

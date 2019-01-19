@@ -20,6 +20,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private airAttackCombo: number = 1;
   private dyingTime: number = 400;
   private health: number;
+  private attributes: any;
 
   public getDead(): boolean {
     return this.isDead;
@@ -34,11 +35,11 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public getRightSide(): number {
-    return this.body.x + this.body.width - 7;
+    return this.body.x + this.body.width;
   }
 
   public getLeftSide(): number {
-    return this.body.x - this.body.width - 13;
+    return this.body.x;
   }
 
   public setWield(wield: boolean): void {
@@ -56,16 +57,21 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.currentScene = params.scene;
     this.isWielding = params.wield || false;
     this.health = params.scene.registry.get("health");
+    this.attributes = params.scene.cache.json.get('attributes')['player'];
 
     // image
     this.setScale(3);
     this.setOrigin(0, 0);
+    this.setDepth(this.attributes.depth);
 
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
-    this.body.setOffset(12, params.scene.scene.key === "TownScene" ? 15 : 7);
-    this.body.setSize(24, 25, false);
+    this.body.setOffset(
+      this.attributes.body.offset.x, 
+      params.scene.scene.key === "TownScene" ? this.attributes.body.offset.y * 2 : this.attributes.body.offset.y
+    );
+    this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
 
     params.scene.add.existing(this);
   }
@@ -148,6 +154,9 @@ export class Player extends Phaser.GameObjects.Sprite {
   public runLeft(): void {
     if (!this.isAttacking && !this.isSliding) {
       this.flipX = true;
+      if (this.body.offset.x > 0) {
+        this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
+      }
       this.body.setVelocityX(-300);
       if (!this.inAir) {
         this.isRunning = true;
@@ -159,6 +168,9 @@ export class Player extends Phaser.GameObjects.Sprite {
   public runRight(): void {
     if (!this.isAttacking && !this.isSliding) {
       this.flipX = false;
+      if (this.body.offset.x < 0) {
+        this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
+      }
       this.body.setVelocityX(300);
       if (!this.inAir) {
         this.isRunning = true;
@@ -180,26 +192,27 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public damage(fromLeft: boolean): void {
+  public damage(amount: number): void {
     if (!this.isDead && !this.isSliding) {
       this.isAttacking = false;
       this.isHurting = true;
-      this.health--;
-      this.currentScene.registry.set("health", this.health);
+      this.health -= amount;
+      this.currentScene.registry.set("health", this.health > 0 ? this.health : 0);
       this.currentScene.events.emit("healthChanged");
+
+      this.setTintFill(0xffffff);
+      setTimeout(() => {
+        this.clearTint();
+      }, 100);
+
       if (this.health > 0) {
         this.anims.play("adventurerHurt", true);
-        // this.body.setVelocity(fromLeft ? 75 : -75, -75);
         setTimeout(() => {
           this.isHurting = false;
-          this.clearTint();
-          this.setAlpha(1);
         }, 400);
       } else {
         this.isDead = true;
       }
-      this.setTint(0xfc8a75);
-      this.setAlpha(0.9);
     }
   }
 

@@ -78,7 +78,8 @@ export class MainMenuScene extends Phaser.Scene {
    */
   private initRegistry(): void {
     this.registry.set("points", 0);
-    this.registry.set("health", 10);
+    this.registry.set("health", 100);
+    this.registry.set("maxHealth", 100);
     this.registry.set("currentScene", "MainMenuScene");
   }
 }

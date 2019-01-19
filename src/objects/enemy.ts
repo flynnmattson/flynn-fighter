@@ -12,11 +12,10 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private isAttacking: boolean = false;
   private currentScene: Phaser.Scene;
   private player: Player;
-  private attackCooldown: number = 1500;
-  private attackSpeed: number = 600;
-  private nextAttack: number = 0;
+  private attackCooldowns: Array<number>; // Object of Attack Cooldowns to know which one is available
+  private attackNum: number; // Index number of Current Attack (in attributes.json)
   private attackFinished: number = 0;
-  private health: number = 3;
+  private health: number;
   private dyingTime: number = 400;
   private attributes: any;
 
@@ -27,18 +26,23 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
     // Loads in the attributes from the Games cache. This what we'll
     // use to define all of this enemies attributes.
-    this.attributes = params.scene.cache.json.get('enemyAttributes')[params.key];
+    this.attributes = params.scene.cache.json.get('attributes')[params.key];
+    this.health = this.attributes.health;
+    this.attackCooldowns = [];
+    this.attributes.attack.forEach((a) => {
+      this.attackCooldowns.push(0);
+    });
 
     // image
     this.setScale(3);
     this.setOrigin(0, 0);
+    this.setDepth(this.attributes.depth);
 
     // physics
     params.scene.physics.world.enable(this);
     this.body.allowGravity = true;
     this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
     this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
-    // this.body.setSize(20, 25, false);
     
     params.scene.add.existing(this);
   }
@@ -69,35 +73,35 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.isAttacking = false;
       this.isHurting = true;
       this.health--;
+      this.setTintFill(0xffffff);
+      setTimeout(() => {
+        this.clearTint();
+      }, 100);
       if (this.health > 0) {
         this.anims.play(`${this.texture.key}Hurt`, true);
         this.body.setVelocity(info.faceLeft ? -75 : 75, 75);
         setTimeout(() => {
           this.isHurting = false;
-          this.clearTint();
-          this.setAlpha(1);
         }, 600);
       } else {
         this.isDead = true;
       }
-      this.setTint(0xfc8a75);
-      this.setAlpha(0.9);
     }
   }
 
   private move(): void {
-    // this.currentScene.physics.overlap(
-    //   this,
-    //   this.player,
-    //   (enemy: Enemy, player: Player) => {
-    //     this.attack();
-    //   },
-    //   null,
-    //   this
-    // );
-    if (!this.isHurting && !this.isAttacking && this.x > this.player.getRightSide()) {
+    this.currentScene.physics.overlap(
+      this,
+      this.player,
+      (enemy: Enemy, player: Player) => {
+        this.attack();
+      },
+      null,
+      this
+    );
+    if (!this.isHurting && !this.isAttacking && this.body.x > this.player.getRightSide()) {
       this.runLeft();
-    } else if (!this.isHurting && !this.isAttacking && this.x < this.player.getLeftSide()) {
+    } else if (!this.isHurting && !this.isAttacking && this.body.x + this.body.width < this.player.getLeftSide()) {
       this.runRight();
     } else {
       if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
@@ -109,26 +113,45 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
   private attack(): void {
     if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
-      this.player.damage(this.flipX);
+      this.player.damage(this.attributes.attack[this.attackNum].damage);
       this.isAttacking = false;
-    } else if (!this.isHurting && this.currentScene.time.now >= this.nextAttack) {
+    } else if (!this.isHurting && this.readyAttack()) {
       this.isAttacking = true;
-      this.anims.play(`${this.texture.key}Attack1`, false);
-      if (this.flipX) this.body.setVelocityX(50);
-      else this.body.setVelocityX(-50);
-      this.nextAttack = this.currentScene.time.now + this.attackCooldown;
-      this.attackFinished = this.currentScene.time.now + this.attackSpeed;
+      this.anims.play(`${this.texture.key}Attack${this.attackNum + 1}`, false);
+      this.body.setVelocityX(
+        this.flipX ? 
+        this.attributes.attack[this.attackNum].velocity :
+        -this.attributes.attack[this.attackNum].velocity
+      );
+      this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
+      this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
     }
+  }
+
+  private readyAttack(): boolean {
+    for (let i = 0; i < this.attackCooldowns.length; i++) {
+      if (this.attackCooldowns[i] <= this.currentScene.time.now) {
+        this.attackNum = i;
+        return true;
+      }
+    }
+    return false;
   }
 
   private runLeft(): void {
     this.flipX = false;
+    if (this.body.offset.x < 0) {
+      this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
+    }
     this.body.setVelocityX(this.attributes.speed * -1);
     this.anims.play(`${this.texture.key}Run`, true);
   }
 
   private runRight(): void {
     this.flipX = true;
+    if (this.body.offset.x > 0) {
+      this.body.setOffset(this.attributes.body.offset.flipX, this.attributes.body.offset.y);
+    }
     this.body.setVelocityX(this.attributes.speed);
     this.anims.play(`${this.texture.key}Run`, true);
   }

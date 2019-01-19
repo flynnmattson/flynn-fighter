@@ -103,7 +103,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -239,8 +239,15 @@ export class GameScene extends Phaser.Scene {
       y: this.sys.canvas.height - 205,
       key: "slug"
     });
+    let enemy2 = new Enemy({
+      scene: this,
+      x: x,
+      y: this.sys.canvas.height - 205,
+      key: "slime"
+    });
 
     this.enemies.add(enemy);
+    this.enemies.add(enemy2);
   }
 
   private spawnEnemy(): void {

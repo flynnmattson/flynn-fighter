@@ -21117,6 +21117,15 @@ declare namespace Phaser {
             setTint(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
 
             /**
+              * Sets the tint values for this Game Object.
+              * @param topLeft The tint being applied to the top-left of the Game Object. If not other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
+              * @param topRight The tint being applied to the top-right of the Game Object.
+              * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
+              * @param bottomRight The tint being applied to the bottom-right of the Game Object.
+              */
+            setTintFill(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
+
+            /**
              * The tint value being applied to the top-left of the Game Object.
              * This value is interpolated from the corner to the center of the Game Object.
              */
