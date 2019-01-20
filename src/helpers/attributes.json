@@ -29,8 +29,9 @@
       {
         "damage": 5,
         "speed": 600,
-        "cooldown": 1500,
-        "velocity": 50
+        "cooldown": 1200,
+        "velocity": 150,
+        "range" : 20
       }
     ],
     "health": 3,
@@ -52,14 +53,16 @@
     "attack": [
       {
         "damage": 8,
-        "speed": 600,
+        "speed": 1000,
         "cooldown": 1500,
-        "velocity": 50
+        "velocity": 150,
+        "range": 20
       }, {
         "damage": 20,
-        "speed": 600,
-        "cooldown": 1500,
-        "velocity": 50
+        "speed": 2200,
+        "cooldown": 10000,
+        "velocity": 0,
+        "range": 45
       }
     ],
     "health": 5,

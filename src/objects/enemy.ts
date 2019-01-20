@@ -1,4 +1,5 @@
 import { Player } from "./player";
+import { AttackBox } from "./attackBox";
 
 /**
  * @author       Flynn Mattson
@@ -18,10 +19,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private health: number;
   private dyingTime: number = 400;
   private attributes: any;
+  private attackHitbox: AttackBox;
 
   constructor(params) {
-    super(params.scene, params.x, params.y, params.key, params.frame);
+    super(params.scene, params.x, params.y, params.key);
     this.currentScene = params.scene;
+    this.attackHitbox = params.attackBox;
+    this.attackHitbox.disable();
     this.player = params.scene.getPlayer();
 
     // Loads in the attributes from the Games cache. This what we'll
@@ -59,6 +63,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       } else {
         this.currentScene.registry.set("points", this.currentScene.registry.get("points") + 1);
         this.currentScene.events.emit("pointsChanged");
+        this.attackHitbox.destroy();
         this.destroy();
       }
     }
@@ -71,6 +76,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   public damage(info): void {
     if (!this.isDead) {
       this.isAttacking = false;
+      this.attackHitbox.disable();
       this.isHurting = true;
       this.health--;
       this.setTintFill(0xffffff);
@@ -90,6 +96,14 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   private move(): void {
+    /*
+      If you are not currently attacking, Check to see if there is an
+      attack in range that is not on cooldown. Might have to iterate through
+      and check the range starting from furthest range attack and if 
+      it overlaps with player hitbox then trigger attack call for that
+      specific attack. Within attack call, put another overlap check on 
+      timeout for when you want to trigger the damage on the player.
+    */
     this.currentScene.physics.overlap(
       this,
       this.player,
@@ -106,8 +120,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     } else {
       if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
         this.isAttacking = false;
+        this.attackHitbox.disable();
       }
       this.stopRun();
+    }
+
+    if (this.attackHitbox.isEnabled()) {
+      this.repositionAttackBox();
     }
   }
 
@@ -115,16 +134,36 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
       this.player.damage(this.attributes.attack[this.attackNum].damage);
       this.isAttacking = false;
-    } else if (!this.isHurting && this.readyAttack()) {
+      this.attackHitbox.disable();
+    } else if (!this.isAttacking && !this.isHurting && this.readyAttack()) {
       this.isAttacking = true;
+      this.attackHitbox.enable();
+      this.attackHitbox.setBodySize(
+        this.attributes.attack[this.attackNum].range,
+        this.attributes.body.size.y
+      );
       this.anims.play(`${this.texture.key}Attack${this.attackNum + 1}`, false);
       this.body.setVelocityX(
         this.flipX ? 
         this.attributes.attack[this.attackNum].velocity :
-        -this.attributes.attack[this.attackNum].velocity
+        this.attributes.attack[this.attackNum].velocity * -1
       );
       this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
       this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
+    }
+  }
+
+  private repositionAttackBox(): void {
+    if (this.flipX) {
+      this.attackHitbox.setPosition(
+        (this.body.x + this.body.width) - this.attackHitbox.getBodyWidth() / 2,
+        this.body.y
+      );
+    } else {
+      this.attackHitbox.setPosition(
+        this.body.x - this.attackHitbox.getBodyWidth() / 2,
+        this.body.y
+      );
     }
   }
 

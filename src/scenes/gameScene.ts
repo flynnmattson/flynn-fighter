@@ -9,6 +9,7 @@ import { Player } from "../objects/player";
 import { Enemy } from "../objects/enemy";
 import { Background } from "../objects/background";
 import { ActionText } from "../objects/actionText";
+import { AttackBox } from "../objects/attackBox";
 
 export class GameScene extends Phaser.Scene {
   // objects
@@ -71,12 +72,14 @@ export class GameScene extends Phaser.Scene {
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
     this.groundLayer.setScale(3);
     this.groundLayer.setCollisionByProperty({collides: true});
-
     this.player = new Player({
       scene: this,
       x: -120,
       y: 50,
-      wield: false
+      wield: false,
+      attackBox: new AttackBox({
+        scene: this
+      })
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
@@ -103,7 +106,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {
@@ -178,8 +181,8 @@ export class GameScene extends Phaser.Scene {
           setTimeout(() => {
             this.physics.overlap(
               this.enemies,
-              this.player,
-              (enemy: Enemy, player: Player) => {
+              this.player.getAttackBox(),
+              (enemy: Enemy, player: AttackBox) => {
                 enemy.damage(attackInfo);
               },
               null,
@@ -224,12 +227,12 @@ export class GameScene extends Phaser.Scene {
   private startSpawner(): void {
     this.spawnEnemy();
 
-    // this.timer = this.time.addEvent({
-    //   delay: 5000,
-    //   callback: this.spawnEnemy,
-    //   callbackScope: this,
-    //   loop: true
-    // });
+    this.timer = this.time.addEvent({
+      delay: 5000,
+      callback: this.spawnEnemy,
+      callbackScope: this,
+      loop: true
+    });
   }
 
   private addOneEnemy(x: number): void {
@@ -237,13 +240,19 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: x,
       y: this.sys.canvas.height - 205,
-      key: "slug"
+      key: "slug",
+      attackBox: new AttackBox({
+        scene: this
+      })
     });
     let enemy2 = new Enemy({
       scene: this,
       x: x,
       y: this.sys.canvas.height - 205,
-      key: "slime"
+      key: "slime",
+      attackBox: new AttackBox({
+        scene: this
+      })
     });
 
     this.enemies.add(enemy);

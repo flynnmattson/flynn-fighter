@@ -7,6 +7,7 @@
 import { Player } from "../objects/player";
 import { Background } from "../objects/background";
 import { ActionText } from "../objects/actionText";
+import { AttackBox } from "../objects/attackBox";
 
 export class TownScene extends Phaser.Scene {
   // objects
@@ -91,7 +92,11 @@ export class TownScene extends Phaser.Scene {
       scene: this,
       x: this.sys.canvas.width / 5,
       y: this.sys.canvas.height - 200,
-      wield: false
+      key: "Player",
+      wield: false,
+      attackBox: new AttackBox({
+        scene: this
+      })
     });
 
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
@@ -100,7 +105,7 @@ export class TownScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.groundLayer);
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {

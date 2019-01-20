@@ -1,3 +1,5 @@
+import { AttackBox } from "./attackBox";
+
 /**
  * @author       Flynn Mattson
  * @copyright    2019 Flynn Mattson
@@ -21,6 +23,84 @@ export class Player extends Phaser.GameObjects.Sprite {
   private dyingTime: number = 400;
   private health: number;
   private attributes: any;
+  private attackHitbox: AttackBox;
+
+  constructor(params) {
+    super(params.scene, params.x, params.y, params.key);
+    this.currentScene = params.scene;
+    this.attackHitbox = params.attackBox;
+    this.isWielding = params.wield || false;
+    if (!this.isWielding) {
+      this.attackHitbox.disable();
+    }
+    this.health = params.scene.registry.get("health");
+    this.attributes = params.scene.cache.json.get('attributes')['player'];
+
+    // image
+    this.setScale(3);
+    this.setOrigin(0, 0);
+    this.setDepth(this.attributes.depth);
+
+    // physics
+    params.scene.physics.world.enable(this);
+    this.body.allowGravity = true;
+    this.body.setOffset(
+      this.attributes.body.offset.x,
+      params.scene.scene.key === "TownScene" ? this.attributes.body.offset.y * 2 : this.attributes.body.offset.y
+    );
+    this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
+    this.attackHitbox.setBodySize(this.attributes.body.size.x, this.attributes.body.size.y);
+
+    params.scene.add.existing(this);
+  }
+
+  update(): void {
+    if (this.attackHitbox.isEnabled()) {
+      if (this.flipX) {
+        this.attackHitbox.setPosition(
+          this.getLeftSide() - this.attackHitbox.getBodyWidth() / 2,
+          this.body.y
+        );
+      } else {
+        this.attackHitbox.setPosition(
+          this.getLeftSide() + this.attackHitbox.getBodyWidth() / 2,
+          this.body.y
+        );
+      }
+    }
+    if (this.body.velocity.y === 0 && this.inAir) {
+      this.inAir = false;
+      this.airAttackCombo = 1;
+    } else if (this.body.velocity.y != 0) {
+      if (!this.anims.isPlaying) {
+        this.anims.play("adventurerFall", true);
+      }
+      this.inAir = true;
+      this.isRunning = false;
+    }
+
+    if (this.isAttacking && this.currentScene.time.now > this.nextAttack) {
+      this.isAttacking = false;
+      this.attackHitbox.disable();
+    }
+
+    if (this.isSliding && this.currentScene.time.now > this.nextSlide - this.attackCooldown) {
+      this.isSliding = false;
+    }
+
+    if (this.isDead) {
+      this.anims.play("adventurerDie", true);
+      this.body.setVelocityX(0);
+
+      if (this.dyingTime > 0) {
+        this.dyingTime -= 10;
+      } else {
+        this.currentScene.scene.start("MainMenuScene");
+      }
+    }
+
+    this.isOffTheScreen();
+  }
 
   public getDead(): boolean {
     return this.isDead;
@@ -42,6 +122,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.body.x;
   }
 
+  public getAttackBox(): AttackBox {
+    return this.attackHitbox;
+  }
+
   public setWield(wield: boolean): void {
     if (wield && !this.isWielding) {
       this.anims.play("adventurerWield", false);
@@ -50,64 +134,6 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.anims.play("adventurerUnwield", false);
       this.isWielding = false;
     }
-  }
-
-  constructor(params) {
-    super(params.scene, params.x, params.y, params.key, params.frame);
-    this.currentScene = params.scene;
-    this.isWielding = params.wield || false;
-    this.health = params.scene.registry.get("health");
-    this.attributes = params.scene.cache.json.get('attributes')['player'];
-
-    // image
-    this.setScale(3);
-    this.setOrigin(0, 0);
-    this.setDepth(this.attributes.depth);
-
-    // physics
-    params.scene.physics.world.enable(this);
-    this.body.allowGravity = true;
-    this.body.setOffset(
-      this.attributes.body.offset.x, 
-      params.scene.scene.key === "TownScene" ? this.attributes.body.offset.y * 2 : this.attributes.body.offset.y
-    );
-    this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
-
-    params.scene.add.existing(this);
-  }
-
-  update(): void {
-    if (this.body.velocity.y === 0 && this.inAir) {
-      this.inAir = false;
-      this.airAttackCombo = 1;
-    } else if (this.body.velocity.y != 0) {
-      if (!this.anims.isPlaying) {
-        this.anims.play("adventurerFall", true);
-      }
-      this.inAir = true;
-      this.isRunning = false;
-    }
-
-    if (this.isAttacking && this.currentScene.time.now > this.nextAttack) {
-      this.isAttacking = false;
-    }
-
-    if (this.isSliding && this.currentScene.time.now > this.nextSlide - this.attackCooldown) {
-      this.isSliding = false;
-    }
-
-    if (this.isDead) {
-      this.anims.play("adventurerDie", true);
-      this.body.setVelocityX(0);
-
-      if (this.dyingTime > 0) {
-        this.dyingTime -= 10;
-      } else {
-        this.currentScene.scene.start("MainMenuScene");
-      }
-    }
-
-    this.isOffTheScreen();
   }
 
   public jump(): void {
@@ -130,6 +156,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public attack(): object {
     if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
+      this.attackHitbox.enable();
       if (this.inAir) {
         this.body.setVelocityX(0);
         this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
@@ -195,6 +222,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public damage(amount: number): void {
     if (!this.isDead && !this.isSliding) {
       this.isAttacking = false;
+      this.attackHitbox.disable();
       this.isHurting = true;
       this.health -= amount;
       this.currentScene.registry.set("health", this.health > 0 ? this.health : 0);

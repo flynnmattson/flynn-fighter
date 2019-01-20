@@ -270,7 +270,7 @@
         "typeOfGeneration": "generateFrameNumbers",
         "key": "slug",
         "start": 10,
-        "end": 14
+        "end": 15
       },
       "repeat": 0,
       "frameRate": 6
@@ -280,7 +280,7 @@
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
         "key": "slug",
-        "start": 15,
+        "start": 16,
         "end": 29
       },
       "repeat": 0,
