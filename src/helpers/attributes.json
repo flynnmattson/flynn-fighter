@@ -31,7 +31,9 @@
         "speed": 600,
         "cooldown": 1200,
         "velocity": 150,
-        "range" : 20
+        "range" : 20,
+        "offset": -5,
+        "trigger": 500
       }
     ],
     "health": 3,
@@ -56,13 +58,17 @@
         "speed": 1000,
         "cooldown": 1500,
         "velocity": 150,
-        "range": 20
+        "range": 25,
+        "offset": -15,
+        "trigger": 400
       }, {
         "damage": 20,
         "speed": 2200,
         "cooldown": 10000,
         "velocity": 0,
-        "range": 45
+        "range": 45,
+        "offset": 0,
+        "trigger": 1200
       }
     ],
     "health": 5,

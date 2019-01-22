@@ -13,9 +13,10 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private isAttacking: boolean = false;
   private currentScene: Phaser.Scene;
   private player: Player;
-  private attackCooldowns: Array<number>; // Object of Attack Cooldowns to know which one is available
-  private attackNum: number; // Index number of Current Attack (in attributes.json)
-  private attackFinished: number = 0;
+  private attackCooldowns: Array<number>; // Array of Attack Cooldowns to know which one is available
+  private attackNum: number = 0; // Index number of Current Attack (in attributes.json)
+  private attackFinished: number = 0; // Attack animation/follow through is finished at this time.
+  private attackTrigger: number = 0; // When to trigger the current attack's damage to Player
   private health: number;
   private dyingTime: number = 400;
   private attributes: any;
@@ -73,10 +74,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     return this.isDead;
   }
 
+  public getBodyCenter(): number {
+    return this.body.x + (this.body.width / 2);
+  }
+
   public damage(info): void {
     if (!this.isDead) {
-      this.isAttacking = false;
-      this.attackHitbox.disable();
+      this.cancelAttack();
       this.isHurting = true;
       this.health--;
       this.setTintFill(0xffffff);
@@ -104,23 +108,31 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       specific attack. Within attack call, put another overlap check on 
       timeout for when you want to trigger the damage on the player.
     */
-    this.currentScene.physics.overlap(
-      this,
-      this.player,
-      (enemy: Enemy, player: Player) => {
-        this.attack();
-      },
-      null,
-      this
-    );
-    if (!this.isHurting && !this.isAttacking && this.body.x > this.player.getRightSide()) {
+    if (this.isAttacking && this.attackTrigger != 0 && this.currentScene.time.now >= this.attackTrigger) {
+      this.currentScene.physics.overlap(
+        this.attackHitbox,
+        this.player,
+        (enemy: AttackBox, player: Player) => {
+          this.player.damage(this.attributes.attack[this.attackNum].damage);
+        },
+        null,
+        this
+      );
+      this.attackTrigger = 0;
+    } else if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
+      this.cancelAttack();
+    } else if (!this.isAttacking && !this.isHurting) {
+      this.checkRange();
+    }
+
+    if (!this.isHurting && !this.isAttacking && this.body.x > this.player.getBodyRightSide()) {
       this.runLeft();
-    } else if (!this.isHurting && !this.isAttacking && this.body.x + this.body.width < this.player.getLeftSide()) {
+    } else if (!this.isHurting && !this.isAttacking && this.body.x + this.body.width < this.player.getBodyLeftSide()) {
       this.runRight();
     } else {
-      if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
-        this.isAttacking = false;
-        this.attackHitbox.disable();
+      if (!this.isHurting && !this.isAttacking) {
+        if (this.getBodyCenter() < this.player.getBodyCenter()) this.flipX = true;
+        else this.flipX = false;
       }
       this.stopRun();
     }
@@ -130,51 +142,63 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     }
   }
 
-  private attack(): void {
-    if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
-      this.player.damage(this.attributes.attack[this.attackNum].damage);
-      this.isAttacking = false;
-      this.attackHitbox.disable();
-    } else if (!this.isAttacking && !this.isHurting && this.readyAttack()) {
-      this.isAttacking = true;
-      this.attackHitbox.enable();
-      this.attackHitbox.setBodySize(
-        this.attributes.attack[this.attackNum].range,
-        this.attributes.body.size.y
-      );
-      this.anims.play(`${this.texture.key}Attack${this.attackNum + 1}`, false);
-      this.body.setVelocityX(
-        this.flipX ? 
-        this.attributes.attack[this.attackNum].velocity :
-        this.attributes.attack[this.attackNum].velocity * -1
-      );
-      this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
-      this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
+  private checkRange(): void {
+    this.attackHitbox.enable();
+    for (let i = this.attackCooldowns.length - 1; i >= 0; i--) {
+      if (this.isAttacking) return; // Stops the loop from continuing
+      else if (this.attackCooldowns[i] <= this.currentScene.time.now) {
+        this.attackNum = i;
+        this.attackHitbox.setBodySize(
+          this.attributes.attack[this.attackNum].range,
+          this.attributes.body.size.y
+        );
+        this.repositionAttackBox();
+        this.currentScene.physics.overlap(
+          this.attackHitbox,
+          this.player,
+          (enemy: AttackBox, player: Player) => {
+            this.attack();
+          },
+          null,
+          this
+        );
+      }
     }
+  }
+
+  private attack(): void {
+    this.isAttacking = true;
+    this.anims.play(`${this.texture.key}Attack${this.attackNum + 1}`, false);
+    this.body.setVelocityX(
+      this.flipX ?
+      this.attributes.attack[this.attackNum].velocity :
+      this.attributes.attack[this.attackNum].velocity * -1
+    );
+    this.attackTrigger = this.currentScene.time.now + this.attributes.attack[this.attackNum].trigger;
+    this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
+    this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
+  }
+
+  private cancelAttack(): void {
+    this.isAttacking = false;
+    this.attackTrigger = 0;
+    this.attackHitbox.disable();
   }
 
   private repositionAttackBox(): void {
     if (this.flipX) {
       this.attackHitbox.setPosition(
-        (this.body.x + this.body.width) - this.attackHitbox.getBodyWidth() / 2,
+        (this.body.x + this.body.width) - (this.attackHitbox.getBodyWidth() / 2)
+          + this.attributes.attack[this.attackNum].offset,
         this.body.y
       );
     } else {
       this.attackHitbox.setPosition(
-        this.body.x - this.attackHitbox.getBodyWidth() / 2,
+        this.body.x - (this.attackHitbox.getBodyWidth() / 2)
+          - this.attributes.attack[this.attackNum].offset,
         this.body.y
       );
     }
-  }
-
-  private readyAttack(): boolean {
-    for (let i = 0; i < this.attackCooldowns.length; i++) {
-      if (this.attackCooldowns[i] <= this.currentScene.time.now) {
-        this.attackNum = i;
-        return true;
-      }
-    }
-    return false;
   }
 
   private runLeft(): void {

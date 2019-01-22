@@ -58,12 +58,12 @@ export class Player extends Phaser.GameObjects.Sprite {
     if (this.attackHitbox.isEnabled()) {
       if (this.flipX) {
         this.attackHitbox.setPosition(
-          this.getLeftSide() - this.attackHitbox.getBodyWidth() / 2,
+          this.getBodyLeftSide() - this.attackHitbox.getBodyWidth() / 2,
           this.body.y
         );
       } else {
         this.attackHitbox.setPosition(
-          this.getLeftSide() + this.attackHitbox.getBodyWidth() / 2,
+          this.getBodyLeftSide() + this.attackHitbox.getBodyWidth() / 2,
           this.body.y
         );
       }
@@ -114,11 +114,15 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.body.x;
   }
 
-  public getRightSide(): number {
+  public getBodyCenter(): number {
+    return this.body.x + (this.body.width / 2);
+  }
+
+  public getBodyRightSide(): number {
     return this.body.x + this.body.width;
   }
 
-  public getLeftSide(): number {
+  public getBodyLeftSide(): number {
     return this.body.x;
   }
 
