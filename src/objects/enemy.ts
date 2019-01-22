@@ -113,7 +113,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.attackHitbox,
         this.player,
         (enemy: AttackBox, player: Player) => {
-          this.player.damage(this.attributes.attack[this.attackNum].damage);
+          // this.player.damage(this.attributes.attack[this.attackNum].damage);
         },
         null,
         this
@@ -131,8 +131,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.runRight();
     } else {
       if (!this.isHurting && !this.isAttacking) {
-        if (this.getBodyCenter() < this.player.getBodyCenter()) this.flipX = true;
-        else this.flipX = false;
+        if (this.getBodyCenter() + this.attributes.body.offset.flipX < this.player.getBodyCenter()) this.flip(true);
+        else if (this.getBodyCenter() - this.attributes.body.offset.flipX > this.player.getBodyCenter()) this.flip(false);
       }
       this.stopRun();
     }
@@ -185,6 +185,15 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.attackHitbox.disable();
   }
 
+  private flip(state: boolean): void {
+    this.flipX = state;
+    if (state) {
+      this.body.setOffset(this.attributes.body.offset.flipX, this.attributes.body.offset.y);
+    } else {
+      this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
+    }
+  }
+
   private repositionAttackBox(): void {
     if (this.flipX) {
       this.attackHitbox.setPosition(
@@ -202,19 +211,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   private runLeft(): void {
-    this.flipX = false;
-    if (this.body.offset.x < 0) {
-      this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
-    }
+    if (this.flipX) this.flip(false);
     this.body.setVelocityX(this.attributes.speed * -1);
     this.anims.play(`${this.texture.key}Run`, true);
   }
 
   private runRight(): void {
-    this.flipX = true;
-    if (this.body.offset.x > 0) {
-      this.body.setOffset(this.attributes.body.offset.flipX, this.attributes.body.offset.y);
-    }
+    if (!this.flipX) this.flip(true);
     this.body.setVelocityX(this.attributes.speed);
     this.anims.play(`${this.texture.key}Run`, true);
   }

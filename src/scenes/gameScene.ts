@@ -106,7 +106,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -227,12 +227,12 @@ export class GameScene extends Phaser.Scene {
   private startSpawner(): void {
     this.spawnEnemy();
 
-    this.timer = this.time.addEvent({
-      delay: 5000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
+    // this.timer = this.time.addEvent({
+    //   delay: 5000,
+    //   callback: this.spawnEnemy,
+    //   callbackScope: this,
+    //   loop: true
+    // });
   }
 
   private addOneEnemy(x: number): void {
@@ -240,23 +240,23 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: x,
       y: this.sys.canvas.height - 205,
-      key: "slug",
+      key: "imp",
       attackBox: new AttackBox({
         scene: this
       })
     });
-    let enemy2 = new Enemy({
-      scene: this,
-      x: x,
-      y: this.sys.canvas.height - 205,
-      key: "slime",
-      attackBox: new AttackBox({
-        scene: this
-      })
-    });
+    // let enemy2 = new Enemy({
+    //   scene: this,
+    //   x: x,
+    //   y: this.sys.canvas.height - 205,
+    //   key: "slime",
+    //   attackBox: new AttackBox({
+    //     scene: this
+    //   })
+    // });
 
     this.enemies.add(enemy);
-    this.enemies.add(enemy2);
+    // this.enemies.add(enemy2);
   }
 
   private spawnEnemy(): void {

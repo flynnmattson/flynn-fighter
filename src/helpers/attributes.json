@@ -73,5 +73,32 @@
     ],
     "health": 5,
     "speed": 100
+  },
+  "imp": {
+    "depth": 2,
+    "body": {
+      "size": {
+        "x": 20,
+        "y": 25
+      },
+      "offset": {
+        "flipX": 18,
+        "x": 12,
+        "y": 15
+      }
+    },
+    "attack": [
+      {
+        "damage": 8,
+        "speed": 1000,
+        "cooldown": 1500,
+        "velocity": 0,
+        "range": 50,
+        "offset": -15,
+        "trigger": 400
+      }
+    ],
+    "health": 3,
+    "speed": 200
   }
 }
