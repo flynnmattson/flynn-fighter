@@ -87,7 +87,6 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(1000);
 
     this.physics.add.collider(this.player, this.groundLayer);
-    this.physics.add.collider(this.enemies, this.groundLayer);
 
     this.cutscene = {
       countdown: 1400,
@@ -124,6 +123,10 @@ export class GameScene extends Phaser.Scene {
 
   public getPlayer(): Player {
     return this.player;
+  }
+
+  public getGroundLayer(): Phaser.Tilemaps.StaticTilemapLayer {
+    return this.groundLayer;
   }
 
   private debug(): void {
@@ -245,18 +248,18 @@ export class GameScene extends Phaser.Scene {
         scene: this
       })
     });
-    // let enemy2 = new Enemy({
-    //   scene: this,
-    //   x: x,
-    //   y: this.sys.canvas.height - 205,
-    //   key: "slime",
-    //   attackBox: new AttackBox({
-    //     scene: this
-    //   })
-    // });
+    let enemy2 = new Enemy({
+      scene: this,
+      x: x,
+      y: this.sys.canvas.height - 205,
+      key: "slime",
+      attackBox: new AttackBox({
+        scene: this
+      })
+    });
 
     this.enemies.add(enemy);
-    // this.enemies.add(enemy2);
+    this.enemies.add(enemy2);
   }
 
   private spawnEnemy(): void {

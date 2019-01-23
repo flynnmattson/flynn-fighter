@@ -1,5 +1,7 @@
 import { Player } from "./player";
 import { AttackBox } from "./attackBox";
+import { GameScene } from "../scenes/gameScene";
+import { Projectile } from "./projectile";
 
 /**
  * @author       Flynn Mattson
@@ -11,7 +13,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private isDead: boolean = false;
   private isHurting: boolean = false;
   private isAttacking: boolean = false;
-  private currentScene: Phaser.Scene;
+  private currentScene: GameScene;
   private player: Player;
   private attackCooldowns: Array<number>; // Array of Attack Cooldowns to know which one is available
   private attackNum: number = 0; // Index number of Current Attack (in attributes.json)
@@ -21,6 +23,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private dyingTime: number = 400;
   private attributes: any;
   private attackHitbox: AttackBox;
+  private projectiles: Phaser.GameObjects.Group;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key);
@@ -34,7 +37,14 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.attributes = params.scene.cache.json.get('attributes')[params.key];
     this.health = this.attributes.health;
     this.attackCooldowns = [];
-    this.attributes.attack.forEach((a) => {
+    this.attributes.attack.forEach((attack) => {
+      if (attack.type === 'ranged' && !this.projectiles) {
+        this.projectiles = this.currentScene.add.group({
+          classType: Projectile,
+          active: true,
+          runChildUpdate: false
+        });
+      }
       this.attackCooldowns.push(0);
     });
 
@@ -45,7 +55,14 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
     // physics
     params.scene.physics.world.enable(this);
-    this.body.allowGravity = true;
+
+    if (this.attributes.type === 'ground') {
+      this.currentScene.physics.add.collider(this, this.currentScene.getGroundLayer());
+      this.body.allowGravity = true;
+    } else if (this.attributes.type === 'fly') {
+      this.body.allowGravity = false;
+    }
+
     this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
     this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
     
@@ -61,7 +78,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
       if (this.dyingTime > 0) {
         this.dyingTime -= 10;
-      } else {
+      } else if (this.body.velocity.y === 0) {
         this.currentScene.registry.set("points", this.currentScene.registry.get("points") + 1);
         this.currentScene.events.emit("pointsChanged");
         this.attackHitbox.destroy();
@@ -78,6 +95,18 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     return this.body.x + (this.body.width / 2);
   }
 
+  public getBodyRight(): number {
+    return this.body.x + this.body.width;
+  }
+
+  public getBodyLeft(): number {
+    return this.body.x;
+  }
+
+  public getBodyHeightCenter(): number {
+    return this.body.y - (this.body.height / 2);
+  }
+
   public damage(info): void {
     if (!this.isDead) {
       this.cancelAttack();
@@ -89,11 +118,15 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       }, 100);
       if (this.health > 0) {
         this.anims.play(`${this.texture.key}Hurt`, true);
-        this.body.setVelocity(info.faceLeft ? -75 : 75, 75);
+        this.body.setVelocity(info.faceLeft ? -75 : 75, 0);
         setTimeout(() => {
           this.isHurting = false;
         }, 600);
       } else {
+        if (this.attributes.type === 'fly') {
+          this.currentScene.physics.add.collider(this, this.currentScene.getGroundLayer());
+          this.body.allowGravity = true;
+        }
         this.isDead = true;
       }
     }
@@ -109,15 +142,28 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       timeout for when you want to trigger the damage on the player.
     */
     if (this.isAttacking && this.attackTrigger != 0 && this.currentScene.time.now >= this.attackTrigger) {
-      this.currentScene.physics.overlap(
-        this.attackHitbox,
-        this.player,
-        (enemy: AttackBox, player: Player) => {
-          // this.player.damage(this.attributes.attack[this.attackNum].damage);
-        },
-        null,
-        this
-      );
+      if (this.attributes.attack[this.attackNum].type === 'ranged') {
+        // Shoot Projectile Here
+        this.projectiles.add(new Projectile({
+          scene: this.currentScene,
+          x: this.flipX ? this.getBodyRight() : this.getBodyLeft(),
+          y: this.getBodyHeightCenter() + this.body.height,
+          info: this.attributes.attack[this.attackNum].projectile,
+          damage: this.attributes.attack[this.attackNum].damage,
+          key: `${this.texture.key}Projectile${this.attackNum + 1}`,
+          flip: this.flipX
+        }));
+      } else {
+        this.currentScene.physics.overlap(
+          this.attackHitbox,
+          this.player,
+          (enemy: AttackBox, player: Player) => {
+            // this.player.damage(this.attributes.attack[this.attackNum].damage);
+          },
+          null,
+          this
+        );
+      }
       this.attackTrigger = 0;
     } else if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
       this.cancelAttack();
@@ -137,6 +183,16 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.stopRun();
     }
 
+    if (this.attributes.type === 'fly') {
+      if (!this.isHurting && !this.isAttacking && this.getBodyHeightCenter() + 5 < this.player.getBodyHeightCenter()) {
+        this.flyDown();
+      } else if (!this.isHurting && !this.isAttacking && this.getBodyHeightCenter() - 5 > this.player.getBodyHeightCenter()) {
+        this.flyUp();
+      } else {
+        this.stopFly();
+      }
+    }
+
     if (this.attackHitbox.isEnabled()) {
       this.repositionAttackBox();
     }
@@ -144,6 +200,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
 
   private checkRange(): void {
     this.attackHitbox.enable();
+    // Starts from the top of the attacks array in attributes.json.
+    // NOTE: Assumes Range of attacks are ascending in the array which means Furthest away at the end.
     for (let i = this.attackCooldowns.length - 1; i >= 0; i--) {
       if (this.isAttacking) return; // Stops the loop from continuing
       else if (this.attackCooldowns[i] <= this.currentScene.time.now) {
@@ -174,8 +232,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.attributes.attack[this.attackNum].velocity :
       this.attributes.attack[this.attackNum].velocity * -1
     );
-    this.attackTrigger = this.currentScene.time.now + this.attributes.attack[this.attackNum].trigger;
     this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
+    this.attackTrigger = this.currentScene.time.now + this.attributes.attack[this.attackNum].trigger;
     this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
   }
 
@@ -220,6 +278,24 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     if (!this.flipX) this.flip(true);
     this.body.setVelocityX(this.attributes.speed);
     this.anims.play(`${this.texture.key}Run`, true);
+  }
+
+  private flyDown(): void {
+    this.body.setVelocityY(this.attributes.speed);
+    this.anims.play(`${this.texture.key}Run`, true);
+  }
+
+  private flyUp(): void {
+    this.body.setVelocityY(this.attributes.speed * -1);
+    this.anims.play(`${this.texture.key}Run`, true);
+  }
+
+  private stopFly(): void {
+    if (this.body.velocity.y > 0) {
+      this.body.setVelocityY(this.body.velocity.y - 50);
+    } else if (this.body.velocity.y < 0) {
+      this.body.setVelocityY(this.body.velocity.y + 50);
+    }
   }
 
   private stopRun(): void {

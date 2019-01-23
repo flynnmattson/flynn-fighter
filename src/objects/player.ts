@@ -126,6 +126,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.body.x;
   }
 
+  public getBodyHeightCenter(): number {
+    return this.body.y - (this.body.height / 2);
+  }
+
   public getAttackBox(): AttackBox {
     return this.attackHitbox;
   }
