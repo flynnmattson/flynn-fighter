@@ -1,20 +1,21 @@
 {
   "player": {
-    "depth": 1,
+    "depth": 2,
     "body": {
       "size": {
-        "x": 24,
+        "x": 20,
         "y": 25
       },
       "offset": {
-        "x": 12,
+        "flipX": 14,
+        "x": 14,
         "y": 7
       }
     }
   },
   "slime": {
     "type": "ground",
-    "depth": 2,
+    "depth": 3,
     "body": {
       "size": {
         "x": 26,
@@ -38,8 +39,9 @@
         "trigger": 500
       }
     ],
-    "health": 3,
-    "speed": 150
+    "health": 2,
+    "speed": 150,
+    "dying": 500
   },
   "slug": {
     "type": "ground",
@@ -76,12 +78,13 @@
         "trigger": 1200
       }
     ],
-    "health": 5,
-    "speed": 100
+    "health": 6,
+    "speed": 100,
+    "dying": 700
   },
   "imp": {
     "type": "fly",
-    "depth": 0,
+    "depth": 1,
     "body": {
       "size": {
         "x": 20,
@@ -99,20 +102,20 @@
         "projectile": {
           "body": {
             "size": {
-              "x": 34,
-              "y": 9
+              "x": 24,
+              "y": 7
             },
             "offset": {
-              "flipX": 0,
-              "x": 0,
+              "flipX": 7,
+              "x": 2,
               "y": 0
             }
           },
-          "speed": 200
+          "speed": 250
         },
-        "damage": 10,
+        "damage": 7,
         "speed": 1000,
-        "cooldown": 1500,
+        "cooldown": 2000,
         "velocity": 0,
         "range": 100,
         "offset": 150,
@@ -120,6 +123,7 @@
       }
     ],
     "health": 3,
-    "speed": 150
+    "speed": 150,
+    "dying": 900 
   }
 }

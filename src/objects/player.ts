@@ -15,7 +15,9 @@ export class Player extends Phaser.GameObjects.Sprite {
   private isSliding: boolean = false;
   private isWielding: boolean = false;
   private currentScene: Phaser.Scene;
-  private attackCooldown: number = 375;
+  private attackCooldown: number = 355;
+  private attackTrigger: number = 0;
+  private attackStart: number = 0;
   private nextAttack: number = 0;
   private nextSlide: number = 0;
   private attackCombo: number = 1;
@@ -134,6 +136,14 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.attackHitbox;
   }
 
+  public getNextAttack(): number {
+    return this.nextAttack;
+  }
+
+  public getAttackTrigger(): number {
+    return this.attackTrigger;
+  }
+
   public setWield(wield: boolean): void {
     if (wield && !this.isWielding) {
       this.anims.play("adventurerWield", false);
@@ -176,7 +186,16 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
       }
 
-      this.nextAttack = this.currentScene.time.now + this.attackCooldown;
+      // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
+      // this.nextAttack, then continually do overlap checks on enemies and the Player
+      // attack box and if they overlap damage the enemy. Pass in the time of the attack
+      // to the damage function call and keep track of that in the Enemy class. That way
+      // the Enemy will only be damaged by an attack once because we do a bunch of overlap
+      // checks.
+      this.attackStart = this.currentScene.time.now;
+      this.nextAttack = this.attackStart + this.attackCooldown;
+      this.attackTrigger = this.attackStart + this.attackCooldown / 3;
+
       return {
         triggerDamage: this.inAir ? this.attackCooldown - this.attackCooldown / 4 : this.attackCooldown / 2,
         faceLeft: this.flipX
@@ -188,7 +207,7 @@ export class Player extends Phaser.GameObjects.Sprite {
  
   public runLeft(): void {
     if (!this.isAttacking && !this.isSliding) {
-      this.flipX = true;
+      this.flip(true);
       if (this.body.offset.x > 0) {
         this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
       }
@@ -202,7 +221,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   public runRight(): void {
     if (!this.isAttacking && !this.isSliding) {
-      this.flipX = false;
+      this.flip(false);
       if (this.body.offset.x < 0) {
         this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
       }
@@ -227,7 +246,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public damage(amount: number): void {
+  public damage(amount: number): boolean {
     if (!this.isDead && !this.isSliding) {
       this.isAttacking = false;
       this.attackHitbox.disable();
@@ -242,13 +261,26 @@ export class Player extends Phaser.GameObjects.Sprite {
       }, 100);
 
       if (this.health > 0) {
-        this.anims.play("adventurerHurt", true);
+        if (!this.inAir) this.anims.play("adventurerHurt", true);
         setTimeout(() => {
           this.isHurting = false;
         }, 400);
       } else {
         this.isDead = true;
       }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private flip(state: boolean): void {
+    this.flipX = state;
+    if (state) {
+      this.body.setOffset(this.attributes.body.offset.flipX, this.body.offset.y);
+    } else {
+      this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
     }
   }
 

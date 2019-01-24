@@ -19,8 +19,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private attackNum: number = 0; // Index number of Current Attack (in attributes.json)
   private attackFinished: number = 0; // Attack animation/follow through is finished at this time.
   private attackTrigger: number = 0; // When to trigger the current attack's damage to Player
+  private dyingTime: number = 0;
   private health: number;
-  private dyingTime: number = 400;
   private attributes: any;
   private attackHitbox: AttackBox;
   private projectiles: Phaser.GameObjects.Group;
@@ -73,12 +73,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     if (!this.isDead) {
       this.move();
     } else {
-      this.anims.play(`${this.texture.key}Dead`, true);
       this.body.setVelocityX(0);
 
-      if (this.dyingTime > 0) {
-        this.dyingTime -= 10;
-      } else if (this.body.velocity.y === 0) {
+      if (this.dyingTime <= this.currentScene.time.now && this.body.velocity.y === 0) {
         this.currentScene.registry.set("points", this.currentScene.registry.get("points") + 1);
         this.currentScene.events.emit("pointsChanged");
         this.attackHitbox.destroy();
@@ -128,6 +125,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
           this.body.allowGravity = true;
         }
         this.isDead = true;
+        this.dyingTime = this.currentScene.time.now + this.attributes.dying;
+        this.anims.play(`${this.texture.key}Dead`, false);
       }
     }
   }
@@ -158,12 +157,13 @@ export class Enemy extends Phaser.GameObjects.Sprite {
           this.attackHitbox,
           this.player,
           (enemy: AttackBox, player: Player) => {
-            // this.player.damage(this.attributes.attack[this.attackNum].damage);
+            this.player.damage(this.attributes.attack[this.attackNum].damage);
           },
           null,
           this
         );
       }
+      this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
       this.attackTrigger = 0;
     } else if (this.isAttacking && this.currentScene.time.now >= this.attackFinished) {
       this.cancelAttack();
@@ -232,7 +232,6 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.attributes.attack[this.attackNum].velocity :
       this.attributes.attack[this.attackNum].velocity * -1
     );
-    this.attackCooldowns[this.attackNum] = this.currentScene.time.now + this.attributes.attack[this.attackNum].cooldown;
     this.attackTrigger = this.currentScene.time.now + this.attributes.attack[this.attackNum].trigger;
     this.attackFinished = this.currentScene.time.now + this.attributes.attack[this.attackNum].speed;
   }
