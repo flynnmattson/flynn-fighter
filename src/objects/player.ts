@@ -7,10 +7,11 @@ import { AttackBox } from "./attackBox";
  */
 
 export class Player extends Phaser.GameObjects.Sprite {
+  
   private isDead: boolean = false;
   private inAir: boolean = false;
-  private isRunning: boolean = false;
   private isAttacking: boolean = false;
+  private isRunning: boolean = false;
   private isHurting: boolean = false;
   private isSliding: boolean = false;
   private isWielding: boolean = false;
@@ -136,14 +137,6 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.attackHitbox;
   }
 
-  public getNextAttack(): number {
-    return this.nextAttack;
-  }
-
-  public getAttackTrigger(): number {
-    return this.attackTrigger;
-  }
-
   public setWield(wield: boolean): void {
     if (wield && !this.isWielding) {
       this.anims.play("adventurerWield", false);
@@ -171,7 +164,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public attack(): object {
+  public startAttack(): void {
     if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
       this.attackHitbox.enable();
@@ -195,10 +188,18 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.attackStart = this.currentScene.time.now;
       this.nextAttack = this.attackStart + this.attackCooldown;
       this.attackTrigger = this.attackStart + this.attackCooldown / 3;
+    }
+  }
 
+  public triggerAttack(): object {
+    if (
+      this.isAttacking &&
+      this.currentScene.time.now >= this.attackTrigger &&
+      this.currentScene.time.now <= this.nextAttack
+    ) {
       return {
-        triggerDamage: this.inAir ? this.attackCooldown - this.attackCooldown / 4 : this.attackCooldown / 2,
-        faceLeft: this.flipX
+        faceLeft: this.flipX,
+        damageId: this.attackStart
       };
     } else {
       return null;

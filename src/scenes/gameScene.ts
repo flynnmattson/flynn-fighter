@@ -115,6 +115,7 @@ export class GameScene extends Phaser.Scene {
     if (this.cutscene) {
       this.handleCutscene();
     } else {
+      this.handleAttack();
       this.handleInput();
     }
     this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
@@ -177,27 +178,27 @@ export class GameScene extends Phaser.Scene {
 
     this.input.on(
       "pointerdown",
-      () => {
-        let attackInfo;
-        if (attackInfo = this.player.attack()) {
-          // damage overlapping enemies
-          setTimeout(() => {
-            this.physics.overlap(
-              this.enemies,
-              this.player.getAttackBox(),
-              (enemy: Enemy, player: AttackBox) => {
-                enemy.damage(attackInfo);
-              },
-              null,
-              this
-            );
-          }, attackInfo.triggerDamage);
-        }
-      },
+      () => { this.player.startAttack(); },
       this
     );
 
     this.startSpawner();
+  }
+
+  private handleAttack(): void {
+    let attackInfo;
+
+    if (attackInfo = this.player.triggerAttack()) {
+      this.physics.overlap(
+        this.enemies,
+        this.player.getAttackBox(),
+        (enemy: Enemy, player: AttackBox) => {
+          enemy.damage(attackInfo);
+        },
+        null,
+        this
+      );
+    }
   }
 
   private handleInput(): void {

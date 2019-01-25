@@ -19,6 +19,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private attackNum: number = 0; // Index number of Current Attack (in attributes.json)
   private attackFinished: number = 0; // Attack animation/follow through is finished at this time.
   private attackTrigger: number = 0; // When to trigger the current attack's damage to Player
+  private lastDamageId: number = 0; // The Player Damage ID used to only receive damage from a single attack once.
   private dyingTime: number = 0;
   private health: number;
   private attributes: any;
@@ -105,8 +106,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   }
 
   public damage(info): void {
-    if (!this.isDead) {
+    if (!this.isDead && this.lastDamageId !== info.damageId) {
       this.cancelAttack();
+      this.lastDamageId = info.damageId;
       this.isHurting = true;
       this.health--;
       this.setTintFill(0xffffff);
