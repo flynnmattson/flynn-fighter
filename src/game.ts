@@ -1,7 +1,7 @@
 /**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @license      Digitsensitive
+ * @author       Flynn Mattson
+ * @copyright    2019 Flynn Mattson
+ * @license      Flynn Fighter
  */
 
 /// <reference path="./phaser.d.ts"/>

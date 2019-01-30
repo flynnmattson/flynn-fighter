@@ -80,7 +80,7 @@
       {
         "type": "tilemapTiledJSON",
         "key": "jungleMap",
-        "url": "src/assets/other/test2.json"
+        "url": "src/assets/other/jungle_map.json"
       },
       {
         "type": "tilemapTiledJSON",

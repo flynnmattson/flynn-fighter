@@ -105,12 +105,12 @@ export class TownScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.groundLayer);
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
     this.handleInput();
-    this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
+    this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
     this.player.update();
     this.actionText.update();
 

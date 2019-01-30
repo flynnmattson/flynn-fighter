@@ -71,12 +71,16 @@ export class Player extends Phaser.GameObjects.Sprite {
         );
       }
     }
-    if (this.body.velocity.y === 0 && this.inAir) {
+
+    if (this.inAir && this.body.onFloor()) {
       this.inAir = false;
       this.airAttackCombo = 1;
-    } else if (this.body.velocity.y != 0) {
-      if (!this.anims.isPlaying) {
-        this.anims.play("adventurerFall", true);
+    } else if (this.body.velocity.y > 0) {
+      if (
+        !this.anims.isPlaying ||
+        ["adventurerRun", "adventurerRunSword", "adventurerSlide"].indexOf(this.anims.getCurrentKey()) !== -1
+      ) {
+        this.anims.play("adventurerFall", false);
       }
       this.inAir = true;
       this.isRunning = false;
@@ -150,7 +154,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public jump(): void {
     if (!this.isSliding && !this.inAir && !this.isAttacking) {
       this.inAir = true;
-      this.body.setVelocityY(-350);
+      this.body.setVelocityY(-400);
       this.anims.play("adventurerJump", false);
     }
   }
@@ -158,7 +162,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   public slide(): void {
     if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.inAir) {
       this.isSliding = true;
-      this.body.setVelocityX(this.flipX ? this.isRunning ? -550 : -1000 : this.isRunning ? 550 : 1000);
+      this.body.setVelocityX(this.flipX ? this.body.velocity.x !== 0 ? -550 : -1000 : this.body.velocity.x !== 0 ? 550 : 1000);
       this.anims.play("adventurerSlide", true);
       this.nextSlide = this.currentScene.time.now + this.attackCooldown * 2;
     }

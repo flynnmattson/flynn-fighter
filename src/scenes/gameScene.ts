@@ -26,12 +26,13 @@ export class GameScene extends Phaser.Scene {
   private downKey: Phaser.Input.Keyboard.Key;
   private escapeKey: Phaser.Input.Keyboard.Key;
   private keyWait: number;
-  private cutscene: { wield: number, run: number, jump: number, countdown: number };
+  private cutscene: { wield: number, run: number, countdown: number };
 
   // tilemap
   private map: Phaser.Tilemaps.Tilemap;
   private tileset: Phaser.Tilemaps.Tileset;
   private groundLayer: Phaser.Tilemaps.StaticTilemapLayer;
+  private middleLayer: Phaser.Tilemaps.StaticTilemapLayer;
 
   constructor() {
     super({
@@ -65,34 +66,47 @@ export class GameScene extends Phaser.Scene {
     this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
-      area: "jungle"
+      area: "jungle",
+      x: 0,
+      y: 0,
+      width: this.sys.canvas.width * 3,
+      height: 216
     });
     this.map = this.make.tilemap({ key: "jungleMap" });
     this.tileset = this.map.addTilesetImage("jungle tileset", "jungleTiles");
-    this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, 150);
+    this.middleLayer = this.map.createStaticLayer("MiddleGround", this.tileset, 0, -400);
+    this.middleLayer.setScale(3);
+    // this.middleLayer.setScaleMode(ScaleModes.NEAREST);
+    this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, -400);
     this.groundLayer.setScale(3);
     this.groundLayer.setCollisionByProperty({collides: true});
+
+    // TODO: USE THIS TO CREATE SPAWNERS AND WE CAN ADD CUSTOM PROPERTIES TO EACH OF THESE SPAWN
+    // POINT OBJECTS WHICH CAN INCLUDE THE NUMBER OF EACH CLASS THAT SPAWNS, INTERVAL THEY ARE SPAWNED
+    // THAT SORT OF STUFF.
+    console.log(this.map.getObjectLayer("SpawnPoints"));
+
     this.player = new Player({
       scene: this,
-      x: -120,
-      y: 50,
+      x: 0,
+      y: 0,
       wield: false,
       attackBox: new AttackBox({
         scene: this
       })
     });
 
-    this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 1.5, this.sys.canvas.height);
+    this.cameras.main.setBounds(150, -375, this.sys.canvas.width * 2.70, this.sys.canvas.height * 1.15);
     this.cameras.main.startFollow(this.player, true, 1, 1, -50, 0);
+    // this.cameras.main.roundPixels = true;
     this.cameras.main.fadeIn(1000);
 
     this.physics.add.collider(this.player, this.groundLayer);
 
     this.cutscene = {
-      countdown: 1400,
-      wield: 1400,
-      run: 1100,
-      jump: 0
+      countdown: 1500,
+      wield: 1500,
+      run: 1200
     };
     this.countdownText = new ActionText({
       scene: this,
@@ -105,7 +119,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -118,7 +132,8 @@ export class GameScene extends Phaser.Scene {
       this.handleAttack();
       this.handleInput();
     }
-    this.parallaxBg.shift(this.player.getVelocityX(), this.player.getPositionX());
+    this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
+    this.parallaxBg.shiftY(this.cameras.main.scrollY);
     this.player.update();
   }
 
@@ -131,12 +146,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   private debug(): void {
-    const debugGraphics = this.add.graphics().setAlpha(0.75);
-    this.groundLayer.renderDebug(debugGraphics, {
-      tileColor: null, // Color of non-colliding tiles
-      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    });
+    // const debugGraphics = this.add.graphics().setAlpha(0.75);
+    // this.groundLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    // });
 
     this.player.setPosition(250, 0);
     this.player.setWield(true);
@@ -144,8 +159,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleCutscene(): void {
-    if (this.cutscene.jump === 0) this.player.jump();
-    if (this.cutscene.run > 0) {
+    if (this.cutscene.run < 600 && this.cutscene.run > 0) {
       this.player.runRight();
     } else {
       this.player.stopRun();
@@ -182,7 +196,7 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
-    this.startSpawner();
+    // this.startSpawner();
   }
 
   private handleAttack(): void {
