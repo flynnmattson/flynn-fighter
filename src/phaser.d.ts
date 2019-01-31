@@ -52662,7 +52662,8 @@ declare namespace Phaser {
             /**
              * [description]
              */
-            objects: Phaser.GameObjects.GameObject[];
+            objects: any[];
+            // objects: Phaser.GameObjects.GameObject[];
 
         }
 

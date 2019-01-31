@@ -10,6 +10,8 @@ import { Enemy } from "../objects/enemy";
 import { Background } from "../objects/background";
 import { ActionText } from "../objects/actionText";
 import { AttackBox } from "../objects/attackBox";
+import { InputHandler } from "../objects/inputHandler";
+import { Spawner } from "../objects/spawner";
 
 export class GameScene extends Phaser.Scene {
   // objects
@@ -17,15 +19,10 @@ export class GameScene extends Phaser.Scene {
   private enemies: Phaser.GameObjects.Group;
   private countdownText: ActionText;
   private parallaxBg: Background;
+  private inputHandler: InputHandler;
+  private spawners: Array<Spawner>;
 
   // variables
-  private timer: Phaser.Time.TimerEvent;
-  private jumpKey: Phaser.Input.Keyboard.Key;
-  private leftKey: Phaser.Input.Keyboard.Key;
-  private rightKey: Phaser.Input.Keyboard.Key;
-  private downKey: Phaser.Input.Keyboard.Key;
-  private escapeKey: Phaser.Input.Keyboard.Key;
-  private keyWait: number;
   private cutscene: { wield: number, run: number, countdown: number };
 
   // tilemap
@@ -49,21 +46,10 @@ export class GameScene extends Phaser.Scene {
       runChildUpdate: true
     });
     this.cutscene = null;
-
-    // variables
-    this.timer = undefined;
-
-    // input
-    this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
   }
 
   create(): void {
     this.registry.set("currentScene", "GameScene");
-    this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
       area: "jungle",
@@ -81,11 +67,6 @@ export class GameScene extends Phaser.Scene {
     this.groundLayer.setScale(3);
     this.groundLayer.setCollisionByProperty({collides: true});
 
-    // TODO: USE THIS TO CREATE SPAWNERS AND WE CAN ADD CUSTOM PROPERTIES TO EACH OF THESE SPAWN
-    // POINT OBJECTS WHICH CAN INCLUDE THE NUMBER OF EACH CLASS THAT SPAWNS, INTERVAL THEY ARE SPAWNED
-    // THAT SORT OF STUFF.
-    console.log(this.map.getObjectLayer("SpawnPoints"));
-
     this.player = new Player({
       scene: this,
       x: 0,
@@ -96,6 +77,8 @@ export class GameScene extends Phaser.Scene {
       })
     });
 
+    this.inputHandler = new InputHandler({scene: this});
+
     this.cameras.main.setBounds(150, -375, this.sys.canvas.width * 2.70, this.sys.canvas.height * 1.15);
     this.cameras.main.startFollow(this.player, true, 1, 1, -50, 0);
     // this.cameras.main.roundPixels = true;
@@ -103,10 +86,28 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.groundLayer);
 
+    // Spawn Points
+    this.spawners = [];
+    let spawnObjLayer = this.map.getObjectLayer("SpawnPoints");
+    spawnObjLayer.objects.forEach((obj) => {
+      let active = obj.properties.filter((prop) => prop.name === "active").map((prop) => prop.value);
+
+      if (active.length && active[0]) {
+        this.spawners.push(
+          new Spawner({
+            scene: this,
+            x: obj.x * 3,
+            y: obj.y * 3 - 470,
+            properties: obj.properties || []
+          })
+        );
+      }
+    });
+
     this.cutscene = {
-      countdown: 1500,
-      wield: 1500,
-      run: 1200
+      countdown: 1800,
+      wield: 1800,
+      run: 1500
     };
     this.countdownText = new ActionText({
       scene: this,
@@ -119,7 +120,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {
@@ -141,6 +142,10 @@ export class GameScene extends Phaser.Scene {
     return this.player;
   }
 
+  public getEnemies(): Phaser.GameObjects.Group {
+    return this.enemies;
+  }
+
   public getGroundLayer(): Phaser.Tilemaps.StaticTilemapLayer {
     return this.groundLayer;
   }
@@ -153,13 +158,13 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
-    this.player.setPosition(250, 0);
+    this.player.setPosition(100, 0);
     this.player.setWield(true);
     this.cutsceneOver();
   }
 
   private handleCutscene(): void {
-    if (this.cutscene.run < 600 && this.cutscene.run > 0) {
+    if (this.cutscene.run < 950 && this.cutscene.run > 0) {
       this.player.runRight();
     } else {
       this.player.stopRun();
@@ -196,7 +201,7 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
-    // this.startSpawner();
+    this.startSpawner();
   }
 
   private handleAttack(): void {
@@ -216,26 +221,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleInput(): void {
-    if (this.keyWait > 0) this.keyWait -= 10;
-
-    if (this.escapeKey.isDown && !this.keyWait) {
-      this.keyWait = 200;
-      this.escapeKey.isDown = false; // NOTE: have to do this due to a bug I think??
+    if (this.inputHandler.isPressedEscapeKey()) {
+      this.inputHandler.reset();
       this.scene.launch("PauseScene");
       this.scene.pause(this.scene.key);
     }
 
-    if (this.jumpKey.isDown) {
-      if (this.downKey.isDown) {
-        this.player.slide();
+    if (this.inputHandler.isPressedJumpKey()) {
+      if (this.inputHandler.isPressedDownKey()) {
+        this.player.slide(this.inputHandler.isPressedLeftKey() || this.inputHandler.isPressedRightKey());
       } else {
         this.player.jump();
       }
     }
 
-    if (this.leftKey.isDown) {
+    if (this.inputHandler.isPressedLeftKey()) {
       this.player.runLeft();
-    } else if (this.rightKey.isDown) {
+    } else if (this.inputHandler.isPressedRightKey()) {
       this.player.runRight();
     } else {
       this.player.stopRun();
@@ -243,51 +245,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startSpawner(): void {
-    this.spawnEnemy();
-
-    this.timer = this.time.addEvent({
-      delay: 10000,
-      callback: this.spawnEnemy,
-      callbackScope: this,
-      loop: true
-    });
-  }
-
-  private addOneEnemy(x: number): void {
-    let enemy = new Enemy({
-      scene: this,
-      x: x,
-      y: this.sys.canvas.height - 205,
-      key: "imp",
-      attackBox: new AttackBox({
-        scene: this
-      })
-    });
-    let enemy2 = new Enemy({
-      scene: this,
-      x: x,
-      y: this.sys.canvas.height - 205,
-      key: "slime",
-      attackBox: new AttackBox({
-        scene: this
-      })
-    });
-    let enemy3 = new Enemy({
-      scene: this,
-      x: x,
-      y: this.sys.canvas.height - 205,
-      key: "slug",
-      attackBox: new AttackBox({
-        scene: this
-      })
-    });
-
-    this.enemies.add(enemy);
-    this.enemies.add(enemy2);
-    this.enemies.add(enemy3);
-  }
-
-  private spawnEnemy(): void {
-    this.addOneEnemy(this.sys.canvas.width * 1.2);
+    this.spawners.forEach((spawner) => { spawner.start(); });
   }
 }

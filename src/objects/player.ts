@@ -58,6 +58,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
+    // console.log(this.body.x, this.body.y);
     if (this.attackHitbox.isEnabled()) {
       if (this.flipX) {
         this.attackHitbox.setPosition(
@@ -159,10 +160,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public slide(): void {
+  public slide(isMoving: boolean): void {
     if (this.currentScene.time.now > this.nextSlide && !this.isAttacking && !this.inAir) {
       this.isSliding = true;
-      this.body.setVelocityX(this.flipX ? this.body.velocity.x !== 0 ? -550 : -1000 : this.body.velocity.x !== 0 ? 550 : 1000);
+      this.body.setVelocityX(this.flipX ? isMoving ? -550 : -1000 : isMoving ? 550 : 1000);
       this.anims.play("adventurerSlide", true);
       this.nextSlide = this.currentScene.time.now + this.attackCooldown * 2;
     }

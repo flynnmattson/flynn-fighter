@@ -8,21 +8,14 @@ import { Player } from "../objects/player";
 import { Background } from "../objects/background";
 import { ActionText } from "../objects/actionText";
 import { AttackBox } from "../objects/attackBox";
+import { InputHandler } from "../objects/inputHandler";
 
 export class TownScene extends Phaser.Scene {
   // objects
   private player: Player;
   private parallaxBg: Background;
   private actionText: ActionText;
-
-  // variables
-  private jumpKey: Phaser.Input.Keyboard.Key;
-  private leftKey: Phaser.Input.Keyboard.Key;
-  private rightKey: Phaser.Input.Keyboard.Key;
-  private downKey: Phaser.Input.Keyboard.Key;
-  private escapeKey: Phaser.Input.Keyboard.Key;
-  private goKey: Phaser.Input.Keyboard.Key;
-  private keyWait: number;
+  private inputHandler: InputHandler;
 
   // environment
   private map: Phaser.Tilemaps.Tilemap;
@@ -42,19 +35,10 @@ export class TownScene extends Phaser.Scene {
     this.parallaxBg = null;
     this.actionText = null;
     this.townObjects = [];
-
-    // input
-    this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
-    this.goKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
   }
 
   create(): void {
     this.registry.set("currentScene", "TownScene");
-    this.keyWait = 200;
     this.parallaxBg = new Background({
       scene: this,
       area: "town"
@@ -99,13 +83,18 @@ export class TownScene extends Phaser.Scene {
       })
     });
 
+    this.inputHandler = new InputHandler({
+      scene: this,
+      interactKey: true
+    });
+
     this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
     this.cameras.main.startFollow(this.player, true, 1, 1, -65, 0);
     this.cameras.main.fadeIn();
 
     this.physics.add.collider(this.player, this.groundLayer);
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {
@@ -120,9 +109,9 @@ export class TownScene extends Phaser.Scene {
       (player: Player, wagon: Phaser.GameObjects.Image) => {
         this.actionText.showText(100);
         // Listen for Action to go to Jungle here
-        if (this.goKey.isDown) {
+        if (this.inputHandler.isPressedInteractKey()) {
+          this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
-          this.goKey.isDown = false;
           setTimeout(() => {
             this.scene.start("GameScene");
           }, 500);
@@ -149,26 +138,23 @@ export class TownScene extends Phaser.Scene {
   }
 
   private handleInput(): void {
-    if (this.keyWait > 0) this.keyWait -= 10;
-
-    if (this.escapeKey.isDown && !this.keyWait) {
-      this.keyWait = 200;
-      this.escapeKey.isDown = false; // NOTE: have to do this due to a bug I think??
+    if (this.inputHandler.isPressedEscapeKey()) {
+      this.inputHandler.reset();
       this.scene.launch("PauseScene");
       this.scene.pause(this.scene.key);
     }
 
-    if (this.jumpKey.isDown) {
-      if (this.downKey.isDown) {
-        this.player.slide();
+    if (this.inputHandler.isPressedJumpKey()) {
+      if (this.inputHandler.isPressedDownKey()) {
+        this.player.slide(this.inputHandler.isPressedLeftKey() || this.inputHandler.isPressedRightKey());
       } else {
         this.player.jump();
       }
     }
 
-    if (this.leftKey.isDown) {
+    if (this.inputHandler.isPressedLeftKey()) {
       this.player.runLeft();
-    } else if (this.rightKey.isDown) {
+    } else if (this.inputHandler.isPressedRightKey()) {
       this.player.runRight();
     } else {
       this.player.stopRun();

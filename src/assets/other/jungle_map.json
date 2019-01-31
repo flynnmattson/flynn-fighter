@@ -24,18 +24,50 @@
                  "id":1,
                  "name":"",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"delay",
+                         "type":"int",
+                         "value":10000
+                        }, 
+                        {
+                         "name":"enemy_imp",
+                         "type":"int",
+                         "value":2
+                        }],
                  "rotation":0,
                  "type":"Enemy Spawner",
                  "visible":true,
                  "width":0,
                  "x":15,
-                 "y":70
+                 "y":69
                 }, 
                 {
                  "height":0,
                  "id":2,
                  "name":"",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"delay",
+                         "type":"int",
+                         "value":10000
+                        }, 
+                        {
+                         "name":"enemy_slug",
+                         "type":"int",
+                         "value":1
+                        }],
                  "rotation":0,
                  "type":"Enemy Spawner",
                  "visible":true,
@@ -48,6 +80,22 @@
                  "id":3,
                  "name":"",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"active",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"delay",
+                         "type":"int",
+                         "value":10000
+                        }, 
+                        {
+                         "name":"enemy_slime",
+                         "type":"int",
+                         "value":2
+                        }],
                  "rotation":0,
                  "type":"Enemy Spawner",
                  "visible":true,
