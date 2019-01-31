@@ -34,7 +34,7 @@ export class HUDScene extends Phaser.Scene {
     this.healthBar.fillRect(
       32,
       30,
-      (this.cameras.main.width / 4) * this.registry.get("health") / 10,
+      (this.cameras.main.width / 4) * this.registry.get("health") / this.registry.get("maxHealth"),
       16
     );
 
@@ -64,7 +64,7 @@ export class HUDScene extends Phaser.Scene {
     this.healthBar.fillRect(
       32,
       30,
-      (this.cameras.main.width / 4) * this.registry.get("health") / 10,
+      (this.cameras.main.width / 4) * this.registry.get("health") / this.registry.get("maxHealth"),
       16
     );
   }

@@ -5,6 +5,17 @@
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
         "key": "adventurer",
+        "start": 0,
+        "end": 3
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "adventurerIdleSword",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
         "start": 38,
         "end": 41
       },
@@ -15,12 +26,23 @@
       "key": "adventurerRun",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 8,
+        "end": 13
+      },
+      "repeat": 0,
+      "frameRate": 8
+    },
+    {
+      "key": "adventurerRunSword",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
         "key": "adventurerRun",
         "start": 0,
         "end": 5
       },
       "repeat": 0,
-      "frameRate": 6
+      "frameRate": 8
     },
     {
       "key": "adventurerJump",
@@ -28,6 +50,17 @@
         "typeOfGeneration": "generateFrameNumbers",
         "key": "adventurer",
         "start": 14,
+        "end": 23
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerFall",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 22,
         "end": 23
       },
       "repeat": 0,
@@ -100,6 +133,61 @@
       "frameRate": 6
     },
     {
+      "key": "adventurerWield",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 69,
+        "end": 72
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "adventurerUnwield",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 73,
+        "end": 76
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "adventurerAirAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 96,
+        "end": 99
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAirAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 100,
+        "end": 102
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerAirAttack3",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 103,
+        "end": 108
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
       "key": "slimeIdle",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
@@ -122,7 +210,7 @@
       "frameRate": 6
     },
     {
-      "key": "slimeAttack",
+      "key": "slimeAttack1",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",
         "key": "slime",
@@ -152,6 +240,138 @@
         "end": 20
       },
       "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 0,
+        "end": 4
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "slugRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 5,
+        "end": 9
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 10,
+        "end": 15
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 16,
+        "end": 29
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 30,
+        "end": 34
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "slugDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "slug",
+        "start": 35,
+        "end": 38
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "impIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "imp",
+        "start": 0,
+        "end": 5
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "impRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "imp",
+        "start": 6,
+        "end": 9
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "impAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "imp",
+        "start": 10,
+        "end": 19
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "impHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "imp",
+        "start": 20,
+        "end": 23
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "impDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "imp",
+        "start": 24,
+        "end": 32
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "impProjectile1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "impProjectile",
+        "start": 0,
+        "end": 2
+      },
+      "repeat": -1,
       "frameRate": 6
     }
   ]

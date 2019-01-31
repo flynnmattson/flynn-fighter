@@ -1,7 +1,7 @@
 /**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @license      Digitsensitive
+ * @author       Flynn Mattson
+ * @copyright    2019 Flynn Mattson
+ * @license      Flynn Fighter
  */
 
 /// <reference path="./phaser.d.ts"/>
@@ -12,6 +12,7 @@ import { MainMenuScene } from "./scenes/mainMenuScene";
 import { GameScene } from "./scenes/gameScene";
 import { HUDScene } from "./scenes/hudScene";
 import { PauseScene } from "./scenes/pauseScene";
+import { TownScene } from "./scenes/townScene";
 
 // main game configuration
 const config: GameConfig = {
@@ -21,7 +22,14 @@ const config: GameConfig = {
   height: 600,
   type: Phaser.AUTO,
   parent: "game",
-  scene: [BootScene, MainMenuScene, GameScene, HUDScene, PauseScene],
+  scene: [
+    BootScene,
+    MainMenuScene,
+    GameScene,
+    TownScene,
+    HUDScene,
+    PauseScene
+  ],
   input: {
     keyboard: true,
     mouse: true,

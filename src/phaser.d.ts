@@ -21117,6 +21117,15 @@ declare namespace Phaser {
             setTint(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
 
             /**
+              * Sets the tint values for this Game Object.
+              * @param topLeft The tint being applied to the top-left of the Game Object. If not other values are given this value is applied evenly, tinting the whole Game Object. Default 0xffffff.
+              * @param topRight The tint being applied to the top-right of the Game Object.
+              * @param bottomLeft The tint being applied to the bottom-left of the Game Object.
+              * @param bottomRight The tint being applied to the bottom-right of the Game Object.
+              */
+            setTintFill(topLeft?: integer, topRight?: integer, bottomLeft?: integer, bottomRight?: integer): this;
+
+            /**
              * The tint value being applied to the top-left of the Game Object.
              * This value is interpolated from the corner to the center of the Game Object.
              */
@@ -21287,6 +21296,625 @@ declare namespace Phaser {
             setVisible(value: boolean): this;
 
         }
+
+      /**
+       * The Rectangle Shape is a Game Object that can be added to a Scene, Group or Container. You can
+       * treat it like any other Game Object in your game, such as tweening it, scaling it, or enabling
+       * it for input or physics. It provides a quick and easy way for you to render this shape in your
+       * game without using a texture, while still taking advantage of being fully batched in WebGL.
+       * 
+       * This shape supports both fill and stroke colors.
+       * 
+       * You can change the size of the rectangle by changing the `width` and `height` properties.
+       */
+      class Rectangle extends Phaser.GameObjects.GameObject {
+        /**
+         * 
+         * @param scene The Scene to which this Game Object belongs. A Game Object can only belong to one Scene at a time.
+         * @param x The horizontal position of this Game Object in the world.
+         * @param y The vertical position of this Game Object in the world.
+         * @param width The width of the rectangle. Default 128.
+         * @param height The height of the rectangle. Default 128.
+         * @param fillColor The color the rectangle will be filled with, i.e. 0xff0000 for red.
+         * @param fillAlpha The alpha the rectangle will be filled with. You can also set the alpha of the overall Shape using its `alpha` property.
+         */
+        constructor(scene: Phaser.Scene, x: number, y: number, width?: number, height?: number, fillColor?: number, fillAlpha?: number);
+
+        /**
+         * Clears all alpha values associated with this Game Object.
+         * 
+         * Immediately sets the alpha levels back to 1 (fully opaque).
+         */
+        clearAlpha(): this;
+
+        /**
+         * Set the Alpha level of this Game Object. The alpha controls the opacity of the Game Object as it renders.
+         * Alpha values are provided as a float between 0, fully transparent, and 1, fully opaque.
+         * 
+         * If your game is running under WebGL you can optionally specify four different alpha values, each of which
+         * correspond to the four corners of the Game Object. Under Canvas only the `topLeft` value given is used.
+         * @param topLeft The alpha value used for the top-left of the Game Object. If this is the only value given it's applied across the whole Game Object. Default 1.
+         * @param topRight The alpha value used for the top-right of the Game Object. WebGL only.
+         * @param bottomLeft The alpha value used for the bottom-left of the Game Object. WebGL only.
+         * @param bottomRight The alpha value used for the bottom-right of the Game Object. WebGL only.
+         */
+        setAlpha(topLeft?: number, topRight?: number, bottomLeft?: number, bottomRight?: number): this;
+
+        /**
+         * The alpha value of the Game Object.
+         * 
+         * This is a global value, impacting the entire Game Object, not just a region of it.
+         */
+        alpha: number;
+
+        /**
+         * The alpha value starting from the top-left of the Game Object.
+         * This value is interpolated from the corner to the center of the Game Object.
+         */
+        alphaTopLeft: number;
+
+        /**
+         * The alpha value starting from the top-right of the Game Object.
+         * This value is interpolated from the corner to the center of the Game Object.
+         */
+        alphaTopRight: number;
+
+        /**
+         * The alpha value starting from the bottom-left of the Game Object.
+         * This value is interpolated from the corner to the center of the Game Object.
+         */
+        alphaBottomLeft: number;
+
+        /**
+         * The alpha value starting from the bottom-right of the Game Object.
+         * This value is interpolated from the corner to the center of the Game Object.
+         */
+        alphaBottomRight: number;
+
+        /**
+         * Sets the Blend Mode being used by this Game Object.
+         * 
+         * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
+         * 
+         * Under WebGL only the following Blend Modes are available:
+         * 
+         * * ADD
+         * * MULTIPLY
+         * * SCREEN
+         * 
+         * Canvas has more available depending on browser support.
+         * 
+         * You can also create your own custom Blend Modes in WebGL.
+         * 
+         * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
+         * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
+         * reasons try to be careful about the construction of your Scene and the frequency of which blend modes
+         * are used.
+         */
+        blendMode: Phaser.BlendModes | string;
+
+        /**
+         * Sets the Blend Mode being used by this Game Object.
+         * 
+         * This can be a const, such as `Phaser.BlendModes.SCREEN`, or an integer, such as 4 (for Overlay)
+         * 
+         * Under WebGL only the following Blend Modes are available:
+         * 
+         * * ADD
+         * * MULTIPLY
+         * * SCREEN
+         * 
+         * Canvas has more available depending on browser support.
+         * 
+         * You can also create your own custom Blend Modes in WebGL.
+         * 
+         * Blend modes have different effects under Canvas and WebGL, and from browser to browser, depending
+         * on support. Blend Modes also cause a WebGL batch flush should it encounter a new blend mode. For these
+         * reasons try to be careful about the construction of your Scene and the frequency of which blend modes
+         * are used.
+         * @param value The BlendMode value. Either a string or a CONST.
+         */
+        setBlendMode(value: string | Phaser.BlendModes): this;
+
+        /**
+         * The native (un-scaled) width of this Game Object.
+         * 
+         * Changing this value will not change the size that the Game Object is rendered in-game.
+         * For that you need to either set the scale of the Game Object (`setScale`) or use
+         * the `displayWidth` property.
+         */
+        width: number;
+
+        /**
+         * The native (un-scaled) height of this Game Object.
+         * 
+         * Changing this value will not change the size that the Game Object is rendered in-game.
+         * For that you need to either set the scale of the Game Object (`setScale`) or use
+         * the `displayHeight` property.
+         */
+        height: number;
+
+        /**
+         * The displayed width of this Game Object.
+         * 
+         * This value takes into account the scale factor.
+         * 
+         * Setting this value will adjust the Game Object's scale property.
+         */
+        displayWidth: number;
+
+        /**
+         * The displayed height of this Game Object.
+         * 
+         * This value takes into account the scale factor.
+         * 
+         * Setting this value will adjust the Game Object's scale property.
+         */
+        displayHeight: number;
+
+        /**
+         * Sets the internal size of this Game Object, as used for frame or physics body creation.
+         * 
+         * This will not change the size that the Game Object is rendered in-game.
+         * For that you need to either set the scale of the Game Object (`setScale`) or call the
+         * `setDisplaySize` method, which is the same thing as changing the scale but allows you
+         * to do so by giving pixel values.
+         * 
+         * If you have enabled this Game Object for input, changing the size will _not_ change the
+         * size of the hit area. To do this you should adjust the `input.hitArea` object directly.
+         * @param width The width of this Game Object.
+         * @param height The height of this Game Object.
+         */
+        setSize(width: number, height: number): this;
+
+        /**
+         * Sets the display size of this Game Object.
+         * 
+         * Calling this will adjust the scale.
+         * @param width The width of this Game Object.
+         * @param height The height of this Game Object.
+         */
+        setDisplaySize(width: number, height: number): this;
+
+        /**
+         * The depth of this Game Object within the Scene.
+         * 
+         * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
+         * of Game Objects, without actually moving their position in the display list.
+         * 
+         * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
+         * value will always render in front of one with a lower value.
+         * 
+         * Setting the depth will queue a depth sort event within the Scene.
+         */
+        depth: number;
+
+        /**
+         * The depth of this Game Object within the Scene.
+         * 
+         * The depth is also known as the 'z-index' in some environments, and allows you to change the rendering order
+         * of Game Objects, without actually moving their position in the display list.
+         * 
+         * The depth starts from zero (the default value) and increases from that point. A Game Object with a higher depth
+         * value will always render in front of one with a lower value.
+         * 
+         * Setting the depth will queue a depth sort event within the Scene.
+         * @param value The depth of this Game Object.
+         */
+        setDepth(value: integer): this;
+
+        /**
+         * Gets the center coordinate of this Game Object, regardless of origin.
+         * The returned point is calculated in local space and does not factor in any parent containers
+         * @param output An object to store the values in. If not provided a new Vector2 will be created.
+         */
+        getCenter<O extends Phaser.Math.Vector2>(output?: O): O;
+
+        /**
+         * Gets the top-left corner coordinate of this Game Object, regardless of origin.
+         * The returned point is calculated in local space and does not factor in any parent containers
+         * @param output An object to store the values in. If not provided a new Vector2 will be created.
+         * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
+         */
+        getTopLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
+
+        /**
+         * Gets the top-right corner coordinate of this Game Object, regardless of origin.
+         * The returned point is calculated in local space and does not factor in any parent containers
+         * @param output An object to store the values in. If not provided a new Vector2 will be created.
+         * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
+         */
+        getTopRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
+
+        /**
+         * Gets the bottom-left corner coordinate of this Game Object, regardless of origin.
+         * The returned point is calculated in local space and does not factor in any parent containers
+         * @param output An object to store the values in. If not provided a new Vector2 will be created.
+         * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
+         */
+        getBottomLeft<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
+
+        /**
+         * Gets the bottom-right corner coordinate of this Game Object, regardless of origin.
+         * The returned point is calculated in local space and does not factor in any parent containers
+         * @param output An object to store the values in. If not provided a new Vector2 will be created.
+         * @param includeParent If this Game Object has a parent Container, include it (and all other ancestors) in the resulting vector? Default false.
+         */
+        getBottomRight<O extends Phaser.Math.Vector2>(output?: O, includeParent?: boolean): O;
+
+        /**
+         * Gets the bounds of this Game Object, regardless of origin.
+         * The values are stored and returned in a Rectangle, or Rectangle-like, object.
+         * @param output An object to store the values in. If not provided a new Rectangle will be created.
+         */
+        getBounds<O extends Phaser.Geom.Rectangle>(output?: O): O;
+
+        /**
+         * The Mask this Game Object is using during render.
+         */
+        mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask;
+
+        /**
+         * Sets the mask that this Game Object will use to render with.
+         * 
+         * The mask must have been previously created and can be either a GeometryMask or a BitmapMask.
+         * Note: Bitmap Masks only work on WebGL. Geometry Masks work on both WebGL and Canvas.
+         * 
+         * If a mask is already set on this Game Object it will be immediately replaced.
+         * 
+         * Masks are positioned in global space and are not relative to the Game Object to which they
+         * are applied. The reason for this is that multiple Game Objects can all share the same mask.
+         * 
+         * Masks have no impact on physics or input detection. They are purely a rendering component
+         * that allows you to limit what is visible during the render pass.
+         * @param mask The mask this Game Object will use when rendering.
+         */
+        setMask(mask: Phaser.Display.Masks.BitmapMask | Phaser.Display.Masks.GeometryMask): this;
+
+        /**
+         * Clears the mask that this Game Object was using.
+         * @param destroyMask Destroy the mask before clearing it? Default false.
+         */
+        clearMask(destroyMask?: boolean): this;
+
+        /**
+         * Creates and returns a Bitmap Mask. This mask can be used by any Game Object,
+         * including this one.
+         * 
+         * To create the mask you need to pass in a reference to a renderable Game Object.
+         * A renderable Game Object is one that uses a texture to render with, such as an
+         * Image, Sprite, Render Texture or BitmapText.
+         * 
+         * If you do not provide a renderable object, and this Game Object has a texture,
+         * it will use itself as the object. This means you can call this method to create
+         * a Bitmap Mask from any renderable Game Object.
+         * @param renderable A renderable Game Object that uses a texture, such as a Sprite.
+         */
+        createBitmapMask(renderable?: Phaser.GameObjects.GameObject): Phaser.Display.Masks.BitmapMask;
+
+        /**
+         * Creates and returns a Geometry Mask. This mask can be used by any Game Object,
+         * including this one.
+         * 
+         * To create the mask you need to pass in a reference to a Graphics Game Object.
+         * 
+         * If you do not provide a graphics object, and this Game Object is an instance
+         * of a Graphics object, then it will use itself to create the mask.
+         * 
+         * This means you can call this method to create a Geometry Mask from any Graphics Game Object.
+         * @param graphics A Graphics Game Object. The geometry within it will be used as the mask.
+         */
+        createGeometryMask(graphics?: Phaser.GameObjects.Graphics): Phaser.Display.Masks.GeometryMask;
+
+        /**
+         * The horizontal origin of this Game Object.
+         * The origin maps the relationship between the size and position of the Game Object.
+         * The default value is 0.5, meaning all Game Objects are positioned based on their center.
+         * Setting the value to 0 means the position now relates to the left of the Game Object.
+         */
+        originX: number;
+
+        /**
+         * The vertical origin of this Game Object.
+         * The origin maps the relationship between the size and position of the Game Object.
+         * The default value is 0.5, meaning all Game Objects are positioned based on their center.
+         * Setting the value to 0 means the position now relates to the top of the Game Object.
+         */
+        originY: number;
+
+        /**
+         * The horizontal display origin of this Game Object.
+         * The origin is a normalized value between 0 and 1.
+         * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
+         */
+        displayOriginX: number;
+
+        /**
+         * The vertical display origin of this Game Object.
+         * The origin is a normalized value between 0 and 1.
+         * The displayOrigin is a pixel value, based on the size of the Game Object combined with the origin.
+         */
+        displayOriginY: number;
+
+        /**
+         * Sets the origin of this Game Object.
+         * 
+         * The values are given in the range 0 to 1.
+         * @param x The horizontal origin value. Default 0.5.
+         * @param y The vertical origin value. If not defined it will be set to the value of `x`. Default x.
+         */
+        setOrigin(x?: number, y?: number): this;
+
+        /**
+         * Sets the origin of this Game Object based on the Pivot values in its Frame.
+         */
+        setOriginFromFrame(): this;
+
+        /**
+         * Sets the display origin of this Game Object.
+         * The difference between this and setting the origin is that you can use pixel values for setting the display origin.
+         * @param x The horizontal display origin value. Default 0.
+         * @param y The vertical display origin value. If not defined it will be set to the value of `x`. Default x.
+         */
+        setDisplayOrigin(x?: number, y?: number): this;
+
+        /**
+         * Updates the Display Origin cached values internally stored on this Game Object.
+         * You don't usually call this directly, but it is exposed for edge-cases where you may.
+         */
+        updateDisplayOrigin(): this;
+
+        /**
+         * The initial WebGL pipeline of this Game Object.
+         */
+        defaultPipeline: Phaser.Renderer.WebGL.WebGLPipeline;
+
+        /**
+         * The current WebGL pipeline of this Game Object.
+         */
+        pipeline: Phaser.Renderer.WebGL.WebGLPipeline;
+
+        /**
+         * Sets the initial WebGL Pipeline of this Game Object.
+         * This should only be called during the instantiation of the Game Object.
+         * @param pipelineName The name of the pipeline to set on this Game Object. Defaults to the Texture Tint Pipeline. Default TextureTintPipeline.
+         */
+        initPipeline(pipelineName?: string): boolean;
+
+        /**
+         * Sets the active WebGL Pipeline of this Game Object.
+         * @param pipelineName The name of the pipeline to set on this Game Object.
+         */
+        setPipeline(pipelineName: string): this;
+
+        /**
+         * Resets the WebGL Pipeline of this Game Object back to the default it was created with.
+         */
+        resetPipeline(): boolean;
+
+        /**
+         * Gets the name of the WebGL Pipeline this Game Object is currently using.
+         */
+        getPipelineName(): string;
+
+        /**
+         * The Scale Mode being used by this Game Object.
+         * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
+         */
+        scaleMode: Phaser.ScaleModes;
+
+        /**
+         * Sets the Scale Mode being used by this Game Object.
+         * Can be either `ScaleModes.LINEAR` or `ScaleModes.NEAREST`.
+         * @param value The Scale Mode to be used by this Game Object.
+         */
+        setScaleMode(value: Phaser.ScaleModes): this;
+
+        /**
+         * The horizontal scroll factor of this Game Object.
+         * 
+         * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
+         * 
+         * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
+         * It does not change the Game Objects actual position values.
+         * 
+         * A value of 1 means it will move exactly in sync with a camera.
+         * A value of 0 means it will not move at all, even if the camera moves.
+         * Other values control the degree to which the camera movement is mapped to this Game Object.
+         * 
+         * Please be aware that scroll factor values other than 1 are not taken in to consideration when
+         * calculating physics collisions. Bodies always collide based on their world position, but changing
+         * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
+         * them from physics bodies if not accounted for in your code.
+         */
+        scrollFactorX: number;
+
+        /**
+         * The vertical scroll factor of this Game Object.
+         * 
+         * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
+         * 
+         * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
+         * It does not change the Game Objects actual position values.
+         * 
+         * A value of 1 means it will move exactly in sync with a camera.
+         * A value of 0 means it will not move at all, even if the camera moves.
+         * Other values control the degree to which the camera movement is mapped to this Game Object.
+         * 
+         * Please be aware that scroll factor values other than 1 are not taken in to consideration when
+         * calculating physics collisions. Bodies always collide based on their world position, but changing
+         * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
+         * them from physics bodies if not accounted for in your code.
+         */
+        scrollFactorY: number;
+
+        /**
+         * Sets the scroll factor of this Game Object.
+         * 
+         * The scroll factor controls the influence of the movement of a Camera upon this Game Object.
+         * 
+         * When a camera scrolls it will change the location at which this Game Object is rendered on-screen.
+         * It does not change the Game Objects actual position values.
+         * 
+         * A value of 1 means it will move exactly in sync with a camera.
+         * A value of 0 means it will not move at all, even if the camera moves.
+         * Other values control the degree to which the camera movement is mapped to this Game Object.
+         * 
+         * Please be aware that scroll factor values other than 1 are not taken in to consideration when
+         * calculating physics collisions. Bodies always collide based on their world position, but changing
+         * the scroll factor is a visual adjustment to where the textures are rendered, which can offset
+         * them from physics bodies if not accounted for in your code.
+         * @param x The horizontal scroll factor of this Game Object.
+         * @param y The vertical scroll factor of this Game Object. If not set it will use the `x` value. Default x.
+         */
+        setScrollFactor(x: number, y?: number): this;
+
+        /**
+         * The x position of this Game Object.
+         */
+        x: number;
+
+        /**
+         * The y position of this Game Object.
+         */
+        y: number;
+
+        /**
+         * The z position of this Game Object.
+         * Note: Do not use this value to set the z-index, instead see the `depth` property.
+         */
+        z: number;
+
+        /**
+         * The w position of this Game Object.
+         */
+        w: number;
+
+        /**
+         * The horizontal scale of this Game Object.
+         */
+        scaleX: number;
+
+        /**
+         * The vertical scale of this Game Object.
+         */
+        scaleY: number;
+
+        /**
+         * The angle of this Game Object as expressed in degrees.
+         * 
+         * Where 0 is to the right, 90 is down, 180 is left.
+         * 
+         * If you prefer to work in radians, see the `rotation` property instead.
+         */
+        angle: integer;
+
+        /**
+         * The angle of this Game Object in radians.
+         * 
+         * If you prefer to work in degrees, see the `angle` property instead.
+         */
+        rotation: number;
+
+        /**
+         * Sets the position of this Game Object.
+         * @param x The x position of this Game Object. Default 0.
+         * @param y The y position of this Game Object. If not set it will use the `x` value. Default x.
+         * @param z The z position of this Game Object. Default 0.
+         * @param w The w position of this Game Object. Default 0.
+         */
+        setPosition(x?: number, y?: number, z?: number, w?: number): this;
+
+        /**
+         * Sets the position of this Game Object to be a random position within the confines of
+         * the given area.
+         * 
+         * If no area is specified a random position between 0 x 0 and the game width x height is used instead.
+         * 
+         * The position does not factor in the size of this Game Object, meaning that only the origin is
+         * guaranteed to be within the area.
+         * @param x The x position of the top-left of the random area. Default 0.
+         * @param y The y position of the top-left of the random area. Default 0.
+         * @param width The width of the random area.
+         * @param height The height of the random area.
+         */
+        setRandomPosition(x?: number, y?: number, width?: number, height?: number): this;
+
+        /**
+         * Sets the rotation of this Game Object.
+         * @param radians The rotation of this Game Object, in radians. Default 0.
+         */
+        setRotation(radians?: number): this;
+
+        /**
+         * Sets the angle of this Game Object.
+         * @param degrees The rotation of this Game Object, in degrees. Default 0.
+         */
+        setAngle(degrees?: number): this;
+
+        /**
+         * Sets the scale of this Game Object.
+         * @param x The horizontal scale of this Game Object.
+         * @param y The vertical scale of this Game Object. If not set it will use the `x` value. Default x.
+         */
+        setScale(x: number, y?: number): this;
+
+        /**
+         * Sets the x position of this Game Object.
+         * @param value The x position of this Game Object. Default 0.
+         */
+        setX(value?: number): this;
+
+        /**
+         * Sets the y position of this Game Object.
+         * @param value The y position of this Game Object. Default 0.
+         */
+        setY(value?: number): this;
+
+        /**
+         * Sets the z position of this Game Object.
+         * @param value The z position of this Game Object. Default 0.
+         */
+        setZ(value?: number): this;
+
+        /**
+         * Sets the w position of this Game Object.
+         * @param value The w position of this Game Object. Default 0.
+         */
+        setW(value?: number): this;
+
+        /**
+         * Gets the local transform matrix for this Game Object.
+         * @param tempMatrix The matrix to populate with the values from this Game Object.
+         */
+        getLocalTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
+
+        /**
+         * Gets the world transform matrix for this Game Object, factoring in any parent Containers.
+         * @param tempMatrix The matrix to populate with the values from this Game Object.
+         * @param parentMatrix A temporary matrix to hold parent values during the calculations.
+         */
+        getWorldTransformMatrix(tempMatrix?: Phaser.GameObjects.Components.TransformMatrix, parentMatrix?: Phaser.GameObjects.Components.TransformMatrix): Phaser.GameObjects.Components.TransformMatrix;
+
+        /**
+         * The visible state of the Game Object.
+         * 
+         * An invisible Game Object will skip rendering, but will still process update logic.
+         */
+        visible: boolean;
+
+        /**
+         * Sets the visibility of this Game Object.
+         * 
+         * An invisible Game Object will skip rendering, but will still process update logic.
+         * @param value The visible state of the Game Object.
+         */
+        setVisible(value: boolean): this;
+
+      }
+
+
+
 
         /**
          * A Sprite 3D Game Object.
@@ -52034,7 +52662,8 @@ declare namespace Phaser {
             /**
              * [description]
              */
-            objects: Phaser.GameObjects.GameObject[];
+            objects: any[];
+            // objects: Phaser.GameObjects.GameObject[];
 
         }
 

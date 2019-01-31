@@ -69,13 +69,16 @@ export class PauseScene extends Phaser.Scene {
     if (this.keyWait > 0) this.keyWait -= 10;
 
     if (this.escapeKey.isDown && !this.keyWait) {
-      this.scene.resume("GameScene");
+      this.scene.resume(this.registry.get("currentScene"));
       this.scene.stop("PauseScene");
     } else if (this.quitKey.isDown && !this.keyWait) {
       this.quitKey.isDown = false; // NOTE: have to do this due to a bug I think??
-      this.scene.resume("GameScene");
-      this.scene.start("MainMenuScene");
-      this.scene.stop("PauseScene");
+      this.cameras.main.fadeOut(500);
+      setTimeout(() => {
+        this.scene.resume(this.registry.get("currentScene"));
+        this.scene.start("MainMenuScene");
+        this.scene.stop("PauseScene");
+      }, 500);
     }
   }
 }

@@ -33,6 +33,9 @@ export class MainMenuScene extends Phaser.Scene {
     if (this.scene.isVisible("PauseScene")) {
       this.scene.stop("PauseScene");
     }
+    if (this.scene.isVisible("TownScene")) {
+      this.scene.stop("TownScene");
+    }
 
     this.bitmapTexts.push(
       this.add.bitmapText(
@@ -53,13 +56,19 @@ export class MainMenuScene extends Phaser.Scene {
         30
       )
     );
+
+    this.cameras.main.fadeIn();
   }
 
   update(): void {
     if (this.startKey.isDown) {
-      this.scene.start("HUDScene");
-      this.scene.start("GameScene");
-      this.scene.bringToTop("HUDScene");
+      this.cameras.main.fadeOut(500);
+      setTimeout(() => {
+        this.scene.start("HUDScene");
+        // this.scene.start("GameScene");
+        this.scene.start("TownScene");
+        this.scene.bringToTop("HUDScene");
+      }, 500);
     }
   }
 
@@ -69,7 +78,8 @@ export class MainMenuScene extends Phaser.Scene {
    */
   private initRegistry(): void {
     this.registry.set("points", 0);
-    this.registry.set("health", 10);
-    this.registry.set("level", 1);
+    this.registry.set("health", 100);
+    this.registry.set("maxHealth", 100);
+    this.registry.set("currentScene", "MainMenuScene");
   }
 }
