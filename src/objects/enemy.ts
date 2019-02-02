@@ -123,11 +123,15 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         }, 600);
       } else {
         if (this.attributes.type === 'fly') {
-          this.currentScene.physics.add.collider(this, this.currentScene.getGroundLayer());
-          this.body.allowGravity = true;
+          if (this.attributes.dyingGravity) {
+            this.currentScene.physics.add.collider(this, this.currentScene.getGroundLayer());
+            this.body.allowGravity = this.attributes.dyingGravity;
+          } else {
+            this.body.setVelocityY(0)
+          }
         }
         this.isDead = true;
-        this.dyingTime = this.currentScene.time.now + this.attributes.dying;
+        this.dyingTime = this.currentScene.time.now + this.attributes.dyingTime;
         this.anims.play(`${this.texture.key}Dead`, false);
       }
     }
@@ -306,7 +310,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       } else if (this.body.velocity.x < 0) {
         this.body.setVelocityX(this.body.velocity.x + 50);
       }
-      if (!this.isAttacking) this.anims.play(`${this.texture.key}Idle`, true);
+      if (!this.isAttacking && this.body.velocity.y === 0) {
+        this.anims.play(`${this.texture.key}Idle`, true);
+      }
     }
   }
 }

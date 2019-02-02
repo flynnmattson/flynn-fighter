@@ -41,7 +41,7 @@
     ],
     "health": 2,
     "speed": 150,
-    "dying": 500
+    "dyingTime": 500
   },
   "slug": {
     "type": "ground",
@@ -80,7 +80,7 @@
     ],
     "health": 6,
     "speed": 100,
-    "dying": 700
+    "dyingTime": 700
   },
   "imp": {
     "type": "fly",
@@ -124,6 +124,68 @@
     ],
     "health": 3,
     "speed": 150,
-    "dying": 900 
+    "dyingTime": 900,
+    "dyingGravity": true 
+  },
+  "phantomKnight": {
+    "type": "ground",
+    "depth": 0,
+    "body": {
+      "size": {
+        "x": 20,
+        "y": 26
+      },
+      "offset": {
+        "flipX": 18,
+        "x": 18,
+        "y": 20
+      }
+    },
+    "attack": [
+      {
+        "type": "melee",
+        "damage": 10,
+        "speed": 600,
+        "cooldown": 1200,
+        "velocity": 800,
+        "range": 20,
+        "offset": -5,
+        "trigger": 450
+      }
+    ],
+    "health": 4,
+    "speed": 200,
+    "dyingTime": 1000
+  },
+  "reaper": {
+    "type": "fly",
+    "depth": 1,
+    "body": {
+      "size": {
+        "x": 20,
+        "y": 20
+      },
+      "offset": {
+        "flipX": 18,
+        "x": 12,
+        "y": 12
+      }
+    },
+    "attack": [
+      {
+        "type": "melee",
+        "damage": 7,
+        "speed": 800,
+        "cooldown": 1200,
+        "velocity": 150,
+        "range": 30,
+        "offset": -5,
+        "trigger": 450
+      }
+    ],
+    "health": 3,
+    "speed": 150,
+    "dyingTime": 1000,
+    "dyingGravity": false
   }
 }

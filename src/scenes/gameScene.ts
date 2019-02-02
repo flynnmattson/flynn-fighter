@@ -30,6 +30,7 @@ export class GameScene extends Phaser.Scene {
   private tileset: Phaser.Tilemaps.Tileset;
   private groundLayer: Phaser.Tilemaps.StaticTilemapLayer;
   private middleLayer: Phaser.Tilemaps.StaticTilemapLayer;
+  private spawnColliderLayer: Phaser.Tilemaps.StaticTilemapLayer;
 
   constructor() {
     super({
@@ -62,6 +63,9 @@ export class GameScene extends Phaser.Scene {
     this.tileset = this.map.addTilesetImage("jungle tileset", "jungleTiles");
     this.middleLayer = this.map.createStaticLayer("MiddleGround", this.tileset, 0, -400);
     this.middleLayer.setScale(3);
+    this.spawnColliderLayer = this.map.createStaticLayer("SpawnColliders", this.tileset, 0, -400);
+    this.spawnColliderLayer.setScale(3);
+    this.spawnColliderLayer.setCollisionByProperty({ collides: true });
     // this.middleLayer.setScaleMode(ScaleModes.NEAREST);
     this.groundLayer = this.map.createStaticLayer("Ground", this.tileset, 0, -400);
     this.groundLayer.setScale(3);
@@ -120,7 +124,7 @@ export class GameScene extends Phaser.Scene {
       follow: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -158,7 +162,7 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
-    this.player.setPosition(100, 0);
+    this.player.setPosition(150, 0);
     this.player.setWield(true);
     this.cutsceneOver();
   }
@@ -201,7 +205,21 @@ export class GameScene extends Phaser.Scene {
       this
     );
 
+    this.physics.add.collider(this.player, this.spawnColliderLayer);
+    
     this.startSpawner();
+    // this.enemies.add(
+    //   new Enemy({
+    //     scene: this,
+    //     x: 500,
+    //     y: 30,
+    //     key: "reaper",
+    //     attackBox: new AttackBox({
+    //       scene: this
+    //     })
+    //   })
+    // );
+
   }
 
   private handleAttack(): void {

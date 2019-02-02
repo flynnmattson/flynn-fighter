@@ -373,6 +373,116 @@
       },
       "repeat": -1,
       "frameRate": 6
-    }
+    },
+    {
+      "key": "phantomKnightIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "phantomKnight",
+        "start": 0,
+        "end": 3
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "phantomKnightRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "phantomKnight",
+        "start": 4,
+        "end": 9
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "phantomKnightAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "phantomKnight",
+        "start": 10,
+        "end": 16
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "phantomKnightHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "phantomKnight",
+        "start": 17,
+        "end": 21
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "phantomKnightDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "phantomKnight",
+        "start": 22,
+        "end": 27
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "reaperIdle",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "reaper",
+        "start": 0,
+        "end": 3
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
+      "key": "reaperRun",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "reaper",
+        "start": 4,
+        "end": 7
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "reaperAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "reaper",
+        "start": 8,
+        "end": 12
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "reaperHurt",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "reaper",
+        "start": 13,
+        "end": 17
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
+      "key": "reaperDead",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "reaper",
+        "start": 18,
+        "end": 26
+      },
+      "repeat": 0,
+      "frameRate": 6
+    }    
   ]
 }

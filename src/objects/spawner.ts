@@ -58,7 +58,6 @@ export class Spawner {
   private spawn(): void {
     this.enemyTypes.forEach((enemy) => {
       for (let i = 0; i < enemy.amount; i++) {
-        console.log('adding enemy');
         this.currentScene.time.addEvent({
           delay: 400 * (i + 1),
           callback: () => {

@@ -7,7 +7,6 @@ import { AttackBox } from "./attackBox";
  */
 
 export class Player extends Phaser.GameObjects.Sprite {
-  
   private isDead: boolean = false;
   private inAir: boolean = false;
   private isAttacking: boolean = false;
@@ -58,7 +57,6 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    // console.log(this.body.x, this.body.y);
     if (this.attackHitbox.isEnabled()) {
       if (this.flipX) {
         this.attackHitbox.setPosition(
@@ -173,15 +171,16 @@ export class Player extends Phaser.GameObjects.Sprite {
     if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
       this.attackHitbox.enable();
-      if (this.inAir) {
-        this.body.setVelocityX(0);
-        this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
-        this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
-        this.airAttackCombo = this.airAttackCombo === 3 ? 1 : this.airAttackCombo + 1;
-      } else {
+      if (!this.inAir) {
         this.anims.play("adventurerAttack" + this.attackCombo, false);
         this.body.setVelocityX(this.flipX ? this.attackCombo === 3 ? -600 : -300 : this.attackCombo === 3 ? 600 : 300);
         this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
+      } else if (this.airAttackCombo) {
+        this.body.setVelocityX(0);
+        this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
+        this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
+        // If the Air Attack is on the third and final attack then sets to 0 which means combo is finished.
+        this.airAttackCombo = this.airAttackCombo === 3 ? 0 : this.airAttackCombo + 1;
       }
 
       // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
