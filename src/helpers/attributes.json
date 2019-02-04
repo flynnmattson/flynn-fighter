@@ -145,7 +145,7 @@
       {
         "type": "melee",
         "damage": 10,
-        "speed": 600,
+        "speed": 900,
         "cooldown": 1200,
         "velocity": 800,
         "range": 20,

@@ -1,0 +1,50 @@
+{
+  "jungle": {
+    "spawners": [
+      {
+        "id": 1,
+        "wave": [
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 2,
+            "enemies": {
+              "imp": 1
+            }
+          },
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 4,
+            "enemies": {
+              "imp": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "wave": [
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 2,
+            "enemies": {
+              "phantomKnight": 1,
+              "slug": 1
+            }
+          },
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 4,
+            "enemies": {
+              "phantomKnight": 1,
+              "slug": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

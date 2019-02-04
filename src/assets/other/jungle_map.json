@@ -38,7 +38,7 @@
                         {
                          "name":"enemy_imp",
                          "type":"int",
-                         "value":2
+                         "value":1
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",
@@ -56,7 +56,7 @@
                         {
                          "name":"active",
                          "type":"bool",
-                         "value":false
+                         "value":true
                         }, 
                         {
                          "name":"delay",
@@ -66,7 +66,7 @@
                         {
                          "name":"enemy_phantomKnight",
                          "type":"int",
-                         "value":2
+                         "value":1
                         }, 
                         {
                          "name":"enemy_slug",
@@ -117,7 +117,7 @@
                         {
                          "name":"active",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }, 
                         {
                          "name":"delay",
@@ -127,7 +127,7 @@
                         {
                          "name":"enemy_reaper",
                          "type":"int",
-                         "value":2
+                         "value":1
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",

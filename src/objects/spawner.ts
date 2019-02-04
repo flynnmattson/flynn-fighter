@@ -11,6 +11,7 @@ import { AttackBox } from "./attackBox";
 export class Spawner {
   private timer: Phaser.Time.TimerEvent;
   private delay: number;
+  private activeEnemies: number;
   private currentScene: GameScene;
   private position: {x: number, y: number};
   private enemyTypes: Array<{type: string, amount: number}>;
@@ -19,10 +20,14 @@ export class Spawner {
     this.currentScene = params.scene;
     this.enemyTypes = [];
     this.delay = 10000;
+    this.activeEnemies = 0;
     this.position = {
       x: params.x,
       y: params.y
     };
+
+    // TODO: Add these attributes to the object and initialize the first wave.
+    console.log(params.attributes);
 
     params.properties.forEach((prop) => {
       if (prop.name === "delay") this.delay = prop.value;
@@ -42,12 +47,12 @@ export class Spawner {
       },
       callbackScope: this.currentScene,
       loop: true,
-      paused: true
+      paused: true,
+      startAt: this.delay - 500
     });
   }
 
   public start(): void {
-    this.timer.startAt = this.delay - 200;
     this.timer.paused = false;
   }
 

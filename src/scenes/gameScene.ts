@@ -24,6 +24,7 @@ export class GameScene extends Phaser.Scene {
 
   // variables
   private cutscene: { wield: number, run: number, countdown: number };
+  private attributes: any; // Attributes referred to in levelAttributes.json for the given level
 
   // tilemap
   private map: Phaser.Tilemaps.Tilemap;
@@ -90,6 +91,7 @@ export class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.groundLayer);
 
+    this.attributes = this.cache.json.get('levelAttributes')['jungle'];
     // Spawn Points
     this.spawners = [];
     let spawnObjLayer = this.map.getObjectLayer("SpawnPoints");
@@ -102,7 +104,8 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             x: obj.x * 3,
             y: obj.y * 3 - 470,
-            properties: obj.properties || []
+            properties: obj.properties || [],
+            attributes: this.attributes.spawners.filter((attr) => attr.id === obj.id)[0]
           })
         );
       }
@@ -113,6 +116,7 @@ export class GameScene extends Phaser.Scene {
       wield: 1800,
       run: 1500
     };
+
     this.countdownText = new ActionText({
       scene: this,
       x: this.sys.canvas.width / 2,

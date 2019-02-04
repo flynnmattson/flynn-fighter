@@ -54,10 +54,16 @@ export class BootScene extends Phaser.Scene {
       "preload"
     );
 
-    // load out json
+    // load out player & enemy json
     this.load.json(
       "attributes",
       "./src/helpers/attributes.json"
+    );
+
+    // load out level json
+    this.load.json(
+      "levelAttributes",
+      "./src/helpers/levelAttributes.json"
     );
   }
 
