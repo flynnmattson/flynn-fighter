@@ -104,7 +104,6 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             x: obj.x * 3,
             y: obj.y * 3 - 470,
-            properties: obj.properties || [],
             attributes: this.attributes.spawners.filter((attr) => attr.id === obj.id)[0]
           })
         );
@@ -267,6 +266,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startSpawner(): void {
-    this.spawners.forEach((spawner) => { spawner.start(); });
+    // TODO: In Update, continually check all spawners to see if they're all finished.
+    //       Once they're all finished trigger the in between waves event where the user
+    //       can purchase goods heal up all that stuff.
+    this.spawners.forEach((spawner) => { spawner.startNextWave(); });
   }
 }

@@ -2,6 +2,7 @@ import { Player } from "./player";
 import { AttackBox } from "./attackBox";
 import { GameScene } from "../scenes/gameScene";
 import { Projectile } from "./projectile";
+import { Spawner } from "./spawner";
 
 /**
  * @author       Flynn Mattson
@@ -24,12 +25,14 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private health: number;
   private attributes: any;
   private attackHitbox: AttackBox;
+  private spawner: Spawner;
   private projectiles: Phaser.GameObjects.Group;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key);
     this.currentScene = params.scene;
     this.attackHitbox = params.attackBox;
+    this.spawner = params.spawner;
     this.attackHitbox.disable();
     this.player = params.scene.getPlayer();
 
@@ -133,6 +136,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.isDead = true;
         this.dyingTime = this.currentScene.time.now + this.attributes.dyingTime;
         this.anims.play(`${this.texture.key}Dead`, false);
+        this.spawner.enemyDied();
       }
     }
   }

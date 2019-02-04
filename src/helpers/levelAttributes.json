@@ -3,45 +3,117 @@
     "spawners": [
       {
         "id": 1,
-        "wave": [
+        "waves": [
           {
             "delay": 5000,
             "rounds": 3,
             "activeLimit": 2,
-            "enemies": {
-              "imp": 1
-            }
+            "enemies": [
+              {
+                "type": "imp",
+                "amount": 1
+              }
+            ]
           },
           {
             "delay": 5000,
             "rounds": 3,
             "activeLimit": 4,
-            "enemies": {
-              "imp": 2
-            }
+            "enemies": [
+              {
+                "type": "imp",
+                "amount": 2
+              }
+            ]
           }
         ]
       },
       {
         "id": 2,
-        "wave": [
+        "waves": [
           {
             "delay": 5000,
             "rounds": 3,
             "activeLimit": 2,
-            "enemies": {
-              "phantomKnight": 1,
-              "slug": 1
-            }
+            "enemies": [
+              {
+                "type": "phantomKnight",
+                "amount": 1
+              },
+              {
+                "type": "slug",
+                "amount": 1
+              }
+            ]
+          },
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 5,
+            "enemies": [
+              {
+                "type": "phantomKnight",
+                "amount": 2
+              },
+              {
+                "type": "slug",
+                "amount": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "waves": [
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 2,
+            "enemies": [
+              {
+                "type": "slime",
+                "amount": 2
+              }
+            ]
+          },
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 6,
+            "enemies": [
+              {
+                "type": "slime",
+                "amount": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "waves": [
+          {
+            "delay": 5000,
+            "rounds": 3,
+            "activeLimit": 2,
+            "enemies": [
+              {
+                "type": "reaper",
+                "amount": 2
+              }
+            ]
           },
           {
             "delay": 5000,
             "rounds": 3,
             "activeLimit": 4,
-            "enemies": {
-              "phantomKnight": 1,
-              "slug": 1
-            }
+            "enemies": [
+              {
+                "type": "reaper",
+                "amount": 2
+              }
+            ]
           }
         ]
       }

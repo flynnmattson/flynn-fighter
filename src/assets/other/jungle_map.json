@@ -28,17 +28,7 @@
                         {
                          "name":"active",
                          "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"delay",
-                         "type":"int",
-                         "value":10000
-                        }, 
-                        {
-                         "name":"enemy_imp",
-                         "type":"int",
-                         "value":1
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",
@@ -57,21 +47,6 @@
                          "name":"active",
                          "type":"bool",
                          "value":true
-                        }, 
-                        {
-                         "name":"delay",
-                         "type":"int",
-                         "value":10000
-                        }, 
-                        {
-                         "name":"enemy_phantomKnight",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"enemy_slug",
-                         "type":"int",
-                         "value":1
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",
@@ -89,17 +64,7 @@
                         {
                          "name":"active",
                          "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"delay",
-                         "type":"int",
-                         "value":10000
-                        }, 
-                        {
-                         "name":"enemy_slime",
-                         "type":"int",
-                         "value":2
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",
@@ -117,17 +82,7 @@
                         {
                          "name":"active",
                          "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"delay",
-                         "type":"int",
-                         "value":10000
-                        }, 
-                        {
-                         "name":"enemy_reaper",
-                         "type":"int",
-                         "value":1
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"Enemy Spawner",
