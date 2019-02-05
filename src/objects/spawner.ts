@@ -67,7 +67,7 @@ export class Spawner {
   }
 
   private spawn(): void {
-    let didSpawn = false;
+    let didSpawn = false; // An enemy did spawn
 
     for (let i = 0; i < this.currentWaveInfo.enemies.length; i++) {
       for (let j = 0; j < this.currentWaveInfo.enemies[i].amount; j++) {
@@ -79,7 +79,7 @@ export class Spawner {
           this.activeEnemies++;
           this.currentWaveInfo.enemies[i].spawnTotal--;
           this.currentScene.time.addEvent({
-            delay: 400 * (i + 1),
+            delay: 400 * (j + 1),
             callback: () => {
               this.currentScene.getEnemies().add(
                 new Enemy({

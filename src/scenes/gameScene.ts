@@ -17,13 +17,17 @@ export class GameScene extends Phaser.Scene {
   // objects
   private player: Player;
   private enemies: Phaser.GameObjects.Group;
-  private countdownText: ActionText;
   private parallaxBg: Background;
   private inputHandler: InputHandler;
   private spawners: Array<Spawner>;
+  private countdownText: ActionText;
+  private countdownTimer: Phaser.Time.TimerEvent;
+  private messageText: ActionText;
 
   // variables
-  private cutscene: { wield: number, run: number, countdown: number };
+  private countdownEnds: number;
+  private cutscene: { wield: number, run: number };
+  private waveFinished: boolean;
   private attributes: any; // Attributes referred to in levelAttributes.json for the given level
 
   // tilemap
@@ -75,7 +79,7 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player({
       scene: this,
       x: 0,
-      y: 0,
+      y: 10,
       wield: false,
       attackBox: new AttackBox({
         scene: this
@@ -111,7 +115,6 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.cutscene = {
-      countdown: 1800,
       wield: 1800,
       run: 1500
     };
@@ -121,25 +124,80 @@ export class GameScene extends Phaser.Scene {
       x: this.sys.canvas.width / 2,
       y: this.sys.canvas.height / 2 - 50,
       type: "pixelFont",
-      text: "3...",
+      text: "",
       size: 50,
       bounce: false,
-      follow: true
+      follow: true,
+      fadeDuration: 400
     });
 
-    this.debug();
+    this.messageText = new ActionText({
+      scene: this,
+      x: this.sys.canvas.width / 4 - 50,
+      y: this.sys.canvas.height / 2 - 50,
+      type: "pixelFont",
+      text: "",
+      size: 50,
+      bounce: false,
+      follow: true,
+      fadeDuration: 500
+    });
+
+    this.countdownEnds = 0;
+    this.countdownTimer = this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        if (this.countdownEnds > this.time.now) {
+          this.countdownText.setText(`${Math.round((this.countdownEnds - this.time.now) / 1000)}...`);
+          this.countdownText.setPosition(this.sys.canvas.width / 2 - 25, this.sys.canvas.height / 2 - 50);
+          this.countdownText.showText(150);
+        } else {
+          this.messageText.setText('HERE THEY COME!');
+          this.messageText.setPosition(this.sys.canvas.width / 3 - 75, this.sys.canvas.height / 2 - 50);
+          this.messageText.showText(400);
+          this.countdownTimer.paused = true;
+        }
+      },
+      callbackScope: this,
+      loop: true,
+      paused: true
+    });
+
+    // this.debug();
   }
 
   update(): void {
     if (this.countdownText.isShowingText()) {
       this.countdownText.update();
     }
+
+    if (this.messageText.isShowingText()) {
+      this.messageText.update();
+    }
+
+    if (this.player.getWield()) {
+      this.handleAttack();
+    }
+
     if (this.cutscene) {
       this.handleCutscene();
     } else {
-      this.handleAttack();
       this.handleInput();
+      
+      if (!this.waveFinished) {
+        let justFinished = true;
+        this.spawners.forEach((spawner) => {
+          justFinished = justFinished && spawner.waveFinished();
+        });
+  
+        if (justFinished) {
+          this.handleAfterWave();
+        }
+      } else if (this.countdownEnds && this.countdownEnds < this.time.now) {
+        this.handleNextWave();
+      }
     }
+
     this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
     this.parallaxBg.shiftY(this.cameras.main.scrollY);
     this.player.update();
@@ -170,6 +228,34 @@ export class GameScene extends Phaser.Scene {
     this.cutsceneOver();
   }
 
+  private handleAfterWave(): void {
+    this.waveFinished = true;
+    this.player.setWield(false);
+    this.countdownEnds = 0;
+
+    this.messageText.setText('WAVE FINISHED!');
+    this.messageText.setPosition(this.sys.canvas.width / 4, this.sys.canvas.height / 2 - 100);
+    this.messageText.showText(500);
+
+    this.time.addEvent({
+      delay: 2000,
+      callback: () => {
+        this.messageText.setText('NEXT WAVE STARTS IN');
+        this.messageText.setPosition(this.sys.canvas.width / 4 - 75, this.sys.canvas.height / 2 - 100);
+        this.messageText.showText(2500);
+        this.countdownEnds = this.time.now + 15000;
+        this.countdownTimer.paused = false;
+      },
+      callbackScope: this,
+      loop: false,
+    });
+  }
+
+  private handleNextWave(): void {
+    this.player.setWield(true);
+    this.startSpawner();
+  }
+
   private handleCutscene(): void {
     if (this.cutscene.run < 950 && this.cutscene.run > 0) {
       this.player.runRight();
@@ -178,19 +264,10 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.cutscene.wield === 0) {
       this.player.setWield(true);
+      this.countdownEnds = this.time.now + 6000;
+      this.countdownTimer.paused = false;
     }
-    if (this.cutscene.countdown === 0) {
-      this.countdownText.showText(500);
-    } else if (this.cutscene.countdown === -1000) {
-      this.countdownText.setText("2...");
-      this.countdownText.showText(500);
-    } else if (this.cutscene.countdown === -2000) {
-      this.countdownText.setText("1...");
-      this.countdownText.showText(500);
-    } else if (this.cutscene.countdown === -3000) {
-      this.countdownText.setText("HERE THEY COME!");
-      this.countdownText.setPosition(this.sys.canvas.width / 3 - 50, this.sys.canvas.height / 2 - 50);
-      this.countdownText.showText(500);
+    if (this.countdownEnds && this.countdownEnds < this.time.now) {
       this.cutsceneOver();
     }
 
@@ -266,9 +343,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private startSpawner(): void {
-    // TODO: In Update, continually check all spawners to see if they're all finished.
-    //       Once they're all finished trigger the in between waves event where the user
-    //       can purchase goods heal up all that stuff.
+    this.waveFinished = false;
     this.spawners.forEach((spawner) => { spawner.startNextWave(); });
   }
 }

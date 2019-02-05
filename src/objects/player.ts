@@ -112,6 +112,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     return this.isDead;
   }
 
+  public getWield(): boolean {
+    return this.isWielding;
+  }
+
   public getVelocityX(): number {
     return this.body.velocity.x;
   }

@@ -4,19 +4,9 @@
       {
         "id": 1,
         "waves": [
+          null,
           {
-            "delay": 5000,
-            "rounds": 3,
-            "activeLimit": 2,
-            "enemies": [
-              {
-                "type": "imp",
-                "amount": 1
-              }
-            ]
-          },
-          {
-            "delay": 5000,
+            "delay": 4000,
             "rounds": 3,
             "activeLimit": 4,
             "enemies": [
@@ -32,8 +22,8 @@
         "id": 2,
         "waves": [
           {
-            "delay": 5000,
-            "rounds": 3,
+            "delay": 4000,
+            "rounds": 1,
             "activeLimit": 2,
             "enemies": [
               {
@@ -47,7 +37,7 @@
             ]
           },
           {
-            "delay": 5000,
+            "delay": 4000,
             "rounds": 3,
             "activeLimit": 5,
             "enemies": [
@@ -67,8 +57,8 @@
         "id": 3,
         "waves": [
           {
-            "delay": 5000,
-            "rounds": 3,
+            "delay": 4000,
+            "rounds": 1,
             "activeLimit": 2,
             "enemies": [
               {
@@ -78,7 +68,7 @@
             ]
           },
           {
-            "delay": 5000,
+            "delay": 4000,
             "rounds": 3,
             "activeLimit": 6,
             "enemies": [
@@ -93,21 +83,11 @@
       {
         "id": 4,
         "waves": [
+          null,
           {
-            "delay": 5000,
+            "delay": 4000,
             "rounds": 3,
             "activeLimit": 2,
-            "enemies": [
-              {
-                "type": "reaper",
-                "amount": 2
-              }
-            ]
-          },
-          {
-            "delay": 5000,
-            "rounds": 3,
-            "activeLimit": 4,
             "enemies": [
               {
                 "type": "reaper",

@@ -26,7 +26,7 @@ export class ActionText extends Phaser.GameObjects.BitmapText {
     }
     this.fadeInTween = params.scene.tweens.add({
       targets: this,
-      duration: 500,
+      duration: params.fadeDuration || 500,
       alpha: {
         getStart: () => 0,
         getEnd: () => 1
@@ -39,7 +39,7 @@ export class ActionText extends Phaser.GameObjects.BitmapText {
     });
     this.fadeOutTween = params.scene.tweens.add({
       targets: this,
-      duration: 500,
+      duration: params.fadeDuration || 500,
       alpha: {
         getStart: () => 1,
         getEnd: () => 0
