@@ -7,12 +7,23 @@
           null,
           {
             "delay": 4000,
-            "rounds": 3,
-            "activeLimit": 4,
+            "rounds": 2,
+            "activeLimit": 1,
             "enemies": [
               {
                 "type": "imp",
-                "amount": 2
+                "amount": 1
+              }
+            ]
+          },
+          {
+            "delay": 4000,
+            "rounds": 3,
+            "activeLimit": 2,
+            "enemies": [
+              {
+                "type": "imp",
+                "amount": 1
               }
             ]
           }
@@ -38,8 +49,23 @@
           },
           {
             "delay": 4000,
+            "rounds": 2,
+            "activeLimit": 3,
+            "enemies": [
+              {
+                "type": "phantomKnight",
+                "amount": 2
+              },
+              {
+                "type": "slug",
+                "amount": 1
+              }
+            ]
+          },
+          {
+            "delay": 4000,
             "rounds": 3,
-            "activeLimit": 5,
+            "activeLimit": 3,
             "enemies": [
               {
                 "type": "phantomKnight",
@@ -69,8 +95,19 @@
           },
           {
             "delay": 4000,
+            "rounds": 2,
+            "activeLimit": 2,
+            "enemies": [
+              {
+                "type": "slime",
+                "amount": 2
+              }
+            ]
+          },
+          {
+            "delay": 4000,
             "rounds": 3,
-            "activeLimit": 6,
+            "activeLimit": 4,
             "enemies": [
               {
                 "type": "slime",
@@ -84,6 +121,17 @@
         "id": 4,
         "waves": [
           null,
+          {
+            "delay": 4000,
+            "rounds": 2,
+            "activeLimit": 1,
+            "enemies": [
+              {
+                "type": "reaper",
+                "amount": 1
+              }
+            ]
+          },
           {
             "delay": 4000,
             "rounds": 3,

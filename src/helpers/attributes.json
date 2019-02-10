@@ -41,7 +41,8 @@
     ],
     "health": 2,
     "speed": 150,
-    "dyingTime": 500
+    "dyingTime": 500,
+    "points": 2
   },
   "slug": {
     "type": "ground",
@@ -80,7 +81,8 @@
     ],
     "health": 6,
     "speed": 100,
-    "dyingTime": 700
+    "dyingTime": 700,
+    "points": 10
   },
   "imp": {
     "type": "fly",
@@ -125,7 +127,8 @@
     "health": 3,
     "speed": 150,
     "dyingTime": 900,
-    "dyingGravity": true 
+    "dyingGravity": true,
+    "points": 5
   },
   "phantomKnight": {
     "type": "ground",
@@ -147,7 +150,7 @@
         "damage": 10,
         "speed": 900,
         "cooldown": 1200,
-        "velocity": 800,
+        "velocity": 700,
         "range": 20,
         "offset": -5,
         "trigger": 450
@@ -155,7 +158,8 @@
     ],
     "health": 4,
     "speed": 200,
-    "dyingTime": 1000
+    "dyingTime": 1000,
+    "points": 5
   },
   "reaper": {
     "type": "fly",
@@ -186,6 +190,7 @@
     "health": 3,
     "speed": 150,
     "dyingTime": 1000,
-    "dyingGravity": false
+    "dyingGravity": false,
+    "points": 5
   }
 }

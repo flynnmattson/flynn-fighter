@@ -80,8 +80,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.body.setVelocityX(0);
 
       if (this.dyingTime <= this.currentScene.time.now && this.body.velocity.y === 0) {
-        this.currentScene.registry.set("points", this.currentScene.registry.get("points") + 1);
-        this.currentScene.events.emit("pointsChanged");
+        this.currentScene.events.emit("addScore", this.attributes.points);
         this.attackHitbox.destroy();
         this.destroy();
       }

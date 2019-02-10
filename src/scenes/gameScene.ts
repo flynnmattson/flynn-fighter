@@ -126,7 +126,6 @@ export class GameScene extends Phaser.Scene {
       type: "pixelFont",
       text: "",
       size: 50,
-      bounce: false,
       follow: true,
       fadeDuration: 400
     });
@@ -138,7 +137,6 @@ export class GameScene extends Phaser.Scene {
       type: "pixelFont",
       text: "",
       size: 50,
-      bounce: false,
       follow: true,
       fadeDuration: 500
     });
@@ -147,15 +145,18 @@ export class GameScene extends Phaser.Scene {
     this.countdownTimer = this.time.addEvent({
       delay: 1000,
       callback: () => {
-        if (this.countdownEnds > this.time.now) {
-          this.countdownText.setText(`${Math.round((this.countdownEnds - this.time.now) / 1000)}...`);
-          this.countdownText.setPosition(this.sys.canvas.width / 2 - 25, this.sys.canvas.height / 2 - 50);
+        if (this.countdownEnds) {
+          this.countdownText.setText(`${this.countdownEnds}...`);
+          this.countdownText.setPosition(this.sys.canvas.width / 2, this.sys.canvas.height / 2 - 50);
           this.countdownText.showText(150);
+          this.countdownEnds--;
         } else {
-          this.messageText.setText('HERE THEY COME!');
+          this.messageText.setText("HERE THEY COME!");
           this.messageText.setPosition(this.sys.canvas.width / 3 - 75, this.sys.canvas.height / 2 - 50);
           this.messageText.showText(400);
           this.countdownTimer.paused = true;
+          if (this.cutscene) this.cutsceneOver();
+          else this.handleNextWave();
         }
       },
       callbackScope: this,
@@ -193,8 +194,6 @@ export class GameScene extends Phaser.Scene {
         if (justFinished) {
           this.handleAfterWave();
         }
-      } else if (this.countdownEnds && this.countdownEnds < this.time.now) {
-        this.handleNextWave();
       }
     }
 
@@ -233,17 +232,17 @@ export class GameScene extends Phaser.Scene {
     this.player.setWield(false);
     this.countdownEnds = 0;
 
-    this.messageText.setText('WAVE FINISHED!');
+    this.messageText.setText("WAVE FINISHED!");
     this.messageText.setPosition(this.sys.canvas.width / 4, this.sys.canvas.height / 2 - 100);
     this.messageText.showText(500);
 
     this.time.addEvent({
       delay: 2000,
       callback: () => {
-        this.messageText.setText('NEXT WAVE STARTS IN');
+        this.messageText.setText("NEXT WAVE STARTS IN");
         this.messageText.setPosition(this.sys.canvas.width / 4 - 75, this.sys.canvas.height / 2 - 100);
         this.messageText.showText(2500);
-        this.countdownEnds = this.time.now + 15000;
+        this.countdownEnds = 15;
         this.countdownTimer.paused = false;
       },
       callbackScope: this,
@@ -264,11 +263,8 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.cutscene.wield === 0) {
       this.player.setWield(true);
-      this.countdownEnds = this.time.now + 6000;
+      this.countdownEnds = 5;
       this.countdownTimer.paused = false;
-    }
-    if (this.countdownEnds && this.countdownEnds < this.time.now) {
-      this.cutsceneOver();
     }
 
     for (let key in this.cutscene) {
@@ -278,15 +274,12 @@ export class GameScene extends Phaser.Scene {
 
   private cutsceneOver(): void {
     this.cutscene = null;
-
     this.input.on(
       "pointerdown",
       () => { this.player.startAttack(); },
       this
     );
-
     this.physics.add.collider(this.player, this.spawnColliderLayer);
-    
     this.startSpawner();
     // this.enemies.add(
     //   new Enemy({
@@ -299,7 +292,6 @@ export class GameScene extends Phaser.Scene {
     //     })
     //   })
     // );
-
   }
 
   private handleAttack(): void {
@@ -322,6 +314,9 @@ export class GameScene extends Phaser.Scene {
     if (this.inputHandler.isPressedEscapeKey()) {
       this.inputHandler.reset();
       this.scene.launch("PauseScene");
+      // TODO: Need to change HUDScene so it pauses this.time.now when the Pause Scene comes up.
+      // Will probably have to create pauseScene method on the class to handle it.
+      this.scene.pause("HUDScene");
       this.scene.pause(this.scene.key);
     }
 

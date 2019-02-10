@@ -62,11 +62,12 @@ export class MainMenuScene extends Phaser.Scene {
 
   update(): void {
     if (this.startKey.isDown) {
+      this.startKey.isDown = false;
       this.cameras.main.fadeOut(500);
       setTimeout(() => {
+        this.scene.start("TownScene");
         this.scene.start("HUDScene");
         // this.scene.start("GameScene");
-        this.scene.start("TownScene");
         this.scene.bringToTop("HUDScene");
       }, 500);
     }

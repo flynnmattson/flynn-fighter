@@ -69,7 +69,7 @@ export class TownScene extends Phaser.Scene {
       type: "pixelFont",
       text: "E: TRAVEL TO FOREST",
       size: 30,
-      bounce: true
+      bounce: 25
     });
 
     this.player = new Player({
@@ -141,6 +141,7 @@ export class TownScene extends Phaser.Scene {
     if (this.inputHandler.isPressedEscapeKey()) {
       this.inputHandler.reset();
       this.scene.launch("PauseScene");
+      this.scene.pause("HUDScene");
       this.scene.pause(this.scene.key);
     }
 

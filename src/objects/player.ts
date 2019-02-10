@@ -172,7 +172,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public startAttack(): void {
-    if (!this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
+    if (this.isWielding && !this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
       this.attackHitbox.enable();
       if (!this.inAir) {
