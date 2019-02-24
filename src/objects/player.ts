@@ -105,7 +105,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       }
     }
 
-    this.isOffTheScreen();
+    // this.isOffTheScreen();
   }
 
   public getDead(): boolean {

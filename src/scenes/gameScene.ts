@@ -164,7 +164,7 @@ export class GameScene extends Phaser.Scene {
       paused: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -314,10 +314,9 @@ export class GameScene extends Phaser.Scene {
     if (this.inputHandler.isPressedEscapeKey()) {
       this.inputHandler.reset();
       this.scene.launch("PauseScene");
-      // TODO: Need to change HUDScene so it pauses this.time.now when the Pause Scene comes up.
-      // Will probably have to create pauseScene method on the class to handle it.
-      this.scene.pause("HUDScene");
+      
       this.scene.pause(this.scene.key);
+      this.scene.pause("HUDScene");
     }
 
     if (this.inputHandler.isPressedJumpKey()) {

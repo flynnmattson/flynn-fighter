@@ -78,6 +78,16 @@
         "url": "src/assets/other/town/town_tileset.png"
       },
       {
+        "type": "image",
+        "key": "houseTiles1",
+        "url": "src/assets/other/house/house_tileset_1.png"
+      },
+      {
+        "type": "image",
+        "key": "houseTiles2",
+        "url": "src/assets/other/house/house_tileset_2.png"
+      },
+      {
         "type": "tilemapTiledJSON",
         "key": "jungleMap",
         "url": "src/assets/other/jungle_map.json"
@@ -86,6 +96,11 @@
         "type": "tilemapTiledJSON",
         "key": "townMap",
         "url": "src/assets/other/town/town_map.json"
+      },
+      {
+        "type": "tilemapTiledJSON",
+        "key": "houseMap",
+        "url": "src/assets/other/house/house_map.json"
       },
       {
         "type": "spritesheet",

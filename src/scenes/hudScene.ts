@@ -19,6 +19,7 @@ export class HUDScene extends Phaser.Scene {
   private healthBarBg: Phaser.GameObjects.Graphics;
   private healthBar: Phaser.GameObjects.Graphics;
 
+  private lastTime: number;
 
   constructor() {
     super({
@@ -50,6 +51,16 @@ export class HUDScene extends Phaser.Scene {
     if (this.comboScoreText.isShowingText()) {
       this.comboScoreText.update();
     }
+
+    // HACK: I need to do this because when you pause the game the
+    // this.time.now variable will jump forward after resuming the game.
+    // This causes the combo multiplier to run out when the game is paused.
+    // To avoid this I just increase the combo Timer.
+    if (this.time.now - this.lastTime > 20) {
+      this.comboTime.current += this.time.now - this.lastTime;
+    }
+    this.lastTime = this.time.now;
+
 
     if (this.comboTime.current > this.time.now) {
       this.updateComboBar();

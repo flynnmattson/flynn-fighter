@@ -70,6 +70,7 @@ export class PauseScene extends Phaser.Scene {
     if (this.escapeKey.isDown && !this.keyWait) {
       this.scene.resume(this.registry.get("currentScene"));
       this.scene.resume("HUDScene");
+
       this.scene.stop("PauseScene");
     } else if (this.quitKey.isDown && !this.keyWait) {
       this.quitKey.isDown = false; // NOTE: have to do this due to a bug I think??

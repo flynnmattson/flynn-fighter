@@ -43,7 +43,7 @@ const config: GameConfig = {
       debug: false
     }
   },
-  backgroundColor: "#a84647",
+  backgroundColor: "#000000",
   pixelArt: true,
   antialias: false
 };
