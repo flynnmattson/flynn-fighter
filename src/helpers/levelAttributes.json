@@ -34,27 +34,23 @@
         "waves": [
           {
             "delay": 4000,
-            "rounds": 1,
-            "activeLimit": 2,
+            "rounds": 5,
+            "activeLimit": 3,
             "enemies": [
               {
-                "type": "phantomKnight",
-                "amount": 1
-              },
-              {
-                "type": "slug",
-                "amount": 1
+                "type": "slime",
+                "amount": 3
               }
             ]
           },
           {
             "delay": 4000,
-            "rounds": 2,
-            "activeLimit": 3,
+            "rounds": 5,
+            "activeLimit": 5,
             "enemies": [
               {
-                "type": "phantomKnight",
-                "amount": 2
+                "type": "slime",
+                "amount": 4
               },
               {
                 "type": "slug",
@@ -84,23 +80,27 @@
         "waves": [
           {
             "delay": 4000,
-            "rounds": 1,
-            "activeLimit": 2,
+            "rounds": 5,
+            "activeLimit": 3,
             "enemies": [
               {
                 "type": "slime",
                 "amount": 2
+              },
+              {
+                "type": "slug",
+                "amount": 1
               }
             ]
           },
           {
             "delay": 4000,
-            "rounds": 2,
-            "activeLimit": 2,
+            "rounds": 5,
+            "activeLimit": 3,
             "enemies": [
               {
                 "type": "slime",
-                "amount": 2
+                "amount": 3
               }
             ]
           },

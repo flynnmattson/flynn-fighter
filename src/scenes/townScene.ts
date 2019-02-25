@@ -87,7 +87,7 @@ export class TownScene extends Phaser.Scene {
     this.houseFgLayer = this.houseMap.createStaticLayer("Foreground", this.houseTileset1, 0, 1000);
     this.houseFgLayer.setScale(3);
     this.houseFgLayer.setCollisionByProperty({ collides: true });
-    this.houseDoor = new Phaser.GameObjects.Rectangle(this, this.sys.canvas.width + 95, 1000 - 150, 90, 150);
+    this.houseDoor = new Phaser.GameObjects.Rectangle(this, this.sys.canvas.width / 5 + 80, 1370, 90, 150);
     this.physics.world.enable(this.houseDoor);
     this.houseDoor.body.allowGravity = false;
     this.houseDoor.body.setSize(90, 150);
@@ -113,7 +113,7 @@ export class TownScene extends Phaser.Scene {
       }),
       new ActionText({
         scene: this,
-        x: this.houseDoor.x - 180,
+        x: this.houseDoor.x - 125,
         y: this.houseDoor.y - 150,
         type: "pixelFont",
         text: "E: BACK TO TOWN",
@@ -156,12 +156,21 @@ export class TownScene extends Phaser.Scene {
       text.update();
     });
 
+    this.handleTravel();
+    this.handleTownDoor();
+    this.handleHouseDoor();
+  }
+
+  public getPlayer(): Player {
+    return this.player;
+  }
+
+  private handleTravel(): void {
     this.physics.overlap(
       this.player,
       this.townObjects[this.townObjects.length - 1],
       (player: Player, wagon: Phaser.GameObjects.Image) => {
         this.actionTexts[0].showText(100);
-        // Listen for Action to go to Jungle here
         if (this.inputHandler.isPressedInteractKey()) {
           this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
@@ -173,18 +182,22 @@ export class TownScene extends Phaser.Scene {
       null,
       this
     );
+  }
 
+  private handleTownDoor(): void {
     this.physics.overlap(
       this.player,
       this.townDoor,
       (player: Player, door: Phaser.GameObjects.Rectangle) => {
         this.actionTexts[1].showText(100);
-        // Listen for Action to go to Jungle here
         if (this.inputHandler.isPressedInteractKey()) {
           this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
           setTimeout(() => {
-            this.toHouse();
+            this.cameras.main.setBounds(0, 920, this.sys.canvas.width * 2.5, this.sys.canvas.height);
+            this.player.setPosition(this.sys.canvas.width / 5, 1315);
+            this.player.updateOffset();
+            this.cameras.main.fadeIn(500);
           }, 500);
         }
       },
@@ -193,36 +206,26 @@ export class TownScene extends Phaser.Scene {
     );
   }
 
-  public getPlayer(): Player {
-    return this.player;
-  }
-
-  private debug(): void {
-    const debugGraphics = this.add.graphics().setAlpha(0.75);
-    this.townGroundLayer.renderDebug(debugGraphics, {
-      tileColor: null, // Color of non-colliding tiles
-      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    });
-
-    const debugGraphics2 = this.add.graphics().setAlpha(0.75);
-    this.houseGroundLayer.renderDebug(debugGraphics2, {
-      tileColor: null, // Color of non-colliding tiles
-      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    });
-
-    this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
-  }
-
-  private toHouse(): void {
-    this.cameras.main.setBounds(0, 920, this.sys.canvas.width * 2.5, this.sys.canvas.height);
-    this.player.setPosition(this.sys.canvas.width / 5, 1305);
-    this.cameras.main.fadeIn(500);
-  }
-
-  private toTown(): void {
-    
+  private handleHouseDoor(): void {
+    this.physics.overlap(
+      this.player,
+      this.houseDoor,
+      (player: Player, door: Phaser.GameObjects.Rectangle) => {
+        this.actionTexts[2].showText(100);
+        if (this.inputHandler.isPressedInteractKey()) {
+          this.inputHandler.reset();
+          this.cameras.main.fadeOut(500);
+          setTimeout(() => {
+            this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
+            this.player.setPosition(this.sys.canvas.width + 30, this.sys.canvas.height - 190);
+            this.player.updateOffset();
+            this.cameras.main.fadeIn(500);
+          }, 500);
+        }
+      },
+      null,
+      this
+    );
   }
 
   private handleInput(): void {
@@ -248,5 +251,23 @@ export class TownScene extends Phaser.Scene {
     } else {
       this.player.stopRun();
     }
+  }
+
+  private debug(): void {
+    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    this.townGroundLayer.renderDebug(debugGraphics, {
+      tileColor: null, // Color of non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
+
+    const debugGraphics2 = this.add.graphics().setAlpha(0.75);
+    this.houseGroundLayer.renderDebug(debugGraphics2, {
+      tileColor: null, // Color of non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    });
+
+    this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
   }
 }

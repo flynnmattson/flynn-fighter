@@ -164,7 +164,7 @@ export class GameScene extends Phaser.Scene {
       paused: true
     });
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {

@@ -154,6 +154,18 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
+  public updateOffset(): void {
+    if (this.currentScene.scene.key === "TownScene") {
+      // Offset for town vs house
+      this.body.setOffset(
+        this.attributes.body.offset.x,
+        this.y > 1000 ? 10 : this.attributes.body.offset.y * 2
+      );
+    } else if (this.currentScene.scene.key === "GameScene") {
+      this.body.setOffset(this.attributes.body.offset.x, this.attributes.body.offset.y);
+    }
+  }
+
   public jump(): void {
     if (!this.isSliding && !this.inAir && !this.isAttacking) {
       this.inAir = true;
