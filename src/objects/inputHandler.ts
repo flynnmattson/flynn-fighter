@@ -29,13 +29,15 @@ export class InputHandler {
 
   public reset(): void {
     this.escapeKey.isDown = false;
+    this.leftKey.isDown = false;
+    this.rightKey.isDown = false;
     if (this.interactKey) this.interactKey.isDown = false;
   }
 
   public setClickAction(action: Function): void {
     this.currentScene.input.on(
       "pointerdown",
-      () => { action; },
+      () => { action(); },
       this.currentScene
     );
   }

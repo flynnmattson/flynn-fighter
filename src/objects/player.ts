@@ -257,9 +257,9 @@ export class Player extends Phaser.GameObjects.Sprite {
   public stopRun(): void {
     this.isRunning = false;
     if (this.body.velocity.x > 0) {
-      this.body.setVelocityX(this.body.velocity.x - 50);
+      this.body.setVelocityX(this.body.velocity.x < 50 ? 0 : this.body.velocity.x - 50);
     } else if (this.body.velocity.x < 0) {
-      this.body.setVelocityX(this.body.velocity.x + 50);
+      this.body.setVelocityX(this.body.velocity.x > -50 ? 0 : this.body.velocity.x + 50);
     }
     // if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
     if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.inAir) {

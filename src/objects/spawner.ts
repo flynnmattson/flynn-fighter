@@ -79,7 +79,7 @@ export class Spawner {
           this.activeEnemies++;
           this.currentWaveInfo.enemies[i].spawnTotal--;
           this.currentScene.time.addEvent({
-            delay: 400 * (j + 1),
+            delay: 500 * (j + 1),
             callback: () => {
               this.currentScene.getEnemies().add(
                 new Enemy({

@@ -309,9 +309,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private stopRun(): void {
     if (!this.isHurting) {
       if (this.body.velocity.x > 0) {
-        this.body.setVelocityX(this.body.velocity.x - 50);
+        this.body.setVelocityX(this.body.velocity.x < 50 ? 0 : this.body.velocity.x - 50);
       } else if (this.body.velocity.x < 0) {
-        this.body.setVelocityX(this.body.velocity.x + 50);
+        this.body.setVelocityX(this.body.velocity.x > -50 ? 0 : this.body.velocity.x + 50);
       }
       if (!this.isAttacking && this.body.velocity.y === 0) {
         this.anims.play(`${this.texture.key}Idle`, true);

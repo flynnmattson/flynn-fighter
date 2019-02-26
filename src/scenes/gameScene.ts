@@ -78,7 +78,7 @@ export class GameScene extends Phaser.Scene {
 
     this.player = new Player({
       scene: this,
-      x: 0,
+      x: 350,
       y: 10,
       wield: false,
       attackBox: new AttackBox({
@@ -88,7 +88,7 @@ export class GameScene extends Phaser.Scene {
 
     this.inputHandler = new InputHandler({scene: this});
 
-    this.cameras.main.setBounds(150, -375, this.sys.canvas.width * 2.70, this.sys.canvas.height * 1.15);
+    this.cameras.main.setBounds(350, -375, this.sys.canvas.width * 2.70, this.sys.canvas.height * 1.15);
     this.cameras.main.startFollow(this.player, true, 1, 1, -50, 0);
     // this.cameras.main.roundPixels = true;
     this.cameras.main.fadeIn(1000);
@@ -164,7 +164,7 @@ export class GameScene extends Phaser.Scene {
       paused: true
     });
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
@@ -222,7 +222,7 @@ export class GameScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     // });
 
-    this.player.setPosition(150, 0);
+    this.player.setPosition(500, 0);
     this.player.setWield(true);
     this.cutsceneOver();
   }
@@ -274,13 +274,11 @@ export class GameScene extends Phaser.Scene {
 
   private cutsceneOver(): void {
     this.cutscene = null;
-    this.input.on(
-      "pointerdown",
-      () => { this.player.startAttack(); },
-      this
-    );
+    this.inputHandler.setClickAction(() => this.player.startAttack());
     this.physics.add.collider(this.player, this.spawnColliderLayer);
     this.startSpawner();
+
+    // NOTE: Used to add new enemy for testing/debugging
     // this.enemies.add(
     //   new Enemy({
     //     scene: this,

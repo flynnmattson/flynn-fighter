@@ -61,7 +61,7 @@
     "attack": [
       {
         "type": "melee",
-        "damage": 8,
+        "damage": 14,
         "speed": 1000,
         "cooldown": 1500,
         "velocity": 150,
@@ -70,7 +70,7 @@
         "trigger": 400
       }, {
         "type": "melee",
-        "damage": 20,
+        "damage": 25,
         "speed": 2200,
         "cooldown": 10000,
         "velocity": 0,
@@ -80,7 +80,7 @@
       }
     ],
     "health": 6,
-    "speed": 100,
+    "speed": 120,
     "dyingTime": 700,
     "points": 10
   },
