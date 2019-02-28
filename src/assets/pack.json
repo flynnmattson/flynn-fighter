@@ -9,6 +9,36 @@
       },
       {
         "type": "image",
+        "key": "a_key",
+        "url": "src/assets/other/keyboard/a_key.png"
+      },
+      {
+        "type": "image",
+        "key": "d_key",
+        "url": "src/assets/other/keyboard/d_key.png"
+      },
+      {
+        "type": "image",
+        "key": "e_key",
+        "url": "src/assets/other/keyboard/e_key.png"
+      },
+      {
+        "type": "image",
+        "key": "s_key",
+        "url": "src/assets/other/keyboard/s_key.png"
+      },
+      {
+        "type": "image",
+        "key": "q_key",
+        "url": "src/assets/other/keyboard/q_key.png"
+      },
+      {
+        "type": "image",
+        "key": "esc_key",
+        "url": "src/assets/other/keyboard/esc_key.png"
+      },
+      {
+        "type": "image",
         "key": "jungle_background1",
         "url": "src/assets/other/plx-1.png"
       },

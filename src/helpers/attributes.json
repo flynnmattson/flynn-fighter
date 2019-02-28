@@ -13,6 +13,20 @@
       }
     }
   },
+  "master": {
+    "depth": 1,
+    "body": {
+      "size": {
+        "x": 60,
+        "y": 25
+      },
+      "offset": {
+        "flipX": -5,
+        "x": 14,
+        "y": 7
+      }
+    }
+  },
   "slime": {
     "type": "ground",
     "depth": 3,

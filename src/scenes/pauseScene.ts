@@ -1,3 +1,5 @@
+import { ActionText } from "../objects/actionText";
+
 /**
  * @author       Flynn Mattson
  * @copyright    2019 Flynn Mattson
@@ -6,6 +8,7 @@
 
 export class PauseScene extends Phaser.Scene {
   private bitmapTexts: Phaser.GameObjects.BitmapText[];
+  private menuTexts: ActionText[];
   private pauseBg: Phaser.GameObjects.Graphics;
   private escapeKey: Phaser.Input.Keyboard.Key;
   private quitKey: Phaser.Input.Keyboard.Key;
@@ -19,11 +22,12 @@ export class PauseScene extends Phaser.Scene {
 
   init(): void {
     this.bitmapTexts = [];
+    this.menuTexts = [];
     this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     this.quitKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
   }
 
-  create(): void {    
+  create(): void {
     this.keyWait = 200;
     this.pauseBg = this.add.graphics();
     this.pauseBg.fillStyle(0xa84647, 1);
@@ -44,24 +48,26 @@ export class PauseScene extends Phaser.Scene {
         30
       )
     );
-    this.bitmapTexts.push(
-      this.add.bitmapText(
-        this.cameras.main.width / 2 - 60,
-        this.cameras.main.height / 2 - 30,
-        "pixelFont",
-        "Q: QUIT",
-        30
-      )
-    );
-    this.bitmapTexts.push(
-      this.add.bitmapText(
-        this.cameras.main.width / 2 - 96,
-        this.cameras.main.height / 2,
-        "pixelFont",
-        "ESC: RESUME",
-        30
-      )
-    );
+    this.menuTexts = [
+      new ActionText({
+        scene: this,
+        x: this.cameras.main.width / 2 - 60,
+        y: this.cameras.main.height / 2 - 40,
+        type: "pixelFont",
+        text: "QUIT",
+        size: 30,
+        key: "q_key"
+      }),
+      new ActionText({
+        scene: this,
+        x: this.cameras.main.width / 2 - 60,
+        y: this.cameras.main.height / 2,
+        type: "pixelFont",
+        text: "RESUME",
+        size: 30,
+        key: "esc_key"
+      })
+    ];
   }
 
   update(): void {

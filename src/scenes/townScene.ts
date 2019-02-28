@@ -9,13 +9,17 @@ import { Background } from "../objects/background";
 import { ActionText } from "../objects/actionText";
 import { AttackBox } from "../objects/attackBox";
 import { InputHandler } from "../objects/inputHandler";
+import { Master } from "../objects/master";
 
 export class TownScene extends Phaser.Scene {
   // objects
   private player: Player;
   private parallaxBg: Background;
-  private actionTexts: ActionText[];
+  private interactTexts: ActionText[];
+  private tutorialTexts: ActionText[];
+  private tutorialValues: {left: boolean, right: boolean};
   private inputHandler: InputHandler;
+  private master: Master;
 
   // town environment
   private townMap: Phaser.Tilemaps.Tilemap;
@@ -43,7 +47,7 @@ export class TownScene extends Phaser.Scene {
     // objects
     this.player = null;
     this.parallaxBg = null;
-    this.actionTexts = [];
+    this.interactTexts = [];
     this.townObjects = [];
   }
 
@@ -92,35 +96,70 @@ export class TownScene extends Phaser.Scene {
     this.houseDoor.body.allowGravity = false;
     this.houseDoor.body.setSize(90, 150);
 
-    this.actionTexts = [
+    this.interactTexts = [
       new ActionText({
         scene: this,
-        x: this.townObjects[this.townObjects.length - 1].x - 180,
+        x: this.townObjects[this.townObjects.length - 1].x - 165,
         y: this.townObjects[this.townObjects.length - 1].y - 150,
         type: "pixelFont",
-        text: "E: TRAVEL TO FOREST",
+        text: "TRAVEL TO FOREST",
         size: 30,
-        bounce: 25
+        bounce: 25,
+        fadeDuration: 500,
+        key: "e_key"
       }),
       new ActionText({
         scene: this,
-        x: this.townDoor.x - 125,
+        x: this.townDoor.x - 105,
         y: this.townDoor.y - 150,
         type: "pixelFont",
-        text: "E: VISIT MASTER",
+        text: "VISIT MASTER",
         size: 30,
-        bounce: 25
+        bounce: 25,
+        fadeDuration: 500,
+        key: "e_key"
       }),
       new ActionText({
         scene: this,
-        x: this.houseDoor.x - 125,
+        x: this.houseDoor.x - 105,
         y: this.houseDoor.y - 150,
         type: "pixelFont",
-        text: "E: BACK TO TOWN",
+        text: "BACK TO TOWN",
         size: 30,
-        bounce: 25
+        bounce: 25,
+        fadeDuration: 500,
+        key: "e_key"
       })
     ];
+
+    this.tutorialTexts = [
+      new ActionText({
+        scene: this,
+        x: this.sys.canvas.width / 5 - 75,
+        y: this.sys.canvas.height - 180,
+        type: "pixelFont",
+        text: "LEFT",
+        size: 30,
+        bounce: 25,
+        fadeDuration: 500,
+        key: "a_key"
+      }),
+      new ActionText({
+        scene: this,
+        x: this.sys.canvas.width / 5 + 140,
+        y: this.sys.canvas.height - 180,
+        type: "pixelFont",
+        text: "RIGHT",
+        size: 30,
+        bounce: 25,
+        fadeDuration: 500,
+        key: "d_key"
+      })
+    ];
+    this.tutorialValues = {
+      left: false,
+      right: false
+    };
 
     this.player = new Player({
       scene: this,
@@ -131,6 +170,13 @@ export class TownScene extends Phaser.Scene {
       attackBox: new AttackBox({
         scene: this
       })
+    });
+
+    this.master = new Master({
+      scene: this,
+      x: this.sys.canvas.width,
+      y: 1315,
+      key: "Master"
     });
 
     this.inputHandler = new InputHandler({
@@ -144,15 +190,23 @@ export class TownScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.townGroundLayer);
     this.physics.add.collider(this.player, this.houseGroundLayer);
+    this.physics.add.collider(this.master, this.houseGroundLayer);
 
-    // this.debug();
+    this.debug();
   }
 
   update(): void {
     this.handleInput();
     this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
     this.player.update();
-    this.actionTexts.forEach((text) => {
+    this.master.update();
+    this.interactTexts.forEach((text) => {
+      text.update();
+    });
+    
+    if (!this.tutorialValues.left) this.tutorialTexts[0].showText(50);
+    if (!this.tutorialValues.right) this.tutorialTexts[1].showText(50);
+    this.tutorialTexts.forEach((text) => {
       text.update();
     });
 
@@ -170,7 +224,7 @@ export class TownScene extends Phaser.Scene {
       this.player,
       this.townObjects[this.townObjects.length - 1],
       (player: Player, wagon: Phaser.GameObjects.Image) => {
-        this.actionTexts[0].showText(100);
+        this.interactTexts[0].showText(100);
         if (this.inputHandler.isPressedInteractKey()) {
           this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
@@ -189,14 +243,12 @@ export class TownScene extends Phaser.Scene {
       this.player,
       this.townDoor,
       (player: Player, door: Phaser.GameObjects.Rectangle) => {
-        this.actionTexts[1].showText(100);
+        this.interactTexts[1].showText(100);
         if (this.inputHandler.isPressedInteractKey()) {
           this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
           setTimeout(() => {
-            this.cameras.main.setBounds(0, 920, this.sys.canvas.width * 2.5, this.sys.canvas.height);
-            this.player.setPosition(this.sys.canvas.width / 5, 1315);
-            this.player.updateOffset();
+            this.travelToHouse();
             this.cameras.main.fadeIn(500);
           }, 500);
         }
@@ -211,14 +263,12 @@ export class TownScene extends Phaser.Scene {
       this.player,
       this.houseDoor,
       (player: Player, door: Phaser.GameObjects.Rectangle) => {
-        this.actionTexts[2].showText(100);
+        this.interactTexts[2].showText(100);
         if (this.inputHandler.isPressedInteractKey()) {
           this.inputHandler.reset();
           this.cameras.main.fadeOut(500);
           setTimeout(() => {
-            this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
-            this.player.setPosition(this.sys.canvas.width + 30, this.sys.canvas.height - 190);
-            this.player.updateOffset();
+            this.travelToTown();
             this.cameras.main.fadeIn(500);
           }, 500);
         }
@@ -246,11 +296,25 @@ export class TownScene extends Phaser.Scene {
 
     if (this.inputHandler.isPressedLeftKey()) {
       this.player.runLeft();
+      if (!this.tutorialValues.left) this.tutorialValues.left = true;
     } else if (this.inputHandler.isPressedRightKey()) {
       this.player.runRight();
+      if (!this.tutorialValues.right) this.tutorialValues.right = true;
     } else {
       this.player.stopRun();
     }
+  }
+
+  private travelToTown(): void {
+    this.cameras.main.setBounds(0, 0, this.sys.canvas.width * 2.5, this.sys.canvas.height);
+    this.player.setPosition(this.sys.canvas.width + 30, this.sys.canvas.height - 190);
+    this.player.updateOffset();
+  }
+
+  private travelToHouse(): void {
+    this.cameras.main.setBounds(0, 920, this.sys.canvas.width * 2.5, this.sys.canvas.height);
+    this.player.setPosition(this.sys.canvas.width / 5, 1315);
+    this.player.updateOffset();
   }
 
   private debug(): void {
@@ -268,6 +332,7 @@ export class TownScene extends Phaser.Scene {
       faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     });
 
-    this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
+    // this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
+    this.travelToHouse();
   }
 }

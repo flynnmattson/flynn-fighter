@@ -1,3 +1,5 @@
+import { ActionText } from "../objects/actionText";
+
 /**
  * @author       Digitsensitive <digit.sensitivee@gmail.com>
  * @copyright    2018 Digitsensitive
@@ -8,6 +10,7 @@
 export class MainMenuScene extends Phaser.Scene {
   private startKey: Phaser.Input.Keyboard.Key;
   private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
+  private menuTexts: ActionText[] = [];
 
   constructor() {
     super({
@@ -47,14 +50,16 @@ export class MainMenuScene extends Phaser.Scene {
       )
     );
 
-    this.bitmapTexts.push(
-      this.add.bitmapText(
-        this.sys.canvas.width / 2 - 50,
-        this.sys.canvas.height / 2 - 10,
-        "pixelFont",
-        "S: PLAY",
-        30
-      )
+    this.menuTexts.push(
+      new ActionText({
+        scene: this,
+        x: this.sys.canvas.width / 2 - 40,
+        y: this.sys.canvas.height / 2 - 10,
+        type: "pixelFont",
+        text: "PLAY",
+        size: 30,
+        key: "s_key"
+      })
     );
 
     this.cameras.main.fadeIn();
