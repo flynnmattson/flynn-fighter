@@ -1,4 +1,5 @@
 import { AttackBox } from "./attackBox";
+import { Projectile } from "./projectile";
 
 /**
  * @author       Flynn Mattson
@@ -26,6 +27,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private health: number;
   private attributes: any;
   private attackHitbox: AttackBox;
+  private projectiles: Phaser.GameObjects.Group;
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key);
@@ -37,6 +39,12 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
     this.health = params.scene.registry.get("health");
     this.attributes = params.scene.cache.json.get('attributes')['player'];
+
+    this.projectiles = this.currentScene.add.group({
+      classType: Projectile,
+      active: true,
+      runChildUpdate: false
+    });
 
     // image
     this.setScale(3);
@@ -183,22 +191,36 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  public startAttack(): void {
+  public startAttack(secondaryAttack: boolean): void {
     if (this.isWielding && !this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
-      this.attackHitbox.enable();
-      if (!this.inAir) {
-        this.anims.play("adventurerAttack" + this.attackCombo, false);
-        this.body.setVelocityX(this.flipX ? this.attackCombo === 3 ? -600 : -300 : this.attackCombo === 3 ? 600 : 300);
-        this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
-      } else if (this.airAttackCombo) {
-        this.body.setVelocityX(0);
-        this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
-        this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
-        // If the Air Attack is on the third and final attack then sets to 0 which means combo is finished.
-        this.airAttackCombo = this.airAttackCombo === 3 ? 0 : this.airAttackCombo + 1;
+      if (secondaryAttack) {
+        if (this.inAir) {
+          this.anims.play("adventurerBowAttack2", false);
+          this.body.setVelocityX(0);
+          setTimeout(() => this.shootArrow(), 300);
+        } else {
+          this.anims.play("adventurerBowAttack1", false);
+          setTimeout(() => {
+            this.body.setVelocityX(this.flipX ? 300 : -300);
+            this.shootArrow();
+          }, 650);
+        }
+      } else {
+        this.attackHitbox.enable();
+        if (!this.inAir) {
+          this.anims.play("adventurerAttack" + this.attackCombo, false);
+          this.body.setVelocityX(this.flipX ? this.attackCombo === 3 ? -600 : -300 : this.attackCombo === 3 ? 600 : 300);
+          this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
+        } else if (this.airAttackCombo) {
+          this.body.setVelocityX(0);
+          this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
+          this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
+          // If the Air Attack is on the third and final attack then sets to 0 which means combo is finished.
+          this.airAttackCombo = this.airAttackCombo === 3 ? 0 : this.airAttackCombo + 1;
+        }
       }
-
+  
       // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
       // this.nextAttack, then continually do overlap checks on enemies and the Player
       // attack box and if they overlap damage the enemy. Pass in the time of the attack
@@ -309,5 +331,18 @@ export class Player extends Phaser.GameObjects.Sprite {
     if (this.y + this.height > this.scene.sys.canvas.height) {
       this.isDead = true;
     }
+  }
+
+  private shootArrow(): void {
+    this.projectiles.add(new Projectile({
+      scene: this.currentScene,
+      owner: 'player',
+      x: this.flipX ? this.getBodyLeftSide() : this.getBodyRightSide(),
+      y: this.getBodyHeightCenter() + this.body.height,
+      info: this.attributes.attack[0].projectile,
+      damage: this.attributes.attack[0].damage,
+      key: `adventurerBowProjectile1`,
+      flip: !this.flipX
+    }));
   }
 }

@@ -154,6 +154,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         // Shoot Projectile Here
         this.projectiles.add(new Projectile({
           scene: this.currentScene,
+          owner: 'enemy',
           x: this.flipX ? this.getBodyRight() : this.getBodyLeft(),
           y: this.getBodyHeightCenter() + this.body.height,
           info: this.attributes.attack[this.attackNum].projectile,

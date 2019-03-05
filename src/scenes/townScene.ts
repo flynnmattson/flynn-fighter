@@ -332,7 +332,7 @@ export class TownScene extends Phaser.Scene {
       faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     });
 
-    // this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
-    this.travelToHouse();
+    this.player.setPosition(this.sys.canvas.width * 2.2, this.sys.canvas.height - 200);
+    // this.travelToHouse();
   }
 }

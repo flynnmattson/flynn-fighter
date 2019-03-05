@@ -188,6 +188,39 @@
       "frameRate": 10
     },
     {
+      "key": "adventurerBowAttack1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurerBow",
+        "start": 0,
+        "end": 8
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerBowAttack2",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurerBow",
+        "start": 9,
+        "end": 14
+      },
+      "repeat": 0,
+      "frameRate": 10
+    },
+    {
+      "key": "adventurerBowProjectile1",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurerBowProjectile",
+        "start": 0,
+        "end": 3
+      },
+      "repeat": -1,
+      "frameRate": 6
+    },
+    {
       "key": "slimeIdle",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",

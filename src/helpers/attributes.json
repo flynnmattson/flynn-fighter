@@ -11,7 +11,33 @@
         "x": 14,
         "y": 7
       }
-    }
+    },
+    "attack": [
+      {
+        "type": "ranged",
+        "projectile": {
+          "body": {
+            "size": {
+              "x": 24,
+              "y": 7
+            },
+            "offset": {
+              "flipX": 7,
+              "x": 2,
+              "y": 0
+            }
+          },
+          "speed": 500
+        },
+        "damage": 7,
+        "speed": 1000,
+        "cooldown": 2000,
+        "velocity": 0,
+        "range": 100,
+        "offset": 150,
+        "trigger": 600
+      }
+    ]
   },
   "master": {
     "depth": 1,
@@ -55,7 +81,7 @@
     ],
     "health": 2,
     "speed": 150,
-    "dyingTime": 500,
+    "dyingTime": 700,
     "points": 2
   },
   "slug": {

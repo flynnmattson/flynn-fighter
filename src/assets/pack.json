@@ -152,6 +152,24 @@
       },
       {
         "type": "spritesheet",
+        "key": "adventurerBow",
+        "url": "src/assets/sprites/adventurer-bow-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "adventurerBowProjectile",
+        "url": "src/assets/sprites/adventurer-bow-projectile-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 34,
+          "frameHeight": 9
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "slime",
         "url": "src/assets/sprites/enemies/slime-Sheet.png",
         "frameConfig": {

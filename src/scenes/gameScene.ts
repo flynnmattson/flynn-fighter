@@ -155,8 +155,12 @@ export class GameScene extends Phaser.Scene {
           this.messageText.setPosition(this.sys.canvas.width / 3 - 75, this.sys.canvas.height / 2 - 50);
           this.messageText.showText(400);
           this.countdownTimer.paused = true;
-          if (this.cutscene) this.cutsceneOver();
-          else this.handleNextWave();
+          if (this.cutscene) {
+            this.cutsceneOver();
+            this.startSpawner();
+          } else {
+            this.handleNextWave();
+          }
         }
       },
       callbackScope: this,
@@ -191,7 +195,7 @@ export class GameScene extends Phaser.Scene {
           justFinished = justFinished && spawner.waveFinished();
         });
   
-        if (justFinished) {
+        if (justFinished && this.spawners.length) {
           this.handleAfterWave();
         }
       }
@@ -212,19 +216,6 @@ export class GameScene extends Phaser.Scene {
 
   public getGroundLayer(): Phaser.Tilemaps.StaticTilemapLayer {
     return this.groundLayer;
-  }
-
-  private debug(): void {
-    // const debugGraphics = this.add.graphics().setAlpha(0.75);
-    // this.groundLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    // });
-
-    this.player.setPosition(500, 0);
-    this.player.setWield(true);
-    this.cutsceneOver();
   }
 
   private handleAfterWave(): void {
@@ -274,9 +265,8 @@ export class GameScene extends Phaser.Scene {
 
   private cutsceneOver(): void {
     this.cutscene = null;
-    this.inputHandler.setClickAction(() => this.player.startAttack());
+    this.inputHandler.setClickAction((rightClick) => this.player.startAttack(rightClick));
     this.physics.add.collider(this.player, this.spawnColliderLayer);
-    this.startSpawner();
 
     // NOTE: Used to add new enemy for testing/debugging
     // this.enemies.add(
@@ -337,5 +327,24 @@ export class GameScene extends Phaser.Scene {
   private startSpawner(): void {
     this.waveFinished = false;
     this.spawners.forEach((spawner) => { spawner.startNextWave(); });
+  }
+
+  private debug(): void {
+    // const debugGraphics = this.add.graphics().setAlpha(0.75);
+    // this.groundLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+    // });
+
+    this.player.setPosition(500, 0);
+    this.player.setWield(true);
+    this.cutsceneOver();
+
+    // For quickly turning off spawn points
+    // this.spawners = [];
+
+    // For turning on spawn points
+    this.startSpawner();
   }
 }

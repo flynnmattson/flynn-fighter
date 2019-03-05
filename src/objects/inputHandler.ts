@@ -37,7 +37,9 @@ export class InputHandler {
   public setClickAction(action: Function): void {
     this.currentScene.input.on(
       "pointerdown",
-      () => { action(); },
+      (pointer) => {
+        action(pointer.rightButtonDown()); 
+      },
       this.currentScene
     );
   }
