@@ -17493,7 +17493,7 @@ declare namespace Phaser {
                  * @param offsetY Vertical offset of the particle origin from the Game Object. Default 0.
                  * @param trackVisible Whether the emitter's visible state will track the target's visible state. Default false.
                  */
-                startFollow(target: Phaser.GameObjects.Particles.Particle, offsetX?: number, offsetY?: number, trackVisible?: boolean): Phaser.GameObjects.Particles.ParticleEmitter;
+                startFollow(target: Phaser.GameObjects.GameObject, offsetX?: number, offsetY?: number, trackVisible?: boolean): Phaser.GameObjects.Particles.ParticleEmitter;
 
                 /**
                  * Stops following a Game Object.

@@ -286,6 +286,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "smokeAndFire",
+        "url": "src/assets/other/particles/smoke_fire.png",
+        "frameConfig": {
+          "frameWidth": 16,
+          "frameHeight": 16
+        }
+      },
+      {
         "type": "json",
         "key": "animationJSON",
         "url": "src/assets/animations/animations.json"

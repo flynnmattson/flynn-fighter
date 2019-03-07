@@ -1,6 +1,7 @@
 {
   "player": {
     "depth": 2,
+    "dyingTime": 400,
     "body": {
       "size": {
         "x": 20,
@@ -12,9 +13,68 @@
         "y": 7
       }
     },
-    "attack": [
+    "swordGroundAttack": [
       {
-        "type": "ranged",
+        "damage": 10,
+        "speed": 355,
+        "trigger": 115,
+        "velocity": 300
+      },
+      {
+        "damage": 10,
+        "speed": 355,
+        "trigger": 115,
+        "velocity": 300
+      },
+      {
+        "damage": 15,
+        "speed": 375,
+        "trigger": 115,
+        "velocity": 600
+      }
+    ],
+    "swordAirAttack": [
+      {
+        "damage": 10,
+        "speed": 355,
+        "trigger": 115,
+        "velocity": -150
+      },
+      {
+        "damage": 10,
+        "speed": 355,
+        "trigger": 115,
+        "velocity": -150
+      },
+      {
+        "damage": 20,
+        "speed": 375,
+        "trigger": 115,
+        "velocity": 300
+      }
+    ],
+    "bowAttack": [
+      {
+        "projectile": {
+          "body": {
+            "size": {
+              "x": 24,
+              "y": 7
+            },
+            "offset": {
+              "flipX": 7,
+              "x": 2,
+              "y": 0
+            }
+          },
+          "speed": 500
+        },
+        "damage": 15,
+        "speed": 900,
+        "velocity": 300,
+        "trigger": 650
+      },
+      {
         "projectile": {
           "body": {
             "size": {
@@ -30,12 +90,9 @@
           "speed": 500
         },
         "damage": 7,
-        "speed": 1000,
-        "cooldown": 2000,
+        "speed": 550,
         "velocity": 0,
-        "range": 100,
-        "offset": 150,
-        "trigger": 600
+        "trigger": 300
       }
     ]
   },

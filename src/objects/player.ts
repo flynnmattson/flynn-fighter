@@ -192,44 +192,40 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   public startAttack(secondaryAttack: boolean): void {
-    if (this.isWielding && !this.isRunning && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
+    if (this.isWielding && !this.isSliding && this.currentScene.time.now > this.nextAttack) {
       this.isAttacking = true;
       if (secondaryAttack) {
-        if (this.inAir) {
-          this.anims.play("adventurerBowAttack2", false);
-          this.body.setVelocityX(0);
-          setTimeout(() => this.shootArrow(), 300);
-        } else {
+        if (!this.inAir) {
           this.anims.play("adventurerBowAttack1", false);
           setTimeout(() => {
-            this.body.setVelocityX(this.flipX ? 300 : -300);
-            this.shootArrow();
-          }, 650);
+            if (this.isAttacking) {
+              this.body.setVelocityX(this.attributes.bowAttack[0].velocity * (this.flipX ? 1 : -1));
+              this.shootArrow(this.attributes.bowAttack[0]);
+            }
+          }, this.attributes.bowAttack[0].trigger);
+          this.startAttackTimers(this.attributes.bowAttack[0], false);
+        } else {
+          this.anims.play("adventurerBowAttack2", false);
+          this.body.setVelocityX(0);
+          setTimeout(() => {
+            if (this.isAttacking) this.shootArrow(this.attributes.bowAttack[1]);
+          }, this.attributes.bowAttack[1].trigger);
+          this.startAttackTimers(this.attributes.bowAttack[1], false);
         }
       } else {
-        this.attackHitbox.enable();
         if (!this.inAir) {
           this.anims.play("adventurerAttack" + this.attackCombo, false);
-          this.body.setVelocityX(this.flipX ? this.attackCombo === 3 ? -600 : -300 : this.attackCombo === 3 ? 600 : 300);
+          this.body.setVelocityX(this.attributes.swordGroundAttack[this.attackCombo - 1].velocity * (this.flipX ? -1 : 1));
+          this.startAttackTimers(this.attributes.swordGroundAttack[this.attackCombo - 1], true);
           this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
         } else if (this.airAttackCombo) {
-          this.body.setVelocityX(0);
           this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
-          this.body.setVelocityY(this.airAttackCombo === 3 ? 300 : -150);
+          this.body.setVelocity(0, this.attributes.swordAirAttack[this.airAttackCombo - 1].velocity);
+          this.startAttackTimers(this.attributes.swordAirAttack[this.airAttackCombo - 1], true);
           // If the Air Attack is on the third and final attack then sets to 0 which means combo is finished.
           this.airAttackCombo = this.airAttackCombo === 3 ? 0 : this.airAttackCombo + 1;
         }
       }
-  
-      // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
-      // this.nextAttack, then continually do overlap checks on enemies and the Player
-      // attack box and if they overlap damage the enemy. Pass in the time of the attack
-      // to the damage function call and keep track of that in the Enemy class. That way
-      // the Enemy will only be damaged by an attack once because we do a bunch of overlap
-      // checks.
-      this.attackStart = this.currentScene.time.now;
-      this.nextAttack = this.attackStart + this.attackCooldown;
-      this.attackTrigger = this.attackStart + this.attackCooldown / 3;
     }
   }
 
@@ -259,6 +255,8 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.isRunning = true;
         this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
+    } else {
+      this.stopRun();
     }
   }
 
@@ -273,19 +271,23 @@ export class Player extends Phaser.GameObjects.Sprite {
         this.isRunning = true;
         this.anims.play(`adventurerRun${this.isWielding ? "Sword" : ""}`, true);
       }
+    } else {
+      this.stopRun();
     }
   }
 
   public stopRun(): void {
-    this.isRunning = false;
-    if (this.body.velocity.x > 0) {
-      this.body.setVelocityX(this.body.velocity.x < 50 ? 0 : this.body.velocity.x - 50);
-    } else if (this.body.velocity.x < 0) {
-      this.body.setVelocityX(this.body.velocity.x > -50 ? 0 : this.body.velocity.x + 50);
-    }
-    // if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
-    if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.inAir) {
-      this.anims.play(`adventurerIdle${this.isWielding ? "Sword" : ""}`, true);
+    if (!this.isSliding) {
+      this.isRunning = false;
+      if (this.body.velocity.x > 0) {
+        this.body.setVelocityX(this.body.velocity.x < 50 ? 0 : this.body.velocity.x - 50);
+      } else if (this.body.velocity.x < 0) {
+        this.body.setVelocityX(this.body.velocity.x > -50 ? 0 : this.body.velocity.x + 50);
+      }
+      // if (!this.isHurting && !this.isJumping && !this.isAttacking && !this.isSliding) {
+      if ((!this.anims.isPlaying || this.anims.getCurrentKey().startsWith("adventurerRun")) && !this.inAir) {
+        this.anims.play(`adventurerIdle${this.isWielding ? "Sword" : ""}`, true);
+      }
     }
   }
 
@@ -333,14 +335,27 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
-  private shootArrow(): void {
+  private startAttackTimers(attributes: any, needsHitbox: boolean): void {
+    if (needsHitbox) this.attackHitbox.enable();
+    // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
+    // this.nextAttack, then continually do overlap checks on enemies and the Player
+    // attack box and if they overlap damage the enemy. Pass in the time of the attack
+    // to the damage function call and keep track of that in the Enemy class. That way
+    // the Enemy will only be damaged by an attack once because we do a bunch of overlap
+    // checks.
+    this.attackStart = this.currentScene.time.now;
+    this.nextAttack = this.attackStart + attributes.speed;
+    this.attackTrigger = this.attackStart + attributes.trigger;
+  }
+
+  private shootArrow(attributes: any): void {
     this.projectiles.add(new Projectile({
       scene: this.currentScene,
       owner: 'player',
       x: this.flipX ? this.getBodyLeftSide() : this.getBodyRightSide(),
       y: this.getBodyHeightCenter() + this.body.height,
-      info: this.attributes.attack[0].projectile,
-      damage: this.attributes.attack[0].damage,
+      info: attributes.projectile,
+      damage: attributes.damage,
       key: `adventurerBowProjectile1`,
       flip: !this.flipX
     }));
