@@ -221,6 +221,17 @@
       "frameRate": 6
     },
     {
+      "key": "adventurerCast",
+      "frames": {
+        "typeOfGeneration": "generateFrameNumbers",
+        "key": "adventurer",
+        "start": 85,
+        "end": 92
+      },
+      "repeat": 0,
+      "frameRate": 6
+    },
+    {
       "key": "slimeIdle",
       "frames": {
         "typeOfGeneration": "generateFrameNumbers",

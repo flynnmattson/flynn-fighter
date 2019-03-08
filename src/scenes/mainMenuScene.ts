@@ -87,5 +87,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set("health", 100);
     this.registry.set("maxHealth", 100);
     this.registry.set("currentScene", "MainMenuScene");
+    this.registry.set("secondaryAttack", "magicAttack");
+    // this.registry.set("secondaryAttack", "bowAttack");
   }
 }

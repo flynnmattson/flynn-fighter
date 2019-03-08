@@ -17496,6 +17496,11 @@ declare namespace Phaser {
                 startFollow(target: Phaser.GameObjects.GameObject, offsetX?: number, offsetY?: number, trackVisible?: boolean): Phaser.GameObjects.Particles.ParticleEmitter;
 
                 /**
+                 * Turns off the emitter.
+                 */
+                stop(): Phaser.GameObjects.Particles.ParticleEmitter;
+
+                /**
                  * Stops following a Game Object.
                  */
                 stopFollow(): Phaser.GameObjects.Particles.ParticleEmitter;

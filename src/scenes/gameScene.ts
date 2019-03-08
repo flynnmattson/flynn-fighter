@@ -24,9 +24,6 @@ export class GameScene extends Phaser.Scene {
   private countdownTimer: Phaser.Time.TimerEvent;
   private messageText: ActionText;
 
-  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager;
-  private fire: Phaser.GameObjects.Particles.ParticleEmitter;
-
   // variables
   private countdownEnds: number;
   private cutscene: { wield: number, run: number };
@@ -88,24 +85,6 @@ export class GameScene extends Phaser.Scene {
         scene: this
       })
     });
-
-    this.particles = this.add.particles('smokeAndFire');
-    this.fire = this.particles.createEmitter({
-      frame: [3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-      // speed: 75,
-      speed: 250,
-      // frequency: 10, // How often to shoot the texture. Lower means more frequent
-      quantity: 2, // Number of emitters to shoot. Defaults to 1
-      scale: { start: 3, end: 1 },
-      // angle: { min: 225, max: 315 }, // Angled upward. Good for when enemies are on fire.
-      angle: { min: -25, max: 45 },
-      alpha: { start: 1, end: 0.6, ease: 'Expo.easeOut' },
-      blendMode: 'ADD',
-      rotate: { min: -180, max: 180 },
-      lifespan: { min: 900, max: 1000 },
-      gravityY: -200
-    });
-    this.fire.startFollow(this.player, 120, 60);
 
     this.inputHandler = new InputHandler({scene: this});
 

@@ -28,6 +28,14 @@ export class Player extends Phaser.GameObjects.Sprite {
   private attributes: any;
   private attackHitbox: AttackBox;
   private projectiles: Phaser.GameObjects.Group;
+  private secondaryAttack: string;
+
+  // Particle Variables
+
+  private particles: Phaser.GameObjects.Particles.ParticleEmitterManager;
+  private fire: Phaser.GameObjects.Particles.ParticleEmitter;
+  private emitterLine: Phaser.Geom.Line;
+  
 
   constructor(params) {
     super(params.scene, params.x, params.y, params.key);
@@ -38,6 +46,7 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.attackHitbox.disable();
     }
     this.health = params.scene.registry.get("health");
+    this.secondaryAttack = params.scene.registry.get("secondaryAttack");
     this.attributes = params.scene.cache.json.get('attributes')['player'];
 
     this.projectiles = this.currentScene.add.group({
@@ -60,6 +69,30 @@ export class Player extends Phaser.GameObjects.Sprite {
     );
     this.body.setSize(this.attributes.body.size.x, this.attributes.body.size.y, false);
     this.attackHitbox.setBodySize(this.attributes.body.size.x, this.attributes.body.size.y);
+
+    //particles
+
+    this.emitterLine = new Phaser.Geom.Line(0, 0, 150, 0);
+    this.particles = this.currentScene.add.particles('smokeAndFire');
+    this.fire = this.particles.createEmitter({
+      emitZone: {source: this.emitterLine, type: 'edge', quantity: 110, yoyo: false},
+      frame: [3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      // speed: 75,
+      speed: 250,
+      // frequency: 10, // How often to shoot the texture. Lower means more frequent
+      quantity: 3, // Number of emitters to shoot. Defaults to 1
+      scale: { start: 3, end: 1 },
+      angle: { min: 225, max: 315 }, // Angled upward. Good for when enemies are on fire.
+      // angle: { min: -25, max: 45 },
+      alpha: { start: 1, end: 0.6, ease: 'Expo.easeOut' },
+      blendMode: 'ADD',
+      rotate: { min: -180, max: 180 },
+      lifespan: { min: 900, max: 1000 },
+      gravityY: -200
+    });
+    this.fire.startFollow(this, 120, 60);
+    this.fire.stop();
+    // this.fire.setVisible(false);
 
     params.scene.add.existing(this);
   }
@@ -196,21 +229,45 @@ export class Player extends Phaser.GameObjects.Sprite {
       this.isAttacking = true;
       if (secondaryAttack) {
         if (!this.inAir) {
-          this.anims.play("adventurerBowAttack1", false);
-          setTimeout(() => {
-            if (this.isAttacking) {
-              this.body.setVelocityX(this.attributes.bowAttack[0].velocity * (this.flipX ? 1 : -1));
-              this.shootArrow(this.attributes.bowAttack[0]);
-            }
-          }, this.attributes.bowAttack[0].trigger);
-          this.startAttackTimers(this.attributes.bowAttack[0], false);
+          switch (this.secondaryAttack) {
+            case 'bowAttack':
+              this.anims.play("adventurerBowAttack1", false);
+              setTimeout(() => {
+                if (this.isAttacking) {
+                  this.body.setVelocityX(this.attributes.bowAttack[0].velocity * (this.flipX ? 1 : -1));
+                  this.shootArrow(this.attributes.bowAttack[0]);
+                }
+              }, this.attributes.bowAttack[0].trigger);
+              this.startAttackTimers(this.attributes.bowAttack[0], false);
+              break;
+            case 'magicAttack':
+              this.anims.play("adventurerCast", false);
+              setTimeout(() => {
+                if (this.isAttacking) {
+                  this.body.setVelocityX(this.attributes.magicAttack[0].velocity * (this.flipX ? 1 : -1));
+                  // TODO: Shoot flame here
+                  this.fire.start();
+                  // this.fire.setVisible(true);
+                }
+              }, this.attributes.magicAttack[0].trigger);
+              this.startAttackTimers(this.attributes.magicAttack[0], true);
+              break;
+            default:
+              return;
+          }
         } else {
-          this.anims.play("adventurerBowAttack2", false);
-          this.body.setVelocityX(0);
-          setTimeout(() => {
-            if (this.isAttacking) this.shootArrow(this.attributes.bowAttack[1]);
-          }, this.attributes.bowAttack[1].trigger);
-          this.startAttackTimers(this.attributes.bowAttack[1], false);
+          switch (this.secondaryAttack) {
+            case 'bowAttack':
+              this.anims.play("adventurerBowAttack2", false);
+              this.body.setVelocityX(0);
+              setTimeout(() => {
+                if (this.isAttacking) this.shootArrow(this.attributes.bowAttack[1]);
+              }, this.attributes.bowAttack[1].trigger);
+              this.startAttackTimers(this.attributes.bowAttack[1], false);
+              break;
+            default:
+              return;
+          }
         }
       } else {
         if (!this.inAir) {
@@ -335,6 +392,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
   }
 
+  // TODO: This function shouldn't need the needsHitbox parameter. Instead look at the
+  // attributes and if the range and offset keys exist than we know it requires a hitbox.
   private startAttackTimers(attributes: any, needsHitbox: boolean): void {
     if (needsHitbox) this.attackHitbox.enable();
     // TODO: In GameScene, if current time is AFTER this.attackTrigger and BEFORE
