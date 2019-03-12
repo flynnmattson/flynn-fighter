@@ -18,19 +18,37 @@
         "damage": 10,
         "speed": 355,
         "trigger": 115,
-        "velocity": 300
+        "velocity": 300,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }
       },
       {
         "damage": 10,
         "speed": 355,
         "trigger": 115,
-        "velocity": 300
+        "velocity": 300,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }
       },
       {
         "damage": 15,
         "speed": 375,
         "trigger": 115,
-        "velocity": 600
+        "velocity": 600,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }
       }
     ],
     "swordAirAttack": [
@@ -38,19 +56,37 @@
         "damage": 10,
         "speed": 355,
         "trigger": 115,
-        "velocity": -150
+        "velocity": -150,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }        
       },
       {
         "damage": 10,
         "speed": 355,
         "trigger": 115,
-        "velocity": -150
+        "velocity": -150,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }        
       },
       {
         "damage": 20,
         "speed": 375,
         "trigger": 115,
-        "velocity": 300
+        "velocity": 300,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 0
+        }        
       }
     ],
     "bowAttack": [
@@ -98,9 +134,15 @@
     "magicAttack": [
       {
         "damage": 10,
-        "speed": 1000,
+        "speed": 1050,
         "trigger": 500,
-        "velocity": 300
+        "velocity": 300,
+        "attackBox": {
+          "width": 20,
+          "height": 25,
+          "offset": 0,
+          "velocity": 350
+        }
       }
     ]
   },

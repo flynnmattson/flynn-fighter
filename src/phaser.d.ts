@@ -17988,6 +17988,12 @@ declare namespace Phaser {
                 setFrame(frame?: string | integer): Phaser.GameObjects.Particles.ParticleEmitterManager;
 
                 /**
+                 * Sets the depth of this Game Object within the Scene.
+                 * @param value The depth of this Game Object.
+                 */
+                setDepth(value: number): Phaser.GameObjects.Particles.ParticleEmitterManager;
+
+                /**
                  * Assigns texture frames to an emitter.
                  * @param frames The texture frames.
                  * @param emitter The particle emitter to modify.

@@ -197,7 +197,7 @@ export class TownScene extends Phaser.Scene {
 
   update(): void {
     this.handleInput();
-    this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
+    this.parallaxBg.shiftX(this.cameras.main.scrollX);
     this.player.update();
     this.master.update();
     this.interactTexts.forEach((text) => {

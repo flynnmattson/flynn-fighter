@@ -16,6 +16,7 @@ export class Spawner {
   private currentScene: GameScene;
   private position: {x: number, y: number};
   private attributes: any;
+  private reverseSpawn: boolean;
 
   constructor (params) {
     this.currentScene = params.scene;
@@ -26,6 +27,7 @@ export class Spawner {
       x: params.x,
       y: params.y
     };
+    this.reverseSpawn = false;
   }
 
   public startNextWave(): void {
@@ -69,36 +71,41 @@ export class Spawner {
   private spawn(): void {
     let didSpawn = false; // An enemy did spawn
 
-    for (let i = 0; i < this.currentWaveInfo.enemies.length; i++) {
-      for (let j = 0; j < this.currentWaveInfo.enemies[i].amount; j++) {
-        if (
-          this.activeEnemies < this.currentWaveInfo.activeLimit &&
-          this.currentWaveInfo.enemies[i].spawnTotal
-        ) {
-          didSpawn = true;
-          this.activeEnemies++;
-          this.currentWaveInfo.enemies[i].spawnTotal--;
-          this.currentScene.time.addEvent({
-            delay: 500 * (j + 1),
-            callback: () => {
-              this.currentScene.getEnemies().add(
-                new Enemy({
-                  scene: this.currentScene,
-                  spawner: this,
-                  x: this.position.x,
-                  y: this.position.y,
-                  key: this.currentWaveInfo.enemies[i].type,
-                  attackBox: new AttackBox({
-                    scene: this.currentScene
+    if (this.activeEnemies < this.currentWaveInfo.activeLimit) {
+      for (
+        let i = this.reverseSpawn ? this.currentWaveInfo.enemies.length -1 : 0; 
+        this.reverseSpawn ? i >= 0 : i < this.currentWaveInfo.enemies.length;
+        this.reverseSpawn ? i-- : i++
+      ) {
+        for (let j = 0; j < this.currentWaveInfo.enemies[i].amount; j++) {
+          if (this.currentWaveInfo.enemies[i].spawnTotal) {
+            didSpawn = true;
+            this.activeEnemies++;
+            this.currentWaveInfo.enemies[i].spawnTotal--;
+            this.currentScene.time.addEvent({
+              delay: 500 * (j + 1),
+              callback: () => {
+                this.currentScene.getEnemies().add(
+                  new Enemy({
+                    scene: this.currentScene,
+                    spawner: this,
+                    x: this.position.x,
+                    y: this.position.y,
+                    key: this.currentWaveInfo.enemies[i].type,
+                    attackBox: new AttackBox({
+                      scene: this.currentScene
+                    })
                   })
-                })
-              );
-            },
-            callbackScope: this.currentScene,
-            loop: false
-          });
+                );
+              },
+              callbackScope: this.currentScene,
+              loop: false
+            });
+          }
         }
       }
+  
+      this.reverseSpawn = !this.reverseSpawn;
     }
 
     // No active enemies and all enemies have been spawned and the wave is finished for this spawner.

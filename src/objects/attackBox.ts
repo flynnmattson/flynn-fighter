@@ -34,6 +34,7 @@ export class AttackBox extends Phaser.GameObjects.Rectangle {
   }
 
   public disable(): void {
+    this.body.setVelocityX(0);
     this.setActive(false);
     this.currentScene.physics.world.disable(this);
   }

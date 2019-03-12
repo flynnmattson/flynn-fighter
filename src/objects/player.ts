@@ -71,42 +71,24 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.attackHitbox.setBodySize(this.attributes.body.size.x, this.attributes.body.size.y);
 
     //particles
-
-    this.emitterLine = new Phaser.Geom.Line(0, 0, 150, 0);
     this.particles = this.currentScene.add.particles('smokeAndFire');
-    this.fire = this.particles.createEmitter({
-      emitZone: {source: this.emitterLine, type: 'edge', quantity: 110, yoyo: false},
-      frame: [3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-      // speed: 75,
-      speed: 250,
-      // frequency: 10, // How often to shoot the texture. Lower means more frequent
-      quantity: 3, // Number of emitters to shoot. Defaults to 1
-      scale: { start: 3, end: 1 },
-      angle: { min: 225, max: 315 }, // Angled upward. Good for when enemies are on fire.
-      // angle: { min: -25, max: 45 },
-      alpha: { start: 1, end: 0.6, ease: 'Expo.easeOut' },
-      blendMode: 'ADD',
-      rotate: { min: -180, max: 180 },
-      lifespan: { min: 900, max: 1000 },
-      gravityY: -200
-    });
-    this.fire.startFollow(this, 120, 60);
-    this.fire.stop();
-    // this.fire.setVisible(false);
+    this.particles.setDepth(20);
 
     params.scene.add.existing(this);
   }
 
   update(): void {
-    if (this.attackHitbox.isEnabled()) {
+    if (this.attackHitbox.isEnabled() && this.attackHitbox.body.velocity.x === 0) {
       if (this.flipX) {
         this.attackHitbox.setPosition(
-          this.getBodyLeftSide() - this.attackHitbox.getBodyWidth() / 2,
+          this.body.x - (this.attackHitbox.getBodyWidth() / 2),
+          // - attributes.offset,
           this.body.y
         );
       } else {
         this.attackHitbox.setPosition(
-          this.getBodyLeftSide() + this.attackHitbox.getBodyWidth() / 2,
+          (this.body.x + this.body.width) - (this.attackHitbox.getBodyWidth() / 2),
+          // + attributes.offset,
           this.body.y
         );
       }
@@ -127,8 +109,7 @@ export class Player extends Phaser.GameObjects.Sprite {
     }
 
     if (this.isAttacking && this.currentScene.time.now > this.nextAttack) {
-      this.isAttacking = false;
-      this.attackHitbox.disable();
+      this.stopAttacking();
     }
 
     if (this.isSliding && this.currentScene.time.now > this.nextSlide - this.attackCooldown) {
@@ -245,9 +226,8 @@ export class Player extends Phaser.GameObjects.Sprite {
               setTimeout(() => {
                 if (this.isAttacking) {
                   this.body.setVelocityX(this.attributes.magicAttack[0].velocity * (this.flipX ? 1 : -1));
-                  // TODO: Shoot flame here
-                  this.fire.start();
-                  // this.fire.setVisible(true);
+                  this.castMagic();
+                  this.setAttackHitbox(this.attributes.magicAttack[0].attackBox);
                 }
               }, this.attributes.magicAttack[0].trigger);
               this.startAttackTimers(this.attributes.magicAttack[0], true);
@@ -273,11 +253,13 @@ export class Player extends Phaser.GameObjects.Sprite {
         if (!this.inAir) {
           this.anims.play("adventurerAttack" + this.attackCombo, false);
           this.body.setVelocityX(this.attributes.swordGroundAttack[this.attackCombo - 1].velocity * (this.flipX ? -1 : 1));
+          this.setAttackHitbox(this.attributes.swordGroundAttack[this.attackCombo - 1].attackBox);
           this.startAttackTimers(this.attributes.swordGroundAttack[this.attackCombo - 1], true);
           this.attackCombo = this.attackCombo === 3 ? 1 : this.attackCombo + 1;
         } else if (this.airAttackCombo) {
           this.anims.play("adventurerAirAttack" + this.airAttackCombo, false);
           this.body.setVelocity(0, this.attributes.swordAirAttack[this.airAttackCombo - 1].velocity);
+          this.setAttackHitbox(this.attributes.swordAirAttack[this.airAttackCombo - 1].attackBox);
           this.startAttackTimers(this.attributes.swordAirAttack[this.airAttackCombo - 1], true);
           // If the Air Attack is on the third and final attack then sets to 0 which means combo is finished.
           this.airAttackCombo = this.airAttackCombo === 3 ? 0 : this.airAttackCombo + 1;
@@ -305,8 +287,8 @@ export class Player extends Phaser.GameObjects.Sprite {
     if (!this.isAttacking && !this.isSliding) {
       this.flip(true);
       if (this.body.offset.x > 0) {
-        this.body.setOffset(this.attributes.body.offset.x, this.body.offset.y);
-      }
+       if (this.fire && this.fire.active) this.fire.stop();
+      }if (this.fire && this.fire.active) this.fire.stop();
       this.body.setVelocityX(-300);
       if (!this.inAir) {
         this.isRunning = true;
@@ -350,7 +332,7 @@ export class Player extends Phaser.GameObjects.Sprite {
 
   public damage(amount: number): boolean {
     if (!this.isDead && !this.isSliding) {
-      this.isAttacking = false;
+      this.stopAttacking();
       this.attackHitbox.disable();
       this.isHurting = true;
       this.health -= amount;
@@ -418,5 +400,56 @@ export class Player extends Phaser.GameObjects.Sprite {
       key: `adventurerBowProjectile1`,
       flip: !this.flipX
     }));
+  }
+
+  private castMagic(): void {
+    this.emitterLine = new Phaser.Geom.Line(0, 0, this.flipX ? -200 : 200, 0);
+    this.fire = this.particles.createEmitter({
+      emitZone: { source: this.emitterLine, type: 'edge', quantity: 110, yoyo: false },
+      frame: [3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      // speed: 75,
+      speed: 250,
+      // frequency: 10, // How often to shoot the texture. Lower means more frequent
+      quantity: 3, // Number of emitters to shoot. Defaults to 1
+      scale: { start: 3, end: 2 },
+      angle: { min: 225, max: 315 }, // Angled upward. Good for when enemies are on fire.
+      // angle: { min: -25, max: 45 },
+      alpha: { start: 1, end: 0.6, ease: 'Expo.easeOut' },
+      blendMode: 'ADD',
+      rotate: { min: -180, max: 180 },
+      lifespan: { min: 300, max: 400 },
+      gravityY: -200
+    });
+    this.fire.startFollow(this, this.flipX ? 0 : 140, 60);
+  }
+
+  private setAttackHitbox(attributes: any): void {
+    this.attackHitbox.enable();
+    this.attackHitbox.setBodySize(attributes.width, attributes.height);
+    if (this.flipX) {
+      this.attackHitbox.setPosition(
+        this.body.x - (this.attackHitbox.getBodyWidth() / 2),
+        // - attributes.offset,
+        this.body.y
+      );
+      this.attackHitbox.body.setVelocityX(-attributes.velocity);
+    } else {
+      this.attackHitbox.setPosition(
+        (this.body.x + this.body.width) - (this.attackHitbox.getBodyWidth() / 2),
+        // + attributes.offset,
+        this.body.y
+      );
+      this.attackHitbox.body.setVelocityX(attributes.velocity);
+    }
+  }
+
+  private stopAttacking(): void {
+    this.isAttacking = false;
+    if (this.attackHitbox.isEnabled()) {
+      this.attackHitbox.disable();
+    }
+    if (this.fire && this.fire.active) {
+      this.fire.stop();
+    }
   }
 }

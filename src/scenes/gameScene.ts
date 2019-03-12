@@ -201,7 +201,7 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    this.parallaxBg.shiftX(this.player.getVelocityX(), this.player.getPositionX());
+    this.parallaxBg.shiftX(this.cameras.main.scrollX);
     this.parallaxBg.shiftY(this.cameras.main.scrollY);
     this.player.update();
   }
@@ -342,9 +342,9 @@ export class GameScene extends Phaser.Scene {
     this.cutsceneOver();
 
     // For quickly turning off spawn points
-    this.spawners = [];
+    // this.spawners = [];
 
     // For turning on spawn points
-    // this.startSpawner();
+    this.startSpawner();
   }
 }
