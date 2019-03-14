@@ -403,6 +403,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   }
 
   private castMagic(): void {
+    if (this.fire && this.fire.active) this.fire.stop();
     this.emitterLine = new Phaser.Geom.Line(0, 0, this.flipX ? -200 : 200, 0);
     this.fire = this.particles.createEmitter({
       emitZone: { source: this.emitterLine, type: 'edge', quantity: 110, yoyo: false },

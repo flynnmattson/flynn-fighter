@@ -192,7 +192,7 @@ export class TownScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.houseGroundLayer);
     this.physics.add.collider(this.master, this.houseGroundLayer);
 
-    this.debug();
+    // this.debug();
   }
 
   update(): void {

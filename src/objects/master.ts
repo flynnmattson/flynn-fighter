@@ -30,6 +30,6 @@ export class Master extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    this.anims.play('adventurerIdle', true);
+    this.anims.play('masterIdle', true);
   }
 };

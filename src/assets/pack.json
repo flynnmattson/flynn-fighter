@@ -295,6 +295,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "master",
+        "url": "src/assets/sprites/master-Sheet.png",
+        "frameConfig": {
+          "frameWidth": 50,
+          "frameHeight": 37
+        }
+      },
+      {
         "type": "json",
         "key": "animationJSON",
         "url": "src/assets/animations/animations.json"
